@@ -4,7 +4,7 @@ import { ArkivClient } from "./client";
 import { ExtractionReceipt, LPClaim, SearcherProfile } from "./schemas";
 
 test("ArkivClient round-trip verification", async (t) => {
-  const client = new ArkivClient({ namespace: "darktrace.test" });
+  const client = new ArkivClient({ namespace: "darktrace.test", devMode: "memory" });
 
   const sampleReceipt: ExtractionReceipt = {
     v: "1.0.0",

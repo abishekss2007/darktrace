@@ -1,3 +1,4 @@
+// Canonical field order matches SimulationRegistry.attest(receiptHash, ...). Verified at Stage 9.
 import { keccak256, toHex, stringToBytes } from "viem";
 
 export interface ExtractionReceipt {
