@@ -1,8 +1,10 @@
 # DarkTrace
 
-> **"LPs are losing $1.2B to MEV. DarkTrace gives it back, and proves it on-chain."**
+> **"LPs are losing $1B+ annually to MEV (over $1 billion annually by conservative estimates[^1]). DarkTrace gives it back, and proves it on-chain."**
 
-DarkTrace is MEV forensics for Uniswap v4 LPs: hooks detect extraction footprints, Arkiv seals the immutable proof receipt, and LPs claim USDC rebates on Arc Testnet. By separating extraction fingerprinting on-chain from deterministic counterfactual simulation off-chain, DarkTrace delivers transparent restitution without interfering with trade execution or inventing synchronous cross-chain assumptions.
+DarkTrace is MEV forensics for Uniswap v4 LPs: hooks detect extraction footprints, Arkiv seals the immutable proof receipt, and LPs claim USDC rebates on Arc Testnet. By separating extraction fingerprinting on-chain from deterministic counterfactual computation off-chain, DarkTrace delivers transparent restitution without interfering with trade execution or inventing synchronous cross-chain assumptions.
+
+[^1]: LVR/MEV loss estimates vary by methodology; see Flashbots/RAMS and Dune MEV dashboards. DarkTrace uses 'over $1B annually' as a conservative floor, not a canonical figure.
 
 ---
 
@@ -20,7 +22,7 @@ flowchart LR
 
     subgraph OffChain["Forensic Pipeline"]
         Indexer["Node.js Indexer"]
-        Sim["Arc Counterfactual Simulator\n(viem replay engine)"]
+        Sim["Arc Counterfactual Simulator\n(CPMM counterfactual engine)"]
         Event --> Indexer
         Indexer --> Sim
     end

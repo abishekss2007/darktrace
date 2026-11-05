@@ -11,8 +11,10 @@
 
 > **"DarkTrace is MEV forensics for Uniswap v4 LPs: hooks detect extraction, Arkiv seals the receipt, and LPs get USDC rebates on Arc."**
 
-- **The Problem**: Liquidity providers (LPs) suffer silent, uncompensated Losses-Versus-Rebalancing (LVR) and sandwiching extraction exceeding $1.2B annually. Existing hook patterns either try to block swaps (killing routing flow) or lack cross-chain economic restitution.
+- **The Problem**: Liquidity providers (LPs) suffer silent, uncompensated Losses-Versus-Rebalancing (LVR) and sandwiching extraction of over $1 billion annually by conservative estimates ($1B+ annually)[^1]. Existing hook patterns either try to block swaps (killing routing flow) or lack cross-chain economic restitution.
 - **The Solution**: DarkTrace operates as a lightweight, non-intrusive v4 hook that fingerprints toxic extraction via transient storage deltas. It generates verifiable forensic evidence published to Arkiv and authorizes USDC restitution claims on Arc Testnet via counterfactual simulation.
+
+[^1]: LVR/MEV loss estimates vary by methodology; see Flashbots/RAMS and Dune MEV dashboards. DarkTrace uses 'over $1B annually' as a conservative floor, not a canonical figure.
 
 ---
 

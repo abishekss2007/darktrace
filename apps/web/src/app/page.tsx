@@ -13,7 +13,7 @@ export default function HomePage() {
           DARKTRACE MEV FORENSICS
         </h1>
         <p className="text-muted text-sm max-w-2xl leading-relaxed">
-          LPs are losing $1.2B to MEV. DarkTrace gives it back, and proves it on-chain.
+          LPs are losing $1B+ annually to MEV (over $1 billion annually by conservative estimates). DarkTrace gives it back, and proves it on-chain.
           Transient-storage hooks detect extraction footprints on Base Sepolia,
           Arkiv seals immutable forensic receipts, and affected LPs claim USDC rebates on Arc.
         </p>

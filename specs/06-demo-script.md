@@ -12,7 +12,7 @@
   - $3.75 Extracted (24h) `[DEMO DATA]`
   - $5.00 USDC Vault Reserve on Arc (Live On-Chain)
 * **Voiceover**:
-  > *"In the last 24 hours on Base, LPs lost thousands to toxic sandwich attacks and LVR. Current solutions force a painful trade-off: either block trades and kill routing flow, or let LPs bleed value silently. DarkTrace solves this: hooks detect the extraction, Arkiv seals the proof, and LPs get their USDC back on Arc."*
+  > *"LPs are losing over a billion dollars annually to MEV extraction. Current solutions force a painful trade-off: either block trades and kill routing flow, or let LPs bleed value silently. DarkTrace solves this: hooks detect the extraction, Arkiv seals the proof, and LPs get their USDC back on Arc."*
 
 ---
 
