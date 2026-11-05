@@ -109,6 +109,13 @@ This document tracks all AI-assisted versus human engineering contributions acro
 | `specs/hardening/09-baseline-audit.md` | Yes | Compiled Stage 0 baseline audit for submission qualification pass. | Verified git commits, file existence, Arkiv client grep, and frontend env consumption. |
 | `specs/hardening/10-uniswap-feedback.md` | Yes | Recorded Stage 1 Uniswap FEEDBACK.md creation and line verification. | Verified exact line citations in DarkTraceHook.sol. |
 | `specs/hardening/11-arkiv-rabdi-client.md` | Yes | Recorded Stage 2 Arkiv rabdi client binding and fail-loud migration. | Verified ArkivRpcError and scripts/arkiv-write-test.ts. |
+| `specs/hardening/12-arkiv-submission-files.md` | Yes | Recorded Stage 3 creation of the 5 required Arkiv submission documents. | Verified all file paths and on-chain entity keys. |
+| `arkiv/schema.md` | Yes | Authored darktrace.v1 schema specification for ExtractionReceipt, SearcherProfile, LPClaim. | Included verified live on-chain entity 0xc327...f8ca on Rabdi testnet. |
+| `arkiv/friction.md` | Partial | Structured first-person DX friction report for Arkiv judges. | Authored technical friction notes on RPC drift, hash parity with SimulationRegistry.sol, and fail-loud client design. |
+| `arkiv/reach.md` | Partial | Structured audience analysis and roadmap. | Documented LP, MEV researcher, and pool deployer user archetypes and post-Mumbai plans. |
+| `arkiv/why-arkiv.md` | Partial | Structured architectural comparison. | Documented decentralization advantages over PostgreSQL, indexing vs raw logs, and size/expiry trade-offs. |
+| `arkiv/how-you-use-arkiv.md` | Yes | Documented operational filters, access control, frontend dependencies, and boundaries. | Verified path citations in apps/web. |
+| `arkiv/README.md` | Yes | Created index table for Arkiv submission artifacts. | Verified links and explorer URL on Rabdi testnet. |
 | `.env.example` | Yes | Created environment variable template for Arkiv rabdi, Arc, and Base Sepolia. | Verified placeholder values and comments. |
 | `scripts/arkiv-write-test.ts` | Yes | Authored one-shot Arkiv live verification script for write/read roundtrip. | Tested non-zero exit on missing credentials and WRITE_OK/READ_OK outputs. |
 | `package.json` | Yes | Added `arkiv:write-test` runner script to monorepo root. | Routed command through `@darktrace/arkiv` workspace. |
