@@ -3,7 +3,7 @@
 ## 1. Overview
 
 The Arc settlement layer operates on Circle's USDC-native Layer-1 blockchain (Arc Testnet). It comprises:
-1. **The Counterfactual Engine (`/lib/simulator/counterfactual.ts`)**: An off-chain deterministic viem replay engine that recreates clean pool execution and computes exact extracted value and slippage breakdown.
+1. **The Counterfactual Engine (`/lib/simulator/counterfactual.ts`)**: An off-chain deterministic engine that computes counterfactual victim execution against pre-attack reserves using constant-product (`x * y = k`) pricing (no archive-node fork replay) and isolates injected MEV slippage from legitimate price impact.
 2. **SimulationRegistry (`/contracts/src/SimulationRegistry.sol`)**: An on-chain registry recording cryptographic attestations of simulation results.
 3. **RebateVault (`/contracts/src/RebateVault.sol`)**: A secure, non-reentrant USDC vault where affected LPs claim restitution against verified `receiptHash` attestations.
 
@@ -27,11 +27,11 @@ Given an observed sandwich attack at block $N$ with transactions $\{T_{\text{fro
 - Let $R_0 = (\text{reserve}_0, \text{reserve}_1, \text{tick}_0)$ be the pool reserves prior to $T_{\text{frontrun}}$.
 - Let $R_{\text{actual}}$ be the reserves experienced by $T_{\text{victim}}$ after $T_{\text{frontrun}}$ executed.
 
-### 3.2 Counterfactual Execution
-The simulator computes what $T_{\text{victim}}$ would have received if $T_{\text{frontrun}}$ never occurred:
+### 3.2 Counterfactual Execution (Constant-Product Pricing Against Pre-Attack Reserves)
+The simulator computes what $T_{\text{victim}}$ would have received if $T_{\text{frontrun}}$ never occurred by applying the constant-product market maker (CPMM) invariant ($k = \text{reserve}_0 \cdot \text{reserve}_1$) directly to the pre-attack reserves $R_0$ and the victim swap input (no archive RPC fork replay):
 $$P_{\text{pre}} = \text{SpotPrice}(R_0)$$
-$$P_{\text{clean}} = \text{SimulatedPrice}(R_0, T_{\text{victim}})$$
-$$P_{\text{actual}} = \text{ObservedExecutionPrice}(R_{\text{actual}}, T_{\text{victim}})$$
+$$P_{\text{clean}} = \text{CPMMPrice}(R_0, T_{\text{victim}})$$
+$$P_{\text{actual}} = \text{CPMMPrice}(R_{\text{actual}}, T_{\text{victim}})$$
 
 ### 3.3 Slippage Breakdown
 1. **Legitimate Slippage**:
@@ -41,7 +41,12 @@ $$P_{\text{actual}} = \text{ObservedExecutionPrice}(R_{\text{actual}}, T_{\text{
 3. **Extracted USDC**:
    $$\text{extractedUSDC} = \text{Volume}_{\text{victim}} \times \frac{\text{injectedSlippageBps}}{10{,}000}$$
 4. **Deterministic Simulation Hash**:
-   $$\text{simulationHash} = \text{keccak256}(\text{abi.encode}(R_0, T_{\text{victim}}, P_{\text{clean}}, P_{\text{actual}}))$$
+   $$\text{simulationHash} = \text{keccak256}(\text{abi.encode}(\text{poolId}, \text{blockNumber}, \text{injectedSlippageBps}, \text{legitSlippageBps}, \text{extractedUSDCRaw}))$$
+
+### 3.4 Fidelity & Limits
+- **What Is Exact**: Within any single active Uniswap v4 tick interval $[\text{tickLower}, \text{tickUpper}]$ where active liquidity $L$ is constant, concentrated liquidity behaves identically to a virtual constant-product curve ($x_{\text{virtual}} \cdot y_{\text{virtual}} = L^2$). Consequently, given pre-attack virtual reserves $R_0$, the CPMM decomposition into `legitSlippageBps` and `injectedSlippageBps`—as well as the ABI-encoded `simulationHash`—is mathematically exact within that tick range.
+- **What Is Approximated**: `runCounterfactualSimulation` does not fork historical EVM state from an archive RPC node, nor does it traverse the pool's initialized tick bitmap across multi-tick boundary crossings where active liquidity $L$ steps up or down.
+- **Why This Boundary Is Acceptable for Sandwich Detection**: Classic MEV sandwich attacks execute within the same block and predominantly within the local active tick range (or immediately adjacent ticks) because crossing multiple wide tick boundaries increases the searcher's own gas cost and price impact. Computing against pre-attack reserves via the constant-product formula provides sub-millisecond, deterministic attribution of frontrun displacement without depending on external archive RPC latency or availability.
 
 ---
 

@@ -28,4 +28,5 @@ Welcome to the technical specification directory for **DarkTrace** (MEV Forensic
 | [`hardening/02-cross-chain-scope.md`](./hardening/02-cross-chain-scope.md) | Stage 2 declaration keeping cross-chain slashing out of scope and separating Flow 1 (Base Sepolia) from Flow 2 (Arc Testnet). |
 | [`hardening/03-demo-data-labeling.md`](./hardening/03-demo-data-labeling.md) | Stage 3 implementation record for `<NetworkBadge>`, inline `[DEMO]` pills, dashboard disclaimers, and `/api/stats`. |
 | [`hardening/04-attribution-and-history.md`](./hardening/04-attribution-and-history.md) | Stage 4 commit history diagnosis (`31+` commits), `RESTRUCTURE_NOTES.md`, per-file `/AI_ATTRIBUTION.md` matrix, and spec index. |
+| [`hardening/05-simulator-honesty.md`](./hardening/05-simulator-honesty.md) | Stage 5 audit and alignment of `lib/simulator/counterfactual.ts` and `specs/03-arc-simulator.md` with constant-product (CPMM) counterfactual computation. |
 
