@@ -17,6 +17,16 @@ This document tracks all AI-assisted versus human engineering contributions acro
 | `specs/02-hook-design.md` | Yes | Drafted transient storage slots and detection condition. | Verified bitmask calculation (`0x00C0`) and inversion thresholds. |
 | `specs/03-arc-simulator.md` | Yes | Documented counterfactual simulation math and Arc USDC dual interface. | Formulated slippage breakdown formula and simulation hash generation. |
 | `specs/04-arkiv-schema.md` | Yes | Documented Arkiv JSON schemas and indexing attributes. | Structured canonical receipt hash ordering and LP claim linkage. |
+| `specs/05-ui-ux.md` | Yes | Authored UI design tokens, color palette, and anti-slop rules. | Enforced Geist Sans/Mono typography, border-only structure, and tabular numbers. |
+| `apps/web/src/components/ui/HashDisplay.tsx` | Yes | Scaffolded hash shortener with clipboard copy button. | Added copy state feedback and monospace formatting. |
+| `apps/web/src/components/ui/StatusPill.tsx` | Yes | Generated color-coded status pills for forensic pipeline states. | Configured border-only badges for DETECTED, SIMULATED, ARCHIVED, REBATED. |
+| `apps/web/src/data/mockData.ts` | Partial | Generated mock data structures for pools and receipts. | Calibrated realistic MEV sandwich values, basis point spreads, and proof hashes. |
+| `apps/web/src/app/dashboard/page.tsx` | Yes | Scaffolded monitored pools and receipts surveillance tables. | Implemented right-aligned tabular numbers and direct route linking. |
+| `apps/web/src/app/pool/[id]/page.tsx` | Yes | Scaffolded pool inspector with TVL and volume metrics. | Implemented conditional empty state for clean pool trading history. |
+| `apps/web/src/app/receipt/[hash]/page.tsx` | Partial | Scaffolded forensic receipt detail card layout. | Built toxic vs legit slippage decomposition math box and same-block tx sequence viewer. |
+| `apps/web/src/app/searcher/[address]/page.tsx` | Yes | Scaffolded searcher profile and historical extractions view. | Configured toxic arbitrage status and slashed bond tracking. |
+| `apps/web/src/app/lp/[address]/page.tsx` | Yes | Scaffolded LP restitution view and claim statistics. | Linked Arc Testnet settlement balances and claim history. |
+| `apps/web/src/app/demo/page.tsx` | Partial | Scaffolded two-column terminal layout. | Implemented interactive state machine from DETECTED -> SIMULATED -> ARCHIVED -> REBATED. |
 | `contracts/src/RebateVault.sol` | Partial | Scaffolded ERC-20 USDC custody vault. | Designed replay nullifier checks, SimulationRegistry attestation verification, and self-payout guards. |
 | `contracts/src/SimulationRegistry.sol` | Yes | Scaffolded attestation storage mapping. | Implemented immutable simulation record storage and unauthorized write protections. |
 | `contracts/test/mocks/MockUSDC.sol` | Yes | Generated standard 6-decimal ERC20 test mock. | Verified transfer and allowance behavior for vault testing. |
