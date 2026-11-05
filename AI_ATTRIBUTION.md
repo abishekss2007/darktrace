@@ -116,6 +116,7 @@ This document tracks all AI-assisted versus human engineering contributions acro
 | `specs/hardening/15-demo-script-update.md` | Yes | Recorded Stage 6 demo script update with Arc Studio and Arkiv rabdi beats. | Verified runtime and voiceover lines. |
 | `specs/hardening/24-read-only-link-audit.md` | Yes | Stage 0 baseline audit and clickable link verification across all documentation and routes. | Verified local/remote HEAD parity, entity key vs receipt hash proof, and link table. |
 | `specs/hardening/25-arkiv-identifier-fix.md` | Yes | Stage 1 Arkiv identity model correction and boundary enforcement specification. | Documented data model updates, explorer route disambiguation, and unit test results. |
+| `specs/hardening/26-web3-claims.md` | Yes | Stage 2 Web3 claims, contract address reality, and demo behavior specification. | Documented Foundry vs Studio vault roles, hook passive telemetry scope, and slippage math. |
 | `specs/submission/FINAL-SUBMISSION-CHECKLIST.md` | Yes | Compiled final submission qualification freeze checklist for Uniswap, Arc, and Arkiv. | Verified all qualifying evidence, file pointers, and live transaction hashes. |
 | `arc-studio/prompt.md` | Yes | Authored paste-ready prompt for Arc Studio to generate SimulationRegistry and RebateVault. | Specified exact APIs, 0x3600... native USDC, ReentrancyGuard, and double-claim tests. |
 | `arc-studio/README.md` | Yes | Authored 14-step checklist for manual Arc Studio workflow. | Step-by-step guidance from studio.arc.io to Vercel redeployment. |

@@ -426,11 +426,11 @@ export default function DemoPage() {
                   <Check className="w-5 h-5 flex-shrink-0" />
                   <div>
                     <div className="font-bold flex items-center gap-2">
-                      <span>USDC Rebate Claimed & Settled</span>
+                      <span>Simulated Rebate Claim Settled</span>
                       <DemoData />
                     </div>
                     <div className="text-[10px] text-muted mt-0.5">
-                      ${selectedItem.extractedUSDC} USDC credited to LP via RebateVault.sol on Arc Testnet.
+                      Simulated payout: ${selectedItem.extractedUSDC} USDC credited to LP demo balance. (No live claim transaction broadcast).
                     </div>
                   </div>
                 </div>
@@ -444,12 +444,12 @@ export default function DemoPage() {
                   {isClaiming ? (
                     <>
                       <RefreshCw className="w-4 h-4 animate-spin" />
-                      <span>Settling USDC Rebate on Arc...</span>
+                      <span>Simulating Rebate Payout on Arc...</span>
                     </>
                   ) : (
                     <>
                       <ShieldCheck className="w-4 h-4" />
-                      <span>Claim ${selectedItem.extractedUSDC} USDC Rebate</span>
+                      <span>Simulate ${selectedItem.extractedUSDC} USDC Rebate Claim</span>
                     </>
                   )}
                 </button>

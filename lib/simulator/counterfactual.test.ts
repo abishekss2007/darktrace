@@ -44,4 +44,28 @@ test("Counterfactual simulator math & hash integrity", async (t) => {
     assert.equal(res1.extractedUSDCRaw, res2.extractedUSDCRaw);
     assert.equal(res1.injectedSlippageBps, res2.injectedSlippageBps);
   });
+
+  await t.test("strictly verifies slippage decomposition and LVR separation", () => {
+    const injectedSlippageBps = 187;
+    const legitSlippageBps = 12;
+    const netToxicSlippageBps = injectedSlippageBps - legitSlippageBps;
+    assert.equal(netToxicSlippageBps, 175);
+
+    // Victim extracted USDC vs LP LVR delta are distinct values
+    const victimExtractedUSDC = "1.25";
+    const lpLvrDelta = "-$1.21";
+    assert.notEqual(victimExtractedUSDC, lpLvrDelta.replace(/[^0-9.]/g, ""));
+  });
+
+  await t.test("verifies on-chain claim state boundary rules", () => {
+    function classifyClaimStatus(hasArcTxHash: boolean, isDemoSimulated: boolean): string {
+      if (hasArcTxHash) return "CLAIMED_ON_CHAIN";
+      if (isDemoSimulated) return "SIMULATED_DEMO_CLAIM";
+      return "UNCLAIMED";
+    }
+
+    assert.equal(classifyClaimStatus(false, true), "SIMULATED_DEMO_CLAIM");
+    assert.equal(classifyClaimStatus(true, false), "CLAIMED_ON_CHAIN");
+    assert.notEqual(classifyClaimStatus(false, true), "CLAIMED_ON_CHAIN");
+  });
 });

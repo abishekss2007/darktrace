@@ -15,13 +15,13 @@ export const arcTestnet = defineChain({
   },
   rpcUrls: {
     default: {
-      http: [process.env.NEXT_PUBLIC_ARC_RPC_URL || "https://rpc.testnet.arc.network"],
+      http: [process.env.NEXT_PUBLIC_ARC_RPC_URL || "https://rpc.testnet.arc.io"],
     },
   },
   blockExplorers: {
     default: {
       name: "ArcScan",
-      url: "https://explorer.testnet.arc.network",
+      url: "https://explorer.testnet.arc.io",
     },
   },
   testnet: true,
