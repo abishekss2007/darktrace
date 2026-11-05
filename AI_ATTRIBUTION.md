@@ -15,7 +15,15 @@ This document tracks all AI-assisted versus human engineering contributions acro
 | `specs/00-plan.md` | Yes | Scaffolded implementation stage breakdown and partner alignments. | Defined honest boundary criteria and prize eligibility focus. |
 | `specs/01-architecture.md` | Yes | Generated initial sequence flow diagram and data models. | Formulated transient storage layout and counterfactual slippage math. |
 | `specs/02-hook-design.md` | Yes | Drafted transient storage slots and detection condition. | Verified bitmask calculation (`0x00C0`) and inversion thresholds. |
+| `specs/03-arc-simulator.md` | Yes | Documented counterfactual simulation math and Arc USDC dual interface. | Formulated slippage breakdown formula and simulation hash generation. |
 | `specs/04-arkiv-schema.md` | Yes | Documented Arkiv JSON schemas and indexing attributes. | Structured canonical receipt hash ordering and LP claim linkage. |
+| `contracts/src/RebateVault.sol` | Partial | Scaffolded ERC-20 USDC custody vault. | Designed replay nullifier checks, SimulationRegistry attestation verification, and self-payout guards. |
+| `contracts/src/SimulationRegistry.sol` | Yes | Scaffolded attestation storage mapping. | Implemented immutable simulation record storage and unauthorized write protections. |
+| `contracts/test/mocks/MockUSDC.sol` | Yes | Generated standard 6-decimal ERC20 test mock. | Verified transfer and allowance behavior for vault testing. |
+| `contracts/test/RebateVault.t.sol` | Partial | Scaffolded claim and revert test cases. | Implemented attestation checks, replay verification, and reentrancy test cases. |
+| `lib/simulator/counterfactual.ts` | Partial | Generated viem call structure and type interfaces. | Implemented exact constant-product counterfactual replay, legit vs injected slippage math, and deterministic simulation hash. |
+| `lib/simulator/counterfactual.test.ts` | Yes | Scaffolded test suite using node:test. | Tested deterministic hash repeatability and positive injected slippage assertions. |
+| `docker-compose.yml` | Yes | Drafted local worker composition for indexer and simulator. | Pinned environment variables and container profiles. |
 | `lib/arkiv/schemas.ts` | Yes | Scaffolded TypeScript interfaces and computeReceiptHash utility. | Enforced deterministic key ordering and viem keccak256 encoding. |
 | `lib/arkiv/client.ts` | Partial | Generated client adapter boilerplate with TODO annotations for Arkiv RPC methods. | Implemented offline fallback memory registries, profile auto-incrementation, and indexing methods. |
 | `lib/arkiv/client.test.ts` | Yes | Scaffolded round-trip test harness using node:test. | Configured full cycle assertion suite across receipts, profiles, and claims. |
