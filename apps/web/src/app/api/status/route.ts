@@ -31,3 +31,4 @@ export async function GET() {
     indexer: indexerStatus || { status: "not_configured" },
   });
 }
+

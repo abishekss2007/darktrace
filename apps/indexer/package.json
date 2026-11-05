@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node20 --outfile=dist/index.js",
     "start": "node dist/index.js",
     "test": "tsx --test src/pipeline.test.ts"
   },
@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.12.12",
+    "esbuild": "^0.21.3",
     "tsx": "^4.10.5",
     "typescript": "^5.4.5"
   }
