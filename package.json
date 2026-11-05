@@ -1,0 +1,19 @@
+{
+  "name": "darktrace-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MEV Forensics for Uniswap v4 LPs with Arkiv proof ledger and Arc USDC rebates",
+  "license": "MIT",
+  "scripts": {
+    "build": "pnpm --filter \"@darktrace/*\" run build",
+    "test": "pnpm --filter \"@darktrace/*\" run test",
+    "lint": "pnpm --filter \"@darktrace/*\" run lint",
+    "contracts:build": "cd contracts && forge build",
+    "contracts:test": "cd contracts && forge test",
+    "dev": "pnpm --filter @darktrace/web dev"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
+
