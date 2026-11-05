@@ -74,8 +74,11 @@ contract RebateVault {
         bytes32 receiptHash,
         address recipient,
         uint256 amountUSDC,
-        bytes calldata /* proofBundle */
+        bytes calldata proofBundle
     ) external nonReentrant {
+        if (proofBundle.length > 0) {
+            // Optional proof payload verification hook
+        }
         if (recipient == address(0)) revert InvalidRecipient();
         if (recipient == address(this)) revert SelfPayoutBlocked();
         if (claimedReceipts[receiptHash]) revert AlreadyClaimed();
