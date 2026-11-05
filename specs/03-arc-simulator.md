@@ -72,3 +72,7 @@ function claimRebate(
 - Attestation verification: Queries `SimulationRegistry.getAttestation(receiptHash)`.
 - Reentrancy protection via OpenZeppelin `ReentrancyGuard`.
 - Zero-address prevention and balance safety checks.
+
+### 4.3 Testnet Vault Funding & Per-Attack Rebate Cap
+- **Live Funded Balance**: `RebateVault` (`0x2ab745F51002Ce236A9A2dA81cDaA553B87f28CD`) is pre-funded on Arc Testnet with **`5.00 USDC`** (`5,000,000` units, 6 decimals) via transaction `0x4289870dba2b919eac9e654e853ff45f38a03bb9a66e0be3d6da8d8e07deab9d`.
+- **Per-Receipt Rebate Cap**: The testnet demo vault caps rebates at **`2.00 USDC` per receipt** (with the canonical demo sandwich attack paying **`1.25 USDC`** and the three seeded historical receipts totaling **`3.75 USDC`**, summing to the exact `5.00 USDC` vault reserve); production caps TBD via pool governance.
