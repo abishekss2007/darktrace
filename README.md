@@ -52,8 +52,8 @@ flowchart LR
 | **Base Sepolia** | Uniswap v4 `PoolManager` | `0x05E73354cFDd6745C338b50BcFDfA3Aa6fA03408` | Canonical v4 Pool Manager |
 | **Base Sepolia** | `DarkTraceHook` | `0xBCC9e1C474Ed195b3791f2c41EdAC2a25c5b80c0` | Hook with `0x00C0` (`beforeSwap`/`afterSwap`) flags |
 | **Base Sepolia** | `SearcherRegistry` | `0x24A2669C706CCE71BAea24a4De18D9D215713551` | Searcher bond escrow and governance slashing |
-| **Arc Testnet** | `SimulationRegistry` | `0xa91B334B80dEAc5a730B29311317b9bA82e4e7c8` | Attestation registry for counterfactual proofs |
-| **Arc Testnet** | `RebateVault` | `0x4De85311B930263CE81D3C89B5F942475beA798C` | Restitution vault paying USDC to victims |
+| **Arc Testnet** | `SimulationRegistry` | `0xb8416cb4d82BA72b70C3EC55d7AC66b5DB415CF8` | Attestation registry for counterfactual proofs |
+| **Arc Testnet** | `RebateVault` | `0x2ab745F51002Ce236A9A2dA81cDaA553B87f28CD` | Restitution vault funded with USDC for LP rebates |
 | **Arc Testnet** | `Arc Native USDC (ERC-20)`| `0x3600000000000000000000000000000000000000` | Native 6-decimal USDC interface on Arc |
 | **Arkiv Ledger** | Namespace / Schemas | `darktrace.v1` | `ExtractionReceipt`, `SearcherProfile`, `LPClaim` |
 
