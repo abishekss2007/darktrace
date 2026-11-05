@@ -31,5 +31,10 @@ Welcome to the technical specification directory for **DarkTrace** (MEV Forensic
 | [`hardening/05-simulator-honesty.md`](./hardening/05-simulator-honesty.md) | Stage 5 audit and alignment of `lib/simulator/counterfactual.ts` and `specs/03-arc-simulator.md` with constant-product (CPMM) counterfactual computation. |
 | [`hardening/06-mev-claim-citation.md`](./hardening/06-mev-claim-citation.md) | Stage 6 replacement of uncited `$1.2B` claims with conservative `$1B+ annually` floor and methodology footnote. |
 | [`hardening/07-partner-feedback.md`](./hardening/07-partner-feedback.md) | Stage 7 verification of 200–250 word partner feedback paragraphs for Uniswap Foundation, Arc, and Arkiv. |
+| [`hardening/08-final-freeze.md`](./hardening/08-final-freeze.md) | Stage 8 summary of judge Q&A rehearsal answers, 10-point demo checklist, booth strategy, and final freeze. |
+| [`hardening/FINAL-CHECKLIST.md`](./hardening/FINAL-CHECKLIST.md) | Flat pre-submission verification matrix with file/line citations (`✅`) and explicit pending human-action notes (`⚠️`). |
 | [`submission/partner-feedback.md`](./submission/partner-feedback.md) | First-person engineering feedback and feature requests for Uniswap Foundation, Arc, and Arkiv. |
+| [`submission/qa-prep.md`](./submission/qa-prep.md) | Rehearsed 60–80 word first-person answers to the 5 toughest judge questions. |
+| [`submission/demo-checklist.md`](./submission/demo-checklist.md) | 10-point pre-recording browser, wallet, and live Arc `RebateVault` (`5.00 USDC`) verification checklist. |
+| [`submission/booth-strategy.md`](./submission/booth-strategy.md) | Ordered partner booth runbook (`Uniswap → Arc → Arkiv`) with pre-loaded URLs, 30s pitches, and engineering questions. |
 
