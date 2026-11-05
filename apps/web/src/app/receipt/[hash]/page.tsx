@@ -149,7 +149,7 @@ export default function ReceiptPage({ params }: ReceiptPageProps) {
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-            <span className="text-muted">Simulation Hash (viem replay):</span>
+            <span className="text-muted">Simulation Hash (CPMM counterfactual):</span>
             <HashDisplay hash={receipt.simulationHash} truncate={false} />
           </div>
 

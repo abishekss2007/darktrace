@@ -144,7 +144,7 @@ export class ForensicPipeline {
       injectedSlippageBps = simResult.injectedSlippageBps;
       legitSlippageBps = simResult.legitSlippageBps;
 
-      this.log("INFO", "SIMULATED", "Counterfactual simulation replayed against pool snapshot", {
+      this.log("INFO", "SIMULATED", "Counterfactual computed against pre-attack reserves using constant-product pricing", {
         extractedUSDC,
         injectedSlippageBps,
         simulationHash,

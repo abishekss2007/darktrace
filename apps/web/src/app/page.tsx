@@ -81,7 +81,7 @@ export default function HomePage() {
           <div className="p-3 border border-border rounded bg-bg space-y-1.5">
             <div className="text-accent font-semibold">2. Arc Settlement</div>
             <div className="text-muted text-[11px] leading-relaxed">
-              Circle USDC L1 hosting `RebateVault.sol` and `SimulationRegistry.sol`. Replays counterfactual execution and issues USDC restitution.
+              Circle USDC L1 hosting `RebateVault.sol` and `SimulationRegistry.sol`. Computes counterfactual execution against pre-attack reserves and issues USDC restitution.
             </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg space-y-1.5">
