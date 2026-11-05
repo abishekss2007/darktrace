@@ -110,8 +110,10 @@ contract DarkTraceHook is IHooks {
         (, int24 currentTick,,) = poolManager.getSlot0(poolId);
 
         bytes32 preTickSlot = _getPreTickSlot(poolId);
+        bytes32 packedTick = bytes32(uint256(uint24(currentTick)) | (1 << 24));
         assembly {
-            tstore(preTickSlot, currentTick)
+            tstore(preTickSlot, packedTick)
+            sstore(preTickSlot, packedTick)
         }
 
         return (IHooks.beforeSwap.selector, BeforeSwapDeltaLibrary.ZERO_DELTA, 0);
@@ -131,10 +133,14 @@ contract DarkTraceHook is IHooks {
         (, int24 postTick,,) = poolManager.getSlot0(poolId);
 
         bytes32 preTickSlot = _getPreTickSlot(poolId);
-        int24 preTick;
+        bytes32 rawPreTick;
         assembly {
-            preTick := tload(preTickSlot)
+            rawPreTick := tload(preTickSlot)
+            if iszero(rawPreTick) {
+                rawPreTick := sload(preTickSlot)
+            }
         }
+        int24 preTick = int24(int256(uint256(rawPreTick) & 0x00FFFFFF));
 
         int24 tickDelta = postTick - preTick;
         PoolTransientState memory s = _loadTransientState(poolId);
@@ -256,7 +262,13 @@ contract DarkTraceHook is IHooks {
         bytes32 valB;
         assembly {
             valA := tload(slotA)
+            if iszero(valA) {
+                valA := sload(slotA)
+            }
             valB := tload(slotB)
+            if iszero(valB) {
+                valB := sload(slotB)
+            }
         }
 
         s.lastBlock = uint64(uint256(valA));
@@ -282,7 +294,9 @@ contract DarkTraceHook is IHooks {
 
         assembly {
             tstore(slotA, valA)
+            sstore(slotA, valA)
             tstore(slotB, valB)
+            sstore(slotB, valB)
         }
     }
 
