@@ -110,6 +110,7 @@ This document tracks all AI-assisted versus human engineering contributions acro
 | `specs/hardening/10-uniswap-feedback.md` | Yes | Recorded Stage 1 Uniswap FEEDBACK.md creation and line verification. | Verified exact line citations in DarkTraceHook.sol. |
 | `specs/hardening/11-arkiv-rabdi-client.md` | Yes | Recorded Stage 2 Arkiv rabdi client binding and fail-loud migration. | Verified ArkivRpcError and scripts/arkiv-write-test.ts. |
 | `specs/hardening/12-arkiv-submission-files.md` | Yes | Recorded Stage 3 creation of the 5 required Arkiv submission documents. | Verified all file paths and on-chain entity keys. |
+| `specs/hardening/13-readme-arkiv.md` | Yes | Recorded Stage 4 README section addition for Arkiv rabdi qualification. | Verified reproducible query and explorer links. |
 | `arkiv/schema.md` | Yes | Authored darktrace.v1 schema specification for ExtractionReceipt, SearcherProfile, LPClaim. | Included verified live on-chain entity 0xc327...f8ca on Rabdi testnet. |
 | `arkiv/friction.md` | Partial | Structured first-person DX friction report for Arkiv judges. | Authored technical friction notes on RPC drift, hash parity with SimulationRegistry.sol, and fail-loud client design. |
 | `arkiv/reach.md` | Partial | Structured audience analysis and roadmap. | Documented LP, MEV researcher, and pool deployer user archetypes and post-Mumbai plans. |

@@ -57,7 +57,51 @@ flowchart LR
 | **Arc Testnet** | `SimulationRegistry` | `0xb8416cb4d82BA72b70C3EC55d7AC66b5DB415CF8` | Attestation registry for counterfactual proofs |
 | **Arc Testnet** | `RebateVault` | `0x2ab745F51002Ce236A9A2dA81cDaA553B87f28CD` | Restitution vault funded with USDC for LP rebates |
 | **Arc Testnet** | `Arc Native USDC (ERC-20)`| `0x3600000000000000000000000000000000000000` | Native 6-decimal USDC interface on Arc |
-| **Arkiv Ledger** | Namespace / Schemas | `darktrace.v1` | `ExtractionReceipt`, `SearcherProfile`, `LPClaim` |
+| **Arkiv (rabdi, 7794095)** | Namespace | `darktrace.v1` | `ExtractionReceipt` / `SearcherProfile` / `LPClaim` |
+| **Arkiv (rabdi, 7794095)** | Sample entity | `0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca` | Verified on `rabdi.explorer.arkiv.network` |
+
+---
+
+## Arkiv integration (rabdi testnet, chain 7794095)
+
+- **Namespace**: `darktrace.v1`
+- **Writer wallet(s)**: `0xb491fe5846DE735B6Cb03a677A3C6296FAB0aDA5`
+- **Entities**: `ExtractionReceipt`, `SearcherProfile`, `LPClaim`
+- **Schema + freshness + expiry policy**: see [`/arkiv/schema.md`](./arkiv/schema.md)
+- **Feedback**: see [`/arkiv/friction.md`](./arkiv/friction.md)
+- **Reproducible verification query** (run from any machine with `ARKIV_RPC_URL` set to `https://rpc.rabdi.db-chain.testnet.arkiv.network`):
+
+  ```typescript
+  import { createPublicClient, http } from "viem";
+  import { createPublicClient as createArkivClient } from "@arkiv-network/sdk";
+  import { rabdi } from "@arkiv-network/sdk/chains";
+  import { eq } from "@arkiv-network/sdk/query";
+
+  const client = createArkivClient({
+    chain: rabdi({ accessKey: process.env.ARKIV_ACCESS_KEY }),
+    transport: http(),
+  });
+
+  const res = await client
+    .select({
+      $key: true,
+      $owner: true,
+      receiptHash: true,
+      poolId: true,
+      searcher: true,
+      victim: true,
+      extractedUSDC: true,
+    })
+    .where(eq("$key", "0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca"))
+    .fetch();
+
+  console.log("Verified entity:", res.entities[0]);
+  ```
+
+- **Explorer link to one live entity**:
+  [https://rabdi.explorer.arkiv.network/entity/0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca](https://rabdi.explorer.arkiv.network/entity/0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca)
+
+- **Sanity check**: `pnpm arkiv:write-test` writes and reads back one receipt on Rabdi testnet. If it does not print `WRITE_OK` + `READ_OK`, the Arkiv env is misconfigured.
 
 ---
 
