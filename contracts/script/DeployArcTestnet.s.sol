@@ -46,3 +46,4 @@ contract DeployArcTestnetScript is Script {
         console.log("Deployment verified on Arc Testnet.");
     }
 }
+

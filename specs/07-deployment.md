@@ -128,3 +128,4 @@ docker compose up -d
 2. **Verify Indexer Ingestion**: Check indexer stdout logs for `[DarkTrace Watcher] Detected ExtractionDetected` and `Simulation sealed with hash`.
 3. **Verify Arkiv Ledger**: Query `arkiv.getByPool(poolId)` and ensure receipt exists with immutable timestamp.
 4. **Verify Arc Claim Execution**: Execute `rebateVault.claimRebate(proofBundle, signature)` on Arc Testnet; assert LP USDC balance increases by exact extracted delta.
+
