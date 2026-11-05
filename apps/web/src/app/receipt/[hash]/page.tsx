@@ -100,11 +100,15 @@ export default function ReceiptPage({ params }: ReceiptPageProps) {
           </div>
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">Injected Slippage</div>
-            <div className="text-accent font-bold mt-1 text-base tabular-nums">+{receipt.injectedSlippageBps} bps</div>
+            <div className="text-accent font-bold mt-1 text-base tabular-nums">
+              <DemoData>+{receipt.injectedSlippageBps} bps</DemoData>
+            </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">Legit Slippage</div>
-            <div className="text-good font-bold mt-1 text-base tabular-nums">{receipt.legitSlippageBps} bps</div>
+            <div className="text-good font-bold mt-1 text-base tabular-nums">
+              <DemoData>{receipt.legitSlippageBps} bps</DemoData>
+            </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">LP LVR Impact</div>

@@ -54,3 +54,15 @@ DarkTrace is designed for institutional liquidity providers, protocol risk teams
 - **Error States**: Left border accent in crimson (`border-l-2 border-danger`) with monospace error code (`ERR_SIMULATION_FAILED`).
 - **Empty States**: Explicit descriptive copy: *"No extractions in this pool. The last 200 swaps were clean."*
 
+---
+
+## 4. Testnet & Demo Data Policy
+
+1. **Always-Visible Network Badge (`<NetworkBadge />`)**:
+   - The top header bar renders a persistent monospace pill displaying `BASE SEPOLIA · ARC TESTNET` regardless of wallet connection state.
+2. **Inline Seeded Data Badge (`<DemoData />` / `<DemoDataBadge />`)**:
+   - Every seeded or illustrative figure not read directly from on-chain state or live Arkiv entities renders inside an inline wrapper displaying a muted `[DEMO]` pill by default (never hidden behind a tooltip).
+3. **Hero Metrics & Live `/api/stats` Aggregation**:
+   - Live on-chain metrics (such as the `RebateVault` `$5.00 USDC` reserve on Arc Testnet and live `darktrace.v1` entity counts exposed via `/api/stats`, cached 10s) render without a `[DEMO]` badge.
+   - Any view combining illustrative or seeded counters displays the explicit muted disclaimer: `"Illustrative data. Live counters reflect only on-chain activity."`
+

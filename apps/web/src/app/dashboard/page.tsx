@@ -21,6 +21,9 @@ export default function DashboardPage() {
           <p className="text-xs text-muted font-mono mt-0.5">
             Active surveillance of Uniswap v4 pools on Base Sepolia • Arc Testnet Settlement
           </p>
+          <p className="text-[11px] text-muted font-mono mt-1">
+            Illustrative data. Live counters reflect only on-chain activity.
+          </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="px-3 py-1 border border-border bg-surface rounded text-xs font-mono">
@@ -144,7 +147,7 @@ export default function DashboardPage() {
                     <DemoData>${r.extractedUSDC}</DemoData>
                   </td>
                   <td className="py-2.5 px-3 text-right text-accent tabular-nums">
-                    +{r.injectedSlippageBps} bps
+                    <DemoData>+{r.injectedSlippageBps} bps</DemoData>
                   </td>
                   <td className="py-2.5 px-3 text-center">
                     <StatusPill status={r.status} />

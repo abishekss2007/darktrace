@@ -12,7 +12,7 @@ interface DemoDataProps {
  */
 export function DemoData({
   children,
-  label = "DEMO DATA",
+  label = "DEMO",
   className = "",
 }: DemoDataProps) {
   return (
@@ -25,10 +25,17 @@ export function DemoData({
   );
 }
 
-export function DemoDataBadge({ label = "DEMO" }: { label?: string }) {
+export function DemoDataBadge({
+  children,
+  label = "DEMO",
+  className = "",
+}: DemoDataProps) {
   return (
-    <span className="px-1.5 py-0.5 text-[9px] leading-none font-mono font-normal tracking-wider uppercase text-muted bg-bg border border-border rounded select-none">
-      [{label}]
+    <span className={`inline-flex items-center gap-1.5 ${className}`}>
+      {children}
+      <span className="px-1.5 py-0.5 text-[9px] leading-none font-mono font-normal tracking-wider uppercase text-muted bg-bg border border-border rounded select-none">
+        [{label}]
+      </span>
     </span>
   );
 }

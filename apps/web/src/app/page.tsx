@@ -62,6 +62,9 @@ export default function HomePage() {
           <div className="text-[10px] font-mono text-muted mt-1">Cryptographically immutable</div>
         </div>
       </div>
+      <div className="text-[11px] font-mono text-muted">
+        Illustrative data. Live counters reflect only on-chain activity.
+      </div>
 
       {/* System Architecture Matrix */}
       <div className="border border-border bg-surface rounded p-4 space-y-3">

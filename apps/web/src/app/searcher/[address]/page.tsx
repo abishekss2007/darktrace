@@ -128,7 +128,7 @@ export default function SearcherPage({ params }: SearcherPageProps) {
                     <DemoData>${r.extractedUSDC}</DemoData>
                   </td>
                   <td className="py-2.5 px-3 text-right text-accent tabular-nums">
-                    +{r.injectedSlippageBps} bps
+                    <DemoData>+{r.injectedSlippageBps} bps</DemoData>
                   </td>
                   <td className="py-2.5 px-3 text-center">
                     <StatusPill status={r.status} />
