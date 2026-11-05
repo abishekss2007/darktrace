@@ -429,9 +429,16 @@ export default function DemoPage() {
 
             {/* Slashed Bond Reprimand Box */}
             {selectedItem.status === "REBATED" && (
-              <div className="p-2.5 border border-border rounded bg-surface text-[11px] text-muted">
-                <span className="text-danger font-semibold">Reputation Penalty: </span>
-                Searcher <span className="font-mono text-text">0x1111…1111</span> bonded collateral slashed by <span className="text-danger font-semibold">${selectedItem.extractedUSDC}</span>.
+              <div className="p-2.5 border border-border rounded bg-surface text-[11px] text-muted space-y-1">
+                <div>
+                  <span className="text-accent font-semibold">Flow 1 · Base Sepolia: </span>
+                  Searcher <span className="font-mono text-text">0x1111…1111</span>{" "}
+                  <span className="text-danger font-semibold">bond reduced (Base Sepolia, forensic only)</span> by{" "}
+                  <span className="text-danger font-semibold">${selectedItem.extractedUSDC}</span>.
+                </div>
+                <div className="text-[10px] text-muted">
+                  Independent of Flow 2 (Arc Testnet pre-funded RebateVault payout; no cross-chain bridge).
+                </div>
               </div>
             )}
           </div>

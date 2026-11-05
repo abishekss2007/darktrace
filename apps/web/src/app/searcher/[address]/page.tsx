@@ -68,15 +68,18 @@ export default function SearcherPage({ params }: SearcherPageProps) {
             </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg">
-            <div className="text-muted text-[11px]">Collateral Bond</div>
+            <div className="text-muted text-[11px]">Collateral Bond (Base Sepolia)</div>
             <div className="text-good font-bold mt-1 tabular-nums">
               <DemoData>$25.00 USDC</DemoData>
             </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg">
-            <div className="text-muted text-[11px]">Slashed by Protocol</div>
+            <div className="text-muted text-[11px]">bond reduced (Base Sepolia, forensic only)</div>
             <div className="text-danger font-bold mt-1 tabular-nums">
               <DemoData>$2.10 USDC</DemoData>
+            </div>
+            <div className="text-[10px] text-muted mt-1">
+              Local Base Sepolia attestation; does not settle or fund Arc vault
             </div>
           </div>
         </div>

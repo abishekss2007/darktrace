@@ -195,29 +195,48 @@ export default function ReceiptPage({ params }: ReceiptPageProps) {
         </div>
       </div>
 
-      {/* Arc Settlement Action Banner */}
-      <div className="border border-border bg-[#15191E] p-4 rounded flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
-        <div>
-          <div className="text-text font-bold uppercase">Arc Restitution Claim</div>
-          <div className="text-muted text-[11px] mt-0.5">
-            {receipt.status === "REBATED" 
-              ? `Rebate of $${receipt.extractedUSDC} USDC settled on Arc Testnet.` 
-              : `Eligible for $${receipt.extractedUSDC} USDC rebate via RebateVault.sol on Arc.`}
+      {/* Two Independent On-Chain Flows: Base Sepolia vs Arc Testnet */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono">
+        <div className="border border-border bg-surface p-4 rounded space-y-1.5">
+          <div className="text-accent font-bold uppercase">
+            Flow 1 · Base Sepolia (SearcherRegistry)
+          </div>
+          <div className="text-text font-semibold">
+            bond reduced (Base Sepolia, forensic only):{" "}
+            <DemoData>
+              <span className="text-danger tabular-nums">${receipt.extractedUSDC}</span>
+            </DemoData>
+          </div>
+          <div className="text-muted text-[11px] leading-relaxed">
+            Local forensic reputation decrement on Base Sepolia (`0x24A2…3551`). No USDC leaves Base Sepolia.
           </div>
         </div>
-        <div>
-          {receipt.status === "REBATED" ? (
-            <div className="px-3 py-1.5 border border-good/40 bg-good/10 text-good rounded font-semibold text-[11px]">
-              CLAIMED & SETTLED
+
+        <div className="border border-border bg-[#15191E] p-4 rounded flex flex-col justify-between gap-3">
+          <div>
+            <div className="text-good font-bold uppercase">
+              Flow 2 · Arc Testnet (Pre-Funded RebateVault)
             </div>
-          ) : (
-            <Link
-              href="/demo"
-              className="px-3 py-1.5 bg-good text-bg rounded font-semibold text-[11px] hover:opacity-90 transition-opacity inline-block"
-            >
-              Claim Rebate on Arc
-            </Link>
-          )}
+            <div className="text-muted text-[11px] mt-1 leading-relaxed">
+              {receipt.status === "REBATED"
+                ? `Rebate of $${receipt.extractedUSDC} USDC settled from pre-funded Arc vault (0x2ab7…28CD).`
+                : `Eligible for $${receipt.extractedUSDC} USDC rebate drawn from pre-funded RebateVault.sol on Arc Testnet.`}
+            </div>
+          </div>
+          <div>
+            {receipt.status === "REBATED" ? (
+              <div className="px-3 py-1.5 border border-good/40 bg-good/10 text-good rounded font-semibold text-[11px] inline-block">
+                CLAIMED & SETTLED (ARC TESTNET)
+              </div>
+            ) : (
+              <Link
+                href="/demo"
+                className="px-3 py-1.5 bg-good text-bg rounded font-semibold text-[11px] hover:opacity-90 transition-opacity inline-block"
+              >
+                Claim Rebate on Arc
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </div>

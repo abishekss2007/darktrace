@@ -12,11 +12,11 @@ This document tracks all AI-assisted versus human engineering contributions acro
 
 | File Path | AI-Assisted | What AI Did | What I Did |
 | :--- | :--- | :--- | :--- |
-| `specs/00-plan.md` | Yes | Scaffolded implementation stage breakdown and partner alignments. | Defined honest boundary criteria and prize eligibility focus. |
-| `specs/01-architecture.md` | Yes | Generated initial sequence flow diagram and data models. | Formulated transient storage layout and counterfactual slippage math. |
-| `specs/02-hook-design.md` | Yes | Drafted transient storage slots and detection condition. | Verified bitmask calculation (`0x00C0`) and inversion thresholds. |
-| `specs/03-arc-simulator.md` | Yes | Documented counterfactual simulation math and Arc USDC dual interface. | Formulated slippage breakdown formula, simulation hash generation, and Section 4.3 (5.00 USDC live vault funding & 2.00 USDC per-receipt cap). |
-| `specs/04-arkiv-schema.md` | Yes | Documented Arkiv JSON schemas and indexing attributes. | Structured canonical receipt hash ordering and LP claim linkage. |
+| `specs/00-plan.md` | Yes | Scaffolded implementation stage breakdown and partner alignments. | Defined honest boundary criteria, prize eligibility focus, and separated Base Sepolia bonds from Arc pre-funded restitution. |
+| `specs/01-architecture.md` | Yes | Generated initial sequence flow diagram and data models. | Formulated transient storage layout, counterfactual slippage math, and separated Flow 1 (Base Sepolia bond reduction) from Flow 2 (Arc pre-funded vault claim) in Mermaid diagram. |
+| `specs/02-hook-design.md` | Yes | Drafted transient storage slots and detection condition. | Verified bitmask calculation (`0x00C0`), inversion thresholds, and clarified Base Sepolia-only scope of `SearcherRegistry.sol`. |
+| `specs/03-arc-simulator.md` | Yes | Documented counterfactual simulation math and Arc USDC dual interface. | Formulated slippage breakdown formula, Section 4.3 (5.00 USDC live vault funding & 2.00 USDC cap), and Section 5 (Cross-Chain Restitution Out of Scope). |
+| `specs/04-arkiv-schema.md` | Yes | Documented Arkiv JSON schemas and indexing attributes. | Structured canonical receipt hash ordering, LP claim linkage, and clarified `slashedUSDC` as Base Sepolia forensic bond reduction. |
 | `specs/05-ui-ux.md` | Yes | Authored UI design tokens, color palette, and anti-slop rules. | Enforced Geist Sans/Mono typography, border-only structure, and tabular numbers. |
 | `apps/web/src/components/ui/HashDisplay.tsx` | Yes | Scaffolded hash shortener with clipboard copy button. | Added copy state feedback and monospace formatting. |
 | `apps/web/src/components/ui/StatusPill.tsx` | Yes | Generated color-coded status pills for forensic pipeline states. | Configured border-only badges for DETECTED, SIMULATED, ARCHIVED, REBATED. |
@@ -25,8 +25,8 @@ This document tracks all AI-assisted versus human engineering contributions acro
 | `apps/web/src/app/page.tsx` | Partial | Scaffolded home page hero banner and 4-column metric cards. | Replaced unbacked hero numbers with 3 extractions, $3.75 extracted volume, and live $5.00 USDC RebateVault reserve wrapped in `<DemoData>`. |
 | `apps/web/src/app/dashboard/page.tsx` | Yes | Scaffolded monitored pools and receipts surveillance tables. | Implemented right-aligned tabular numbers, live $5.00 USDC vault reserve pill, and `<DemoData>` wrappers on seeded rows. |
 | `apps/web/src/app/pool/[id]/page.tsx` | Yes | Scaffolded pool inspector with TVL and volume metrics. | Rescaled fallback pool metrics ($500.00 TVL, $120.00 volume) and wrapped seeded figures in `<DemoData>`. |
-| `apps/web/src/app/receipt/[hash]/page.tsx` | Partial | Scaffolded forensic receipt detail card layout. | Rescaled fallback receipt ($1.25 / -$1.21), built toxic vs legit slippage decomposition box, and added `<DemoData>` pills. |
-| `apps/web/src/app/searcher/[address]/page.tsx` | Yes | Scaffolded searcher profile and historical extractions view. | Rescaled collateral bond ($25.00 USDC) and slashed amount ($2.10 USDC) to match seeded extractions and added `<DemoData>`. |
+| `apps/web/src/app/receipt/[hash]/page.tsx` | Partial | Scaffolded forensic receipt detail card layout. | Rescaled fallback receipt ($1.25 / -$1.21), built toxic vs legit slippage decomposition box, and separated Flow 1 (Base Sepolia bond reduced) from Flow 2 (Arc pre-funded vault claim). |
+| `apps/web/src/app/searcher/[address]/page.tsx` | Yes | Scaffolded searcher profile and historical extractions view. | Rescaled collateral bond ($25.00 USDC) and labeled `$2.10 USDC` as `bond reduced (Base Sepolia, forensic only)` with `<DemoData>`. |
 | `apps/web/src/app/lp/[address]/page.tsx` | Yes | Scaffolded LP restitution view and claim statistics. | Wrapped seeded LP extraction and claim totals in `<DemoData>` and linked Arc Testnet settlement balances. |
 | `apps/web/src/app/demo/page.tsx` | Partial | Scaffolded two-column terminal layout. | Wired live on-chain `RebateVault` balanceOf read via wagmi (`$5.00 USDC`), rescaled demo attack to `$1.25 USDC` (`$15.00 -> $16.25 USDC`), removed fake claim tx hashes, and added `<DemoData>` badges. |
 | `contracts/src/RebateVault.sol` | Partial | Scaffolded ERC-20 USDC custody vault. | Designed replay nullifier checks, SimulationRegistry attestation verification, and self-payout guards. |
@@ -49,7 +49,7 @@ This document tracks all AI-assisted versus human engineering contributions acro
 | `package.json` | Yes | Drafted monorepo root scripts. | Configured workspace target script pipeline. |
 | `contracts/foundry.toml` | Yes | Generated standard Foundry configuration profile. | Tuned EVM version to Cancun, enabled via_ir, and configured remappings. |
 | `contracts/src/DarkTraceHook.sol` | Partial | Generated beforeSwap/afterSwap transient-storage skeleton. | Optimized packed transient state struct to prevent stack depth; designed sandwich footprint heuristic preserving frontrun push delta. |
-| `contracts/src/SearcherRegistry.sol` | Yes | Scaffolded searcher bond deposit and slashing logic. | Added recipient validations and emergency administration protections. |
+| `contracts/src/SearcherRegistry.sol` | Yes | Scaffolded searcher bond deposit and slashing logic. | Added recipient validations, emergency administration protections, and `// NOTE: does not settle across chains; see specs/03` annotations. |
 | `contracts/test/mocks/MockPoolManager.sol` | Partial | Provided minimal extsload mock for StateLibrary integration. | Formatted bit-packed slot0 data representation matching v4 core layout. |
 | `contracts/test/DarkTraceHook.t.sol` | Partial | Generated unit test scaffolding. | Implemented sandwich frontrun/victim/backrun sequences, clean swap assertions, and cross-block defensive fallbacks. |
 | `contracts/test/SearcherRegistry.t.sol` | Yes | Generated happy path and revert test cases for staking and slashing. | Verified unauthorized slash reverts and balance accounting. |
