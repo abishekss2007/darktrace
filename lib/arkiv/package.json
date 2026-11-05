@@ -1,0 +1,19 @@
+{
+  "name": "@darktrace/arkiv",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "test": "tsx --test client.test.ts"
+  },
+  "dependencies": {
+    "viem": "^2.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "tsx": "^4.10.5",
+    "typescript": "^5.4.5"
+  }
+}
