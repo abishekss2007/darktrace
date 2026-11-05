@@ -3,11 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
+import { NetworkBadge } from "@/components/ui/NetworkBadge";
 
 export function Header() {
   const pathname = usePathname();
-  const { chain } = useAccount();
 
   const navItems = [
     { label: "Dashboard", href: "/dashboard" },
@@ -43,11 +42,7 @@ export function Header() {
       </div>
 
       <div className="flex items-center space-x-3">
-        <div className="flex items-center gap-2 px-2 py-0.5 border border-border rounded bg-bg text-[11px] font-mono">
-          <span className="w-1.5 h-1.5 rounded-full bg-good"></span>
-          <span className="text-muted">NET:</span>
-          <span className="text-text">{chain?.name ?? "Base Sepolia / Arc"}</span>
-        </div>
+        <NetworkBadge />
 
         <ConnectButton.Custom>
           {({ account, chain: activeChain, openConnectModal, openAccountModal, mounted }) => {
