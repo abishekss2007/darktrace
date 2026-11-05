@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useReadContract } from "wagmi";
 import { HashDisplay } from "@/components/ui/HashDisplay";
 import { StatusPill } from "@/components/ui/StatusPill";
+import { DemoData } from "@/components/ui/DemoData";
+import { arcTestnet } from "@/config/chains";
 import { 
   ShieldCheck, 
   Database, 
@@ -32,6 +35,19 @@ interface LiveFeedItem {
   arcClaimTx?: string;
 }
 
+const ARC_USDC_ADDRESS = "0x3600000000000000000000000000000000000000" as const;
+const REBATE_VAULT_ADDRESS = "0x2ab745F51002Ce236A9A2dA81cDaA553B87f28CD" as const;
+
+const ERC20_BALANCE_ABI = [
+  {
+    type: "function",
+    name: "balanceOf",
+    stateMutability: "view",
+    inputs: [{ name: "account", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+] as const;
+
 const INITIAL_FEED: LiveFeedItem[] = [
   {
     id: "feed-1",
@@ -40,10 +56,10 @@ const INITIAL_FEED: LiveFeedItem[] = [
     poolName: "WETH / USDC",
     searcher: "0x1111111111111111111111111111111111111111",
     victim: "0x2222222222222222222222222222222222222222",
-    extractedUSDC: "142.50",
+    extractedUSDC: "1.25",
     injectedSlippageBps: 185,
     legitSlippageBps: 12,
-    lpLvrDelta: "-$138.90",
+    lpLvrDelta: "-$1.21",
     status: "ARCHIVED",
     receiptHash: "0x9c8d1f2b3e4a5061728394a5b6c7d8e9f01234567890abcdef1234567890abcd",
     simulationHash: "0xc9ddedeba69e600924875d3ce6c3e2cd554170c510cec4bfd5016182dc156309",
@@ -52,19 +68,18 @@ const INITIAL_FEED: LiveFeedItem[] = [
   {
     id: "feed-2",
     timestamp: "22:45:04.821",
-    poolId: "0x2a1b9487c02b8510fbc282901928014810294821092830192830192830192831",
-    poolName: "cbBTC / USDC",
-    searcher: "0x4444444444444444444444444444444444444444",
-    victim: "0x8888888888888888888888888888888888888888",
-    extractedUSDC: "310.20",
+    poolId: "0x835c24ae58a98118715d7541b2c5f0df8f11ca328b8e9c9c3850441c632e8d21",
+    poolName: "WETH / USDC",
+    searcher: "0x1111111111111111111111111111111111111111",
+    victim: "0x7777777777777777777777777777777777777777",
+    extractedUSDC: "0.85",
     injectedSlippageBps: 240,
     legitSlippageBps: 18,
-    lpLvrDelta: "-$295.40",
-    status: "REBATED",
+    lpLvrDelta: "-$0.82",
+    status: "ARCHIVED",
     receiptHash: "0x4a5b6c7d8e9f01234567890abcdef1234567890abcd9c8d1f2b3e4a506172839",
     simulationHash: "0xa1b2c3d4e5f60718293a4b5c6d7e8f90123456789abcdef0123456789abcdef0",
     arkivURI: "arkiv://darktrace.v1/receipt/0x4a5b6c7d8e9f01234567890abcdef1234567890abcd9c8d1f2b3e4a506172839",
-    arcClaimTx: "0xarc77777777777777777777777777777777777777777777777777777777777777",
   },
 ];
 
@@ -74,8 +89,19 @@ export default function DemoPage() {
   const [isSimulating, setIsSimulating] = useState(false);
   const [isClaiming, setIsClaiming] = useState(false);
   const [claimedSuccess, setClaimedSuccess] = useState(false);
-  const [lpBalance, setLpBalance] = useState(2450.0);
+  const [lpBalance, setLpBalance] = useState(15.0);
   const [animatedLoss, setAnimatedLoss] = useState<number | null>(null);
+
+  const { data: liveVaultRaw } = useReadContract({
+    address: ARC_USDC_ADDRESS,
+    abi: ERC20_BALANCE_ABI,
+    functionName: "balanceOf",
+    args: [REBATE_VAULT_ADDRESS],
+    chainId: arcTestnet.id,
+  });
+
+  const liveVaultUSDC =
+    liveVaultRaw !== undefined ? (Number(liveVaultRaw) / 1e6).toFixed(2) : "5.00";
 
   // Trigger simulated sandwich attack sequence
   const handleTriggerSandwich = () => {
@@ -89,14 +115,14 @@ export default function DemoPage() {
     const now = new Date();
     const timeStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}.${String(now.getMilliseconds()).padStart(3, "0")}`;
 
-    // Target value
-    const targetLoss = 174.8;
+    // Target value calibrated to 5.00 USDC Arc RebateVault
+    const targetLoss = 1.25;
     setAnimatedLoss(0);
 
     // Number ticker animation
     let currentTicker = 0;
     const tickerInterval = setInterval(() => {
-      currentTicker += 19.4;
+      currentTicker += 0.14;
       if (currentTicker >= targetLoss) {
         currentTicker = targetLoss;
         clearInterval(tickerInterval);
@@ -115,7 +141,7 @@ export default function DemoPage() {
       extractedUSDC: targetLoss.toFixed(2),
       injectedSlippageBps: 187,
       legitSlippageBps: 12,
-      lpLvrDelta: "-$169.50",
+      lpLvrDelta: "-$1.21",
       status: "DETECTED",
       receiptHash: newProofHash,
       simulationHash: newSimHash,
@@ -152,7 +178,6 @@ export default function DemoPage() {
     setTimeout(() => {
       setIsClaiming(false);
       setClaimedSuccess(true);
-      const generatedClaimTx = "0xarc" + Array.from({ length: 60 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
 
       // Balance ticks up on Arc!
       setLpBalance((prev) => parseFloat((prev + claimAmount).toFixed(2)));
@@ -160,14 +185,13 @@ export default function DemoPage() {
       setFeed((prev) =>
         prev.map((item) =>
           item.id === selectedItem.id
-            ? { ...item, status: "REBATED", arcClaimTx: generatedClaimTx }
+            ? { ...item, status: "REBATED" }
             : item
         )
       );
       setSelectedItem((curr) => ({
         ...curr,
         status: "REBATED",
-        arcClaimTx: generatedClaimTx,
       }));
     }, 1200);
   };
@@ -194,12 +218,20 @@ export default function DemoPage() {
         </div>
 
         {/* User Restitution Vault Balance Counter */}
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1 border border-border rounded bg-bg">
+            <span className="text-muted">VAULT RESERVE (ARC):</span>
+            <span className="text-text font-bold tabular-nums">
+              ${liveVaultUSDC} USDC
+            </span>
+          </div>
           <div className="flex items-center gap-2 px-3 py-1 border border-border rounded bg-bg">
             <span className="text-muted">LP USDC BALANCE (ARC):</span>
-            <span className="text-good font-bold tabular-nums">
-              ${lpBalance.toFixed(2)} USDC
-            </span>
+            <DemoData>
+              <span className="text-good font-bold tabular-nums">
+                ${lpBalance.toFixed(2)} USDC
+              </span>
+            </DemoData>
           </div>
 
           <button
@@ -260,9 +292,11 @@ export default function DemoPage() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="text-danger font-bold tabular-nums">
-                      ${item.extractedUSDC}
-                    </span>
+                    <DemoData>
+                      <span className="text-danger font-bold tabular-nums">
+                        ${item.extractedUSDC}
+                      </span>
+                    </DemoData>
                     <StatusPill status={item.status} />
                   </div>
                 </div>
@@ -284,7 +318,10 @@ export default function DemoPage() {
           <div className="p-4 flex-1 overflow-y-auto space-y-4 font-mono text-xs">
             {/* Extracted Value Banner with Counter Animation */}
             <div className="p-3.5 border border-border rounded bg-bg space-y-1">
-              <div className="text-[11px] text-muted uppercase">Detected Extracted Loss</div>
+              <div className="text-[11px] text-muted uppercase flex items-center justify-between">
+                <span>Detected Extracted Loss</span>
+                <DemoData />
+              </div>
               <div className="text-3xl font-bold text-danger tabular-nums">
                 ${animatedLoss !== null ? animatedLoss.toFixed(2) : selectedItem.extractedUSDC}
               </div>
@@ -354,7 +391,10 @@ export default function DemoPage() {
                 <div className="p-3.5 border border-good/40 bg-good/10 rounded flex items-center gap-2.5 text-good">
                   <Check className="w-5 h-5 flex-shrink-0" />
                   <div>
-                    <div className="font-bold">USDC Rebate Claimed & Settled</div>
+                    <div className="font-bold flex items-center gap-2">
+                      <span>USDC Rebate Claimed & Settled</span>
+                      <DemoData />
+                    </div>
                     <div className="text-[10px] text-muted mt-0.5">
                       ${selectedItem.extractedUSDC} USDC credited to LP via RebateVault.sol on Arc Testnet.
                     </div>

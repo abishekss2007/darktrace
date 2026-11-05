@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { MOCK_POOLS, MOCK_RECEIPTS } from "@/data/mockData";
 import { HashDisplay } from "@/components/ui/HashDisplay";
 import { StatusPill } from "@/components/ui/StatusPill";
+import { DemoData } from "@/components/ui/DemoData";
 import { ArrowLeft } from "lucide-react";
 
 interface PoolPageProps {
@@ -16,8 +17,8 @@ export default function PoolPage({ params }: PoolPageProps) {
     id: params.id,
     name: "Custom Uniswap v4 Pool",
     feeTier: "0.05%",
-    tvl: "$4,200,000",
-    volume24h: "$890,000",
+    tvl: "$500.00",
+    volume24h: "$120.00",
     extracted24h: "$0.00",
     status: "CLEAN" as const,
     token0: "0x4200000000000000000000000000000000000006",
@@ -67,15 +68,21 @@ export default function PoolPage({ params }: PoolPageProps) {
           </div>
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">Pool TVL</div>
-            <div className="text-text font-bold mt-1 tabular-nums">{pool.tvl}</div>
+            <div className="text-text font-bold mt-1 tabular-nums">
+              <DemoData>{pool.tvl}</DemoData>
+            </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">24h Volume</div>
-            <div className="text-muted font-bold mt-1 tabular-nums">{pool.volume24h}</div>
+            <div className="text-muted font-bold mt-1 tabular-nums">
+              <DemoData>{pool.volume24h}</DemoData>
+            </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">24h Extracted</div>
-            <div className="text-danger font-bold mt-1 tabular-nums">{pool.extracted24h}</div>
+            <div className="text-danger font-bold mt-1 tabular-nums">
+              <DemoData>{pool.extracted24h}</DemoData>
+            </div>
           </div>
         </div>
       </div>
@@ -125,7 +132,7 @@ export default function PoolPage({ params }: PoolPageProps) {
                       </Link>
                     </td>
                     <td className="py-2.5 px-3 text-right font-bold text-danger tabular-nums">
-                      ${r.extractedUSDC}
+                      <DemoData>${r.extractedUSDC}</DemoData>
                     </td>
                     <td className="py-2.5 px-3 text-right text-accent tabular-nums">
                       +{r.injectedSlippageBps} bps

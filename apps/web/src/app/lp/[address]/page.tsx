@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MOCK_RECEIPTS } from "@/data/mockData";
 import { HashDisplay } from "@/components/ui/HashDisplay";
 import { StatusPill } from "@/components/ui/StatusPill";
+import { DemoData } from "@/components/ui/DemoData";
 import { ArrowLeft, Wallet, CheckCircle } from "lucide-react";
 
 interface LPPageProps {
@@ -66,15 +67,21 @@ export default function LPPage({ params }: LPPageProps) {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-border text-xs font-mono">
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">Extractions Suffered</div>
-            <div className="text-text font-bold mt-1 tabular-nums">{lpReceipts.length || 1}</div>
+            <div className="text-text font-bold mt-1 tabular-nums">
+              <DemoData>{lpReceipts.length || 1}</DemoData>
+            </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">Total Value Extracted</div>
-            <div className="text-danger font-bold mt-1 tabular-nums">${totalSuffered}</div>
+            <div className="text-danger font-bold mt-1 tabular-nums">
+              <DemoData>${totalSuffered}</DemoData>
+            </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">Total Rebates Claimed</div>
-            <div className="text-good font-bold mt-1 tabular-nums">${totalRebated} USDC</div>
+            <div className="text-good font-bold mt-1 tabular-nums">
+              <DemoData>${totalRebated} USDC</DemoData>
+            </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">Settlement Network</div>
@@ -123,7 +130,7 @@ export default function LPPage({ params }: LPPageProps) {
                     </Link>
                   </td>
                   <td className="py-2.5 px-3 text-right font-bold text-danger tabular-nums">
-                    ${r.extractedUSDC}
+                    <DemoData>${r.extractedUSDC}</DemoData>
                   </td>
                   <td className="py-2.5 px-3 text-right text-accent tabular-nums">
                     +{r.injectedSlippageBps} bps

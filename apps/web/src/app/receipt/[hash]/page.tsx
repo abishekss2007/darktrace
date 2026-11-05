@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MOCK_RECEIPTS } from "@/data/mockData";
 import { HashDisplay } from "@/components/ui/HashDisplay";
 import { StatusPill } from "@/components/ui/StatusPill";
+import { DemoData } from "@/components/ui/DemoData";
 import { ArrowLeft, ExternalLink, ShieldCheck, Database } from "lucide-react";
 
 interface ReceiptPageProps {
@@ -21,10 +22,10 @@ export default function ReceiptPage({ params }: ReceiptPageProps) {
     victim: "0x2222222222222222222222222222222222222222",
     lp: "0x3333333333333333333333333333333333333333",
     blockNumber: 12489201,
-    extractedUSDC: "142.50",
+    extractedUSDC: "1.25",
     injectedSlippageBps: 185,
     legitSlippageBps: 12,
-    lpLvrDelta: "-$138.90",
+    lpLvrDelta: "-$1.21",
     simulationHash: "0xc9ddedeba69e600924875d3ce6c3e2cd554170c510cec4bfd5016182dc156309",
     arkivURI: `arkiv://darktrace.v1/receipt/${params.hash}`,
     status: "ARCHIVED" as const,
@@ -76,9 +77,11 @@ export default function ReceiptPage({ params }: ReceiptPageProps) {
         <div className="p-4 border border-border rounded bg-bg space-y-2">
           <div className="text-xs font-mono text-text font-semibold flex items-center justify-between">
             <span>Counterfactual Slippage Decomposition</span>
-            <span className="text-danger font-mono font-bold tabular-nums">
-              ${receipt.extractedUSDC} USDC Lost
-            </span>
+            <DemoData>
+              <span className="text-danger font-mono font-bold tabular-nums">
+                ${receipt.extractedUSDC} USDC Lost
+              </span>
+            </DemoData>
           </div>
           <p className="text-xs font-mono text-muted leading-relaxed">
             Victim suffered <span className="text-danger font-semibold">+{receipt.injectedSlippageBps} bps</span> of realized slippage. 
@@ -91,7 +94,9 @@ export default function ReceiptPage({ params }: ReceiptPageProps) {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono pt-2">
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">Extracted USDC</div>
-            <div className="text-danger font-bold mt-1 text-base tabular-nums">${receipt.extractedUSDC}</div>
+            <div className="text-danger font-bold mt-1 text-base tabular-nums">
+              <DemoData>${receipt.extractedUSDC}</DemoData>
+            </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">Injected Slippage</div>
@@ -103,7 +108,9 @@ export default function ReceiptPage({ params }: ReceiptPageProps) {
           </div>
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">LP LVR Impact</div>
-            <div className="text-danger font-bold mt-1 text-base tabular-nums">{receipt.lpLvrDelta}</div>
+            <div className="text-danger font-bold mt-1 text-base tabular-nums">
+              <DemoData>{receipt.lpLvrDelta}</DemoData>
+            </div>
           </div>
         </div>
       </div>

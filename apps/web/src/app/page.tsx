@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DemoData } from "@/components/ui/DemoData";
 
 export default function HomePage() {
   return (
@@ -36,22 +37,28 @@ export default function HomePage() {
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <div className="border border-border bg-surface p-4 rounded">
           <div className="text-[11px] font-mono text-muted uppercase">Detected Extractions</div>
-          <div className="text-xl font-mono font-bold text-accent mt-1 tabular-nums">482</div>
-          <div className="text-[10px] font-mono text-muted mt-1">Across 6 monitored v4 pools</div>
+          <div className="text-xl font-mono font-bold text-accent mt-1 tabular-nums">
+            <DemoData>3</DemoData>
+          </div>
+          <div className="text-[10px] font-mono text-muted mt-1">Across 3 monitored v4 pools</div>
         </div>
         <div className="border border-border bg-surface p-4 rounded">
-          <div className="text-[11px] font-mono text-muted uppercase">Extracted Volume</div>
-          <div className="text-xl font-mono font-bold text-danger mt-1 tabular-nums">$148,920.40</div>
-          <div className="text-[10px] font-mono text-muted mt-1">Past 7 days on Base Sepolia</div>
+          <div className="text-[11px] font-mono text-muted uppercase">Extracted Volume (24h)</div>
+          <div className="text-xl font-mono font-bold text-danger mt-1 tabular-nums">
+            <DemoData>$3.75</DemoData>
+          </div>
+          <div className="text-[10px] font-mono text-muted mt-1">Seeded Base Sepolia receipts</div>
         </div>
         <div className="border border-border bg-surface p-4 rounded">
-          <div className="text-[11px] font-mono text-muted uppercase">Rebates Paid (Arc)</div>
-          <div className="text-xl font-mono font-bold text-good mt-1 tabular-nums">$112,450.00</div>
-          <div className="text-[10px] font-mono text-muted mt-1">Settled in USDC to LP Vaults</div>
+          <div className="text-[11px] font-mono text-muted uppercase">RebateVault Reserve (Arc)</div>
+          <div className="text-xl font-mono font-bold text-good mt-1 tabular-nums">$5.00 USDC</div>
+          <div className="text-[10px] font-mono text-muted mt-1">Live on-chain balance (0x2ab7…28CD)</div>
         </div>
         <div className="border border-border bg-surface p-4 rounded">
           <div className="text-[11px] font-mono text-muted uppercase">Arkiv Sealed Proofs</div>
-          <div className="text-xl font-mono font-bold text-text mt-1 tabular-nums">100.0%</div>
+          <div className="text-xl font-mono font-bold text-text mt-1 tabular-nums">
+            <DemoData>100.0%</DemoData>
+          </div>
           <div className="text-[10px] font-mono text-muted mt-1">Cryptographically immutable</div>
         </div>
       </div>

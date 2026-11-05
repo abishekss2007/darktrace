@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MOCK_POOLS, MOCK_RECEIPTS } from "@/data/mockData";
 import { HashDisplay } from "@/components/ui/HashDisplay";
 import { StatusPill } from "@/components/ui/StatusPill";
+import { DemoData } from "@/components/ui/DemoData";
 
 export default function DashboardPage() {
   const totalExtracted = MOCK_RECEIPTS.reduce(
@@ -21,14 +22,22 @@ export default function DashboardPage() {
             Active surveillance of Uniswap v4 pools on Base Sepolia • Arc Testnet Settlement
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="px-3 py-1 border border-border bg-surface rounded text-xs font-mono">
             <span className="text-muted">Extracted (24h): </span>
-            <span className="text-danger font-bold tabular-nums">${totalExtracted}</span>
+            <DemoData>
+              <span className="text-danger font-bold tabular-nums">${totalExtracted}</span>
+            </DemoData>
+          </div>
+          <div className="px-3 py-1 border border-border bg-surface rounded text-xs font-mono">
+            <span className="text-muted">Vault Reserve (Arc): </span>
+            <span className="text-good font-bold tabular-nums">$5.00 USDC</span>
           </div>
           <div className="px-3 py-1 border border-border bg-surface rounded text-xs font-mono">
             <span className="text-muted">Monitored Pools: </span>
-            <span className="text-accent font-bold tabular-nums">{MOCK_POOLS.length}</span>
+            <DemoData>
+              <span className="text-accent font-bold tabular-nums">{MOCK_POOLS.length}</span>
+            </DemoData>
           </div>
         </div>
       </div>
@@ -65,10 +74,14 @@ export default function DashboardPage() {
                     </Link>
                   </td>
                   <td className="py-2.5 px-3 text-muted">{pool.feeTier}</td>
-                  <td className="py-2.5 px-3 text-right text-text tabular-nums">{pool.tvl}</td>
-                  <td className="py-2.5 px-3 text-right text-muted tabular-nums">{pool.volume24h}</td>
+                  <td className="py-2.5 px-3 text-right text-text tabular-nums">
+                    <DemoData>{pool.tvl}</DemoData>
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-muted tabular-nums">
+                    <DemoData>{pool.volume24h}</DemoData>
+                  </td>
                   <td className="py-2.5 px-3 text-right font-semibold tabular-nums text-danger">
-                    {pool.extracted24h}
+                    <DemoData>{pool.extracted24h}</DemoData>
                   </td>
                   <td className="py-2.5 px-3 text-center">
                     <StatusPill status={pool.status === "ACTIVE" ? "DETECTED" : "CLEAN"} />
@@ -128,7 +141,7 @@ export default function DashboardPage() {
                     </Link>
                   </td>
                   <td className="py-2.5 px-3 text-right font-bold text-danger tabular-nums">
-                    ${r.extractedUSDC}
+                    <DemoData>${r.extractedUSDC}</DemoData>
                   </td>
                   <td className="py-2.5 px-3 text-right text-accent tabular-nums">
                     +{r.injectedSlippageBps} bps
