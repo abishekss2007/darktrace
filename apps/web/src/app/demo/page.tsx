@@ -1,9 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { HashDisplay } from "@/components/ui/HashDisplay";
 import { StatusPill } from "@/components/ui/StatusPill";
-import { Play, Check, ShieldCheck, Database, ArrowRight, Zap, RefreshCw } from "lucide-react";
+import { 
+  ShieldCheck, 
+  Database, 
+  Zap, 
+  RefreshCw, 
+  Check, 
+  ExternalLink, 
+  Layers,
+  ArrowUpRight
+} from "lucide-react";
 
 interface LiveFeedItem {
   id: string;
@@ -20,12 +29,13 @@ interface LiveFeedItem {
   receiptHash: string;
   simulationHash: string;
   arkivURI: string;
+  arcClaimTx?: string;
 }
 
 const INITIAL_FEED: LiveFeedItem[] = [
   {
     id: "feed-1",
-    timestamp: "22:48:12.190",
+    timestamp: "22:50:18.420",
     poolId: "0x835c24ae58a98118715d7541b2c5f0df8f11ca328b8e9c9c3850441c632e8d21",
     poolName: "WETH / USDC",
     searcher: "0x1111111111111111111111111111111111111111",
@@ -54,6 +64,7 @@ const INITIAL_FEED: LiveFeedItem[] = [
     receiptHash: "0x4a5b6c7d8e9f01234567890abcdef1234567890abcd9c8d1f2b3e4a506172839",
     simulationHash: "0xa1b2c3d4e5f60718293a4b5c6d7e8f90123456789abcdef0123456789abcdef0",
     arkivURI: "arkiv://darktrace.v1/receipt/0x4a5b6c7d8e9f01234567890abcdef1234567890abcd9c8d1f2b3e4a506172839",
+    arcClaimTx: "0xarc77777777777777777777777777777777777777777777777777777777777777",
   },
 ];
 
@@ -63,10 +74,13 @@ export default function DemoPage() {
   const [isSimulating, setIsSimulating] = useState(false);
   const [isClaiming, setIsClaiming] = useState(false);
   const [claimedSuccess, setClaimedSuccess] = useState(false);
+  const [lpBalance, setLpBalance] = useState(2450.0);
+  const [animatedLoss, setAnimatedLoss] = useState<number | null>(null);
 
   // Trigger simulated sandwich attack sequence
   const handleTriggerSandwich = () => {
     setIsSimulating(true);
+    setClaimedSuccess(false);
 
     const newItemId = `feed-${Date.now()}`;
     const newProofHash = "0x" + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
@@ -75,7 +89,22 @@ export default function DemoPage() {
     const now = new Date();
     const timeStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}.${String(now.getMilliseconds()).padStart(3, "0")}`;
 
-    // Step 1: DETECTED
+    // Target value
+    const targetLoss = 174.8;
+    setAnimatedLoss(0);
+
+    // Number ticker animation
+    let currentTicker = 0;
+    const tickerInterval = setInterval(() => {
+      currentTicker += 19.4;
+      if (currentTicker >= targetLoss) {
+        currentTicker = targetLoss;
+        clearInterval(tickerInterval);
+      }
+      setAnimatedLoss(parseFloat(currentTicker.toFixed(2)));
+    }, 60);
+
+    // Step 1: DETECTED (Immediate)
     const initialItem: LiveFeedItem = {
       id: newItemId,
       timestamp: timeStr,
@@ -83,7 +112,7 @@ export default function DemoPage() {
       poolName: "WETH / USDC",
       searcher: "0x1111111111111111111111111111111111111111",
       victim: "0x2222222222222222222222222222222222222222",
-      extractedUSDC: "174.80",
+      extractedUSDC: targetLoss.toFixed(2),
       injectedSlippageBps: 187,
       legitSlippageBps: 12,
       lpLvrDelta: "-$169.50",
@@ -96,81 +125,115 @@ export default function DemoPage() {
     setFeed((prev) => [initialItem, ...prev]);
     setSelectedItem(initialItem);
 
-    // Step 2: SIMULATED (after 800ms)
+    // Step 2: SIMULATED (t = 1.0s)
     setTimeout(() => {
       setFeed((prev) =>
         prev.map((item) => (item.id === newItemId ? { ...item, status: "SIMULATED" } : item))
       );
       setSelectedItem((curr) => (curr.id === newItemId ? { ...curr, status: "SIMULATED" } : curr));
-    }, 900);
+    }, 1100);
 
-    // Step 3: ARCHIVED (after 1800ms)
+    // Step 3: ARCHIVED (t = 2.0s)
     setTimeout(() => {
       setFeed((prev) =>
         prev.map((item) => (item.id === newItemId ? { ...item, status: "ARCHIVED" } : item))
       );
       setSelectedItem((curr) => (curr.id === newItemId ? { ...curr, status: "ARCHIVED" } : curr));
       setIsSimulating(false);
-    }, 1900);
+      setAnimatedLoss(null);
+    }, 2100);
   };
 
   // Claim Rebate on Arc
   const handleClaimRebate = () => {
     setIsClaiming(true);
+    const claimAmount = parseFloat(selectedItem.extractedUSDC);
+
     setTimeout(() => {
       setIsClaiming(false);
       setClaimedSuccess(true);
+      const generatedClaimTx = "0xarc" + Array.from({ length: 60 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
+
+      // Balance ticks up on Arc!
+      setLpBalance((prev) => parseFloat((prev + claimAmount).toFixed(2)));
+
       setFeed((prev) =>
-        prev.map((item) => (item.id === selectedItem.id ? { ...item, status: "REBATED" } : item))
+        prev.map((item) =>
+          item.id === selectedItem.id
+            ? { ...item, status: "REBATED", arcClaimTx: generatedClaimTx }
+            : item
+        )
       );
-      setSelectedItem((curr) => ({ ...curr, status: "REBATED" }));
+      setSelectedItem((curr) => ({
+        ...curr,
+        status: "REBATED",
+        arcClaimTx: generatedClaimTx,
+      }));
     }, 1200);
   };
 
+  const netToxicSlippage = selectedItem.injectedSlippageBps - selectedItem.legitSlippageBps;
+
   return (
     <div className="flex-1 p-4 max-w-7xl mx-auto w-full flex flex-col space-y-3">
-      {/* Terminal Command Strip */}
-      <div className="h-10 border border-border bg-surface px-4 rounded flex items-center justify-between text-xs font-mono">
-        <div className="flex items-center gap-3">
-          <span className="text-muted">TERMINAL:</span>
-          <span className="text-text font-bold">FORENSIC RADAR</span>
+      {/* Top Protocol Status Bar */}
+      <div className="border border-border bg-surface px-4 py-2.5 rounded flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs font-mono">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-1.5 text-good font-semibold">
+            <span className="w-2 h-2 rounded-full bg-good animate-pulse"></span>
+            RADAR ACTIVE
+          </div>
           <span className="text-border">|</span>
-          <span className="text-good flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-good animate-pulse"></span>
-            LIVE MONITORING
+          <span className="text-muted">
+            TARGET: <span className="text-text font-bold">Base Sepolia (Hook)</span>
+          </span>
+          <span className="text-border">|</span>
+          <span className="text-muted">
+            SETTLEMENT: <span className="text-text font-bold">Arc Testnet (RebateVault)</span>
           </span>
         </div>
 
-        <button
-          onClick={handleTriggerSandwich}
-          disabled={isSimulating}
-          type="button"
-          className="px-3 py-1 bg-accent hover:opacity-90 disabled:opacity-50 text-bg font-bold rounded flex items-center gap-1.5 transition-opacity"
-        >
-          {isSimulating ? (
-            <>
-              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-              <span>Simulating Sandwich...</span>
-            </>
-          ) : (
-            <>
-              <Zap className="w-3.5 h-3.5" />
-              <span>Trigger Test Sandwich</span>
-            </>
-          )}
-        </button>
+        {/* User Restitution Vault Balance Counter */}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 px-3 py-1 border border-border rounded bg-bg">
+            <span className="text-muted">LP USDC BALANCE (ARC):</span>
+            <span className="text-good font-bold tabular-nums">
+              ${lpBalance.toFixed(2)} USDC
+            </span>
+          </div>
+
+          <button
+            onClick={handleTriggerSandwich}
+            disabled={isSimulating}
+            type="button"
+            className="px-3.5 py-1.5 bg-accent hover:opacity-90 disabled:opacity-50 text-bg font-bold rounded flex items-center gap-1.5 transition-opacity"
+          >
+            {isSimulating ? (
+              <>
+                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                <span>Simulating Attack...</span>
+              </>
+            ) : (
+              <>
+                <Zap className="w-3.5 h-3.5" />
+                <span>Trigger Sandwich</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
-      {/* Two-Column Terminal Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 flex-1 min-h-[580px]">
+      {/* Two-Column Bloomberg Terminal Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 flex-1 min-h-[620px]">
         {/* LEFT COLUMN: Live Event Feed (7 Cols) */}
         <div className="lg:col-span-7 border border-border rounded bg-surface flex flex-col overflow-hidden">
-          <div className="px-3 py-2 border-b border-border bg-[#15181E] flex items-center justify-between text-xs font-mono">
-            <span className="font-semibold text-text uppercase tracking-wider">
-              Live Extraction Stream
-            </span>
+          <div className="px-3 py-2 border-b border-border bg-[#15181E] flex items-center justify-between text-xs font-mono select-none">
+            <div className="flex items-center gap-2 font-semibold text-text uppercase tracking-wider">
+              <Layers className="w-3.5 h-3.5 text-accent" />
+              <span>Real-Time Surveillance Stream</span>
+            </div>
             <span className="text-[11px] text-muted tabular-nums">
-              {feed.length} EVENTS RECORDED
+              {feed.length} OBSERVATIONS
             </span>
           </div>
 
@@ -184,7 +247,7 @@ export default function DemoPage() {
                     setSelectedItem(item);
                     setClaimedSuccess(item.status === "REBATED");
                   }}
-                  className={`p-3 transition-colors cursor-pointer select-none flex items-center justify-between gap-2 ${
+                  className={`p-3.5 transition-colors cursor-pointer select-none flex items-center justify-between gap-3 ${
                     isSelected ? "bg-[#181C22] border-l-2 border-accent" : "hover:bg-[#14161B]"
                   }`}
                 >
@@ -196,7 +259,7 @@ export default function DemoPage() {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                     <span className="text-danger font-bold tabular-nums">
                       ${item.extractedUSDC}
                     </span>
@@ -210,76 +273,91 @@ export default function DemoPage() {
 
         {/* RIGHT COLUMN: Receipt Inspector (5 Cols) */}
         <div className="lg:col-span-5 border border-border rounded bg-surface flex flex-col overflow-hidden">
-          <div className="px-3 py-2 border-b border-border bg-[#15181E] flex items-center justify-between text-xs font-mono">
-            <span className="font-semibold text-text uppercase tracking-wider">
-              Forensic Receipt Detail
-            </span>
+          <div className="px-3 py-2 border-b border-border bg-[#15181E] flex items-center justify-between text-xs font-mono select-none">
+            <div className="flex items-center gap-2 font-semibold text-text uppercase tracking-wider">
+              <ShieldCheck className="w-3.5 h-3.5 text-good" />
+              <span>Cryptographic Receipt Detail</span>
+            </div>
             <StatusPill status={selectedItem.status} />
           </div>
 
           <div className="p-4 flex-1 overflow-y-auto space-y-4 font-mono text-xs">
-            {/* Loss Banner */}
-            <div className="p-3 border border-border rounded bg-bg space-y-1">
-              <div className="text-[11px] text-muted uppercase">Extracted USDC Loss</div>
-              <div className="text-2xl font-bold text-danger tabular-nums">
-                ${selectedItem.extractedUSDC}
+            {/* Extracted Value Banner with Counter Animation */}
+            <div className="p-3.5 border border-border rounded bg-bg space-y-1">
+              <div className="text-[11px] text-muted uppercase">Detected Extracted Loss</div>
+              <div className="text-3xl font-bold text-danger tabular-nums">
+                ${animatedLoss !== null ? animatedLoss.toFixed(2) : selectedItem.extractedUSDC}
               </div>
               <div className="text-[11px] text-muted">
                 LP LVR Impact: <span className="text-danger font-semibold">{selectedItem.lpLvrDelta}</span>
               </div>
             </div>
 
-            {/* Slippage Decomposition */}
-            <div className="p-3 border border-border rounded bg-bg space-y-2">
-              <div className="text-xs font-semibold text-text">Slippage Decomposition</div>
+            {/* Counterfactual Slippage Breakdown */}
+            <div className="p-3.5 border border-border rounded bg-bg space-y-2.5">
+              <div className="text-xs font-semibold text-text uppercase tracking-wider">
+                Counterfactual Decomposition
+              </div>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="p-2 border border-border rounded bg-surface">
-                  <div className="text-muted text-[10px]">INJECTED SLIPPAGE</div>
+                  <div className="text-muted text-[10px]">INJECTED MEV</div>
                   <div className="text-accent font-bold mt-0.5 tabular-nums">
                     +{selectedItem.injectedSlippageBps} bps
                   </div>
                 </div>
                 <div className="p-2 border border-border rounded bg-surface">
-                  <div className="text-muted text-[10px]">LEGIT SLIPPAGE</div>
+                  <div className="text-muted text-[10px]">NATURAL SLIPPAGE</div>
                   <div className="text-good font-bold mt-0.5 tabular-nums">
                     {selectedItem.legitSlippageBps} bps
                   </div>
                 </div>
               </div>
-              <div className="text-[11px] text-muted leading-tight">
-                {selectedItem.injectedSlippageBps - selectedItem.legitSlippageBps} bps was toxic extraction, not price discovery.
+              <div className="text-[11px] text-muted leading-relaxed">
+                <span className="text-accent font-bold">{netToxicSlippage} bps</span> of realized slippage was toxic frontrun injection, not legitimate market price discovery.
               </div>
             </div>
 
-            {/* Cryptographic Hashes */}
-            <div className="space-y-2 pt-1 border-t border-border">
+            {/* Cryptographic Identifiers */}
+            <div className="space-y-2.5 pt-1 border-t border-border">
               <div>
-                <div className="text-[10px] text-muted uppercase">Receipt Hash</div>
+                <div className="text-[10px] text-muted uppercase">Canonical Receipt Hash (Arkiv)</div>
                 <HashDisplay hash={selectedItem.receiptHash} truncate={true} prefixLength={10} suffixLength={8} />
               </div>
 
               <div>
-                <div className="text-[10px] text-muted uppercase">Simulation Hash (Arc)</div>
+                <div className="text-[10px] text-muted uppercase">Simulation Hash (Arc Attestation)</div>
                 <HashDisplay hash={selectedItem.simulationHash} truncate={true} prefixLength={10} suffixLength={8} />
               </div>
 
               <div>
-                <div className="text-[10px] text-muted uppercase">Arkiv Proof Record</div>
+                <div className="text-[10px] text-muted uppercase">Decentralized Proof URI</div>
                 <div className="text-accent text-[11px] flex items-center gap-1 mt-0.5">
                   <Database className="w-3 h-3" />
                   <span className="truncate">{selectedItem.arkivURI}</span>
                 </div>
               </div>
+
+              {selectedItem.arcClaimTx && (
+                <div>
+                  <div className="text-[10px] text-muted uppercase">Arc Settlement Tx</div>
+                  <div className="flex items-center gap-1.5 text-good">
+                    <HashDisplay hash={selectedItem.arcClaimTx} truncate={true} />
+                    <ArrowUpRight className="w-3 h-3" />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Restitution Claim Action */}
             <div className="pt-2 border-t border-border">
               {selectedItem.status === "REBATED" || claimedSuccess ? (
-                <div className="p-3 border border-good/40 bg-good/10 rounded flex items-center gap-2 text-good">
-                  <Check className="w-4 h-4" />
+                <div className="p-3.5 border border-good/40 bg-good/10 rounded flex items-center gap-2.5 text-good">
+                  <Check className="w-5 h-5 flex-shrink-0" />
                   <div>
-                    <div className="font-bold">USDC Rebate Claimed</div>
-                    <div className="text-[10px] text-muted">Settled on Arc Testnet RebateVault.sol</div>
+                    <div className="font-bold">USDC Rebate Claimed & Settled</div>
+                    <div className="text-[10px] text-muted mt-0.5">
+                      ${selectedItem.extractedUSDC} USDC credited to LP via RebateVault.sol on Arc Testnet.
+                    </div>
                   </div>
                 </div>
               ) : selectedItem.status === "ARCHIVED" ? (
@@ -302,11 +380,20 @@ export default function DemoPage() {
                   )}
                 </button>
               ) : (
-                <div className="p-3 border border-border rounded bg-bg text-center text-muted text-[11px]">
-                  Pipeline in progress ({selectedItem.status}). Proof sealing to Arkiv...
+                <div className="p-3 border border-border rounded bg-bg text-center text-muted text-[11px] flex items-center justify-center gap-2">
+                  <RefreshCw className="w-3 h-3 animate-spin text-accent" />
+                  <span>Pipeline in progress: {selectedItem.status}...</span>
                 </div>
               )}
             </div>
+
+            {/* Slashed Bond Reprimand Box */}
+            {selectedItem.status === "REBATED" && (
+              <div className="p-2.5 border border-border rounded bg-surface text-[11px] text-muted">
+                <span className="text-danger font-semibold">Reputation Penalty: </span>
+                Searcher <span className="font-mono text-text">0x1111…1111</span> bonded collateral slashed by <span className="text-danger font-semibold">${selectedItem.extractedUSDC}</span>.
+              </div>
+            )}
           </div>
         </div>
       </div>
