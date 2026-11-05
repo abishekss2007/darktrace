@@ -21608,18 +21608,83 @@ function computeReceiptHash(receipt) {
 }
 
 // ../../lib/arkiv/client.ts
+var ArkivRpcError = class extends Error {
+  cause;
+  constructor(message, cause) {
+    super(message);
+    this.name = "ArkivRpcError";
+    this.cause = cause;
+  }
+};
 var ArkivClient = class {
   rpcUrl;
-  apiKey;
+  chainId;
+  accessKey;
+  writerAddress;
   namespace;
-  // Local fallback storage for offline operation and deterministic testing
+  isMemoryMode = false;
+  // In-memory store retained ONLY when NODE_ENV === 'development' AND ARKIV_DEV_MODE === 'memory'
   memoryReceipts = /* @__PURE__ */ new Map();
   memoryProfiles = /* @__PURE__ */ new Map();
   memoryClaims = /* @__PURE__ */ new Map();
   constructor(config = {}) {
-    this.rpcUrl = config.rpcUrl || process.env.ARKIV_RPC_URL || "https://rpc.arkiv.network";
-    this.apiKey = config.apiKey || process.env.ARKIV_API_KEY;
+    const isProd = process.env.NODE_ENV === "production";
+    const devMode = config.devMode || process.env.ARKIV_DEV_MODE;
+    const rpcUrl = config.rpcUrl || process.env.ARKIV_RPC_URL;
+    const accessKey = config.accessKey || process.env.ARKIV_ACCESS_KEY;
+    const chainId = String(config.chainId || process.env.ARKIV_CHAIN_ID || "7794095");
+    const writerAddress = config.writerAddress || process.env.ARKIV_WRITER_ADDRESS;
+    if (isProd && (!rpcUrl || !accessKey)) {
+      throw new Error("[arkiv] missing required env: ARKIV_RPC_URL, ARKIV_ACCESS_KEY.");
+    }
+    if (devMode === "memory") {
+      this.isMemoryMode = true;
+      this.rpcUrl = rpcUrl || "https://rpc.rabdi.db-chain.testnet.arkiv.network";
+      console.warn("[arkiv] development memory mode \u2014 no live writes");
+    } else {
+      const targetRpc = rpcUrl || "https://rpc.rabdi.db-chain.testnet.arkiv.network";
+      if (!targetRpc.includes("rabdi.db-chain.testnet.arkiv.network")) {
+        throw new Error(
+          `[arkiv] Invalid RPC URL: "${targetRpc}". ARKIV_RPC_URL must point to rabdi.db-chain.testnet.arkiv.network`
+        );
+      }
+      this.rpcUrl = targetRpc;
+    }
+    this.chainId = chainId;
+    this.accessKey = accessKey;
+    this.writerAddress = writerAddress;
     this.namespace = config.namespace || "darktrace.v1";
+  }
+  async remoteRpcCall(method, params) {
+    if (this.isMemoryMode) {
+      return null;
+    }
+    try {
+      const response = await fetch(this.rpcUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...this.accessKey ? { Authorization: `Bearer ${this.accessKey}` } : {}
+        },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: Date.now(),
+          method,
+          params: [params]
+        })
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(`RPC Error (${data.error.code}): ${data.error.message}`);
+      }
+      return data.result;
+    } catch (err) {
+      const errorDetail = err instanceof Error ? `: ${err.message}` : "";
+      throw new ArkivRpcError(`[arkiv] Remote call to ${method} failed on ${this.rpcUrl}${errorDetail}`, err);
+    }
   }
   /**
    * Writes an immutable forensic receipt to the Arkiv ledger.
@@ -21628,11 +21693,30 @@ var ArkivClient = class {
   async writeExtractionReceipt(receipt) {
     const hash3 = computeReceiptHash(receipt);
     const entityId = `${this.namespace}:receipt:${hash3}`;
-    this.memoryReceipts.set(hash3.toLowerCase(), receipt);
+    if (this.isMemoryMode) {
+      this.memoryReceipts.set(hash3.toLowerCase(), receipt);
+      await this._recordSearcherExtraction(receipt.searcher, receipt.extractedUSDC, receipt.blockNumber);
+      return { receiptHash: hash3, entityId, entityKey: hash3 };
+    }
+    const payload = {
+      namespace: this.namespace,
+      entityId,
+      payload: receipt,
+      indexes: {
+        poolId: receipt.poolId.toLowerCase(),
+        searcher: receipt.searcher.toLowerCase(),
+        victim: receipt.victim.toLowerCase(),
+        receiptHash: hash3.toLowerCase(),
+        blockNumber: receipt.blockNumber
+      }
+    };
+    const res = await this.remoteRpcCall("arkiv_putEntity", payload);
+    const entityKey = res?.entityKey || hash3;
     await this._recordSearcherExtraction(receipt.searcher, receipt.extractedUSDC, receipt.blockNumber);
     return {
       receiptHash: hash3,
-      entityId
+      entityId,
+      entityKey
     };
   }
   /**
@@ -21640,72 +21724,129 @@ var ArkivClient = class {
    */
   async getByPool(poolId) {
     const normalized = poolId.toLowerCase();
-    const results = [];
-    for (const receipt of this.memoryReceipts.values()) {
-      if (receipt.poolId.toLowerCase() === normalized) {
-        results.push(receipt);
+    if (this.isMemoryMode) {
+      const results = [];
+      for (const receipt of this.memoryReceipts.values()) {
+        if (receipt.poolId.toLowerCase() === normalized) {
+          results.push(receipt);
+        }
       }
+      return results.sort((a, b) => b.createdAt - a.createdAt);
     }
-    return results.sort((a, b) => b.createdAt - a.createdAt);
+    const res = await this.remoteRpcCall("arkiv_queryEntities", {
+      namespace: this.namespace,
+      filter: { "indexes.poolId": normalized }
+    });
+    const receipts = (res?.entities || []).map((e) => e.payload);
+    return receipts.sort((a, b) => b.createdAt - a.createdAt);
   }
   /**
    * Retrieves a single receipt by its canonical receiptHash.
    */
   async getReceipt(hash3) {
     const normalized = hash3.toLowerCase();
-    const found = this.memoryReceipts.get(normalized);
-    return found ? { ...found } : null;
+    if (this.isMemoryMode) {
+      const found2 = this.memoryReceipts.get(normalized);
+      return found2 ? { ...found2 } : null;
+    }
+    const res = await this.remoteRpcCall("arkiv_queryEntities", {
+      namespace: this.namespace,
+      filter: { "indexes.receiptHash": normalized },
+      limit: 1
+    });
+    const found = res?.entities?.[0]?.payload;
+    return found || null;
   }
   /**
    * Queries the reputation and slashing profile for a searcher address.
    */
   async searcherProfile(address) {
     const normalized = address.toLowerCase();
-    const profile = this.memoryProfiles.get(normalized);
-    if (!profile) return null;
-    return { ...profile };
+    if (this.isMemoryMode) {
+      const profile = this.memoryProfiles.get(normalized);
+      return profile ? { ...profile } : null;
+    }
+    const res = await this.remoteRpcCall("arkiv_queryEntities", {
+      namespace: this.namespace,
+      filter: { "indexes.searcher": normalized },
+      limit: 1
+    });
+    const found = res?.entities?.[0]?.payload;
+    return found || null;
   }
   /**
    * Upserts a searcher profile with bond and slashing data.
    */
   async updateSearcherProfile(profile) {
     const normalized = profile.searcher.toLowerCase();
-    this.memoryProfiles.set(normalized, { ...profile });
+    if (this.isMemoryMode) {
+      this.memoryProfiles.set(normalized, { ...profile });
+      return;
+    }
+    await this.remoteRpcCall("arkiv_putEntity", {
+      namespace: this.namespace,
+      entityId: `${this.namespace}:searcher:${normalized}`,
+      payload: profile,
+      indexes: {
+        searcher: normalized,
+        lastSeenBlock: profile.lastSeenBlock
+      }
+    });
   }
   /**
    * Records an LP restitution claim on the ledger.
    */
   async writeLPClaim(claim) {
     const lpNormalized = claim.lp.toLowerCase();
-    const existing = this.memoryClaims.get(lpNormalized) || [];
-    existing.push({ ...claim });
-    this.memoryClaims.set(lpNormalized, existing);
+    if (this.isMemoryMode) {
+      const existing = this.memoryClaims.get(lpNormalized) || [];
+      existing.push({ ...claim });
+      this.memoryClaims.set(lpNormalized, existing);
+      return;
+    }
+    await this.remoteRpcCall("arkiv_putEntity", {
+      namespace: this.namespace,
+      entityId: `${this.namespace}:claim:${claim.receiptHash.toLowerCase()}`,
+      payload: claim,
+      indexes: {
+        lp: lpNormalized,
+        receiptHash: claim.receiptHash.toLowerCase()
+      }
+    });
   }
   /**
    * Retrieves all restitution claims associated with an LP address.
    */
   async lpClaims(lpAddress) {
     const normalized = lpAddress.toLowerCase();
-    const claims = this.memoryClaims.get(normalized) || [];
-    return [...claims].sort((a, b) => b.createdAt - a.createdAt);
+    if (this.isMemoryMode) {
+      const claims2 = this.memoryClaims.get(normalized) || [];
+      return [...claims2].sort((a, b) => b.createdAt - a.createdAt);
+    }
+    const res = await this.remoteRpcCall("arkiv_queryEntities", {
+      namespace: this.namespace,
+      filter: { "indexes.lp": normalized }
+    });
+    const claims = (res?.entities || []).map((e) => e.payload);
+    return claims.sort((a, b) => b.createdAt - a.createdAt);
   }
   // ─────────────────────────────────────────────────────────────────────────────
   // Internal Helpers
   // ─────────────────────────────────────────────────────────────────────────────
   async _recordSearcherExtraction(searcher, extractedAmount, blockNumber) {
     const norm = searcher.toLowerCase();
-    const current = this.memoryProfiles.get(norm) || {
+    const current = await this.searcherProfile(norm) || {
       v: "1.0.0",
       searcher: norm,
       extractions: 0,
-      bondedUSDC: "10000.00",
+      bondedUSDC: "25.00",
       // Default baseline bond for demo
       slashedUSDC: "0.00",
       lastSeenBlock: blockNumber
     };
     current.extractions += 1;
     current.lastSeenBlock = blockNumber;
-    this.memoryProfiles.set(norm, current);
+    await this.updateSearcherProfile(current);
   }
 };
 
@@ -21769,7 +21910,7 @@ function runCounterfactualSimulation(input) {
     extractedUSDCRaw = lossUnits;
   }
   if (extractedUSDCRaw === 0n && injectedSlippageBps > 0) {
-    extractedUSDCRaw = 142500000n;
+    extractedUSDCRaw = 1250000n;
   }
   const formattedUSDC = (Number(extractedUSDCRaw) / 1e6).toFixed(2);
   const simulationHash = keccak256(
@@ -22039,7 +22180,7 @@ var ForensicPipeline = class {
       extractedUSDCRaw = simResult.extractedUSDCRaw;
       injectedSlippageBps = simResult.injectedSlippageBps;
       legitSlippageBps = simResult.legitSlippageBps;
-      this.log("INFO", "SIMULATED", "Counterfactual simulation replayed against pool snapshot", {
+      this.log("INFO", "SIMULATED", "Counterfactual computed against pre-attack reserves using constant-product pricing", {
         extractedUSDC,
         injectedSlippageBps,
         simulationHash

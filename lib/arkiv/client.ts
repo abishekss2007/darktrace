@@ -56,6 +56,7 @@ export class ArkivClient {
 
     if (devMode === "memory") {
       this.isMemoryMode = true;
+      this.rpcUrl = rpcUrl || "https://rpc.rabdi.db-chain.testnet.arkiv.network";
       console.warn("[arkiv] development memory mode — no live writes");
     } else {
       const targetRpc = rpcUrl || "https://rpc.rabdi.db-chain.testnet.arkiv.network";
@@ -67,7 +68,6 @@ export class ArkivClient {
       this.rpcUrl = targetRpc;
     }
 
-    this.rpcUrl = this.rpcUrl || rpcUrl || "https://rpc.rabdi.db-chain.testnet.arkiv.network";
     this.chainId = chainId;
     this.accessKey = accessKey;
     this.writerAddress = writerAddress;
@@ -98,7 +98,7 @@ export class ArkivClient {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as { error?: { code: number; message: string }; result?: unknown };
       if (data.error) {
         throw new Error(`RPC Error (${data.error.code}): ${data.error.message}`);
       }
