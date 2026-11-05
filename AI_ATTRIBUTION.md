@@ -112,6 +112,7 @@ This document tracks all AI-assisted versus human engineering contributions acro
 | `specs/hardening/12-arkiv-submission-files.md` | Yes | Recorded Stage 3 creation of the 5 required Arkiv submission documents. | Verified all file paths and on-chain entity keys. |
 | `specs/hardening/13-readme-arkiv.md` | Yes | Recorded Stage 4 README section addition for Arkiv rabdi qualification. | Verified reproducible query and explorer links. |
 | `specs/hardening/14-arc-studio-package.md` | Yes | Recorded Stage 5 Arc Studio qualification package creation. | Verified prompt, checklist, and report template. |
+| `specs/hardening/15-demo-script-update.md` | Yes | Recorded Stage 6 demo script update with Arc Studio and Arkiv rabdi beats. | Verified runtime and voiceover lines. |
 | `arc-studio/prompt.md` | Yes | Authored paste-ready prompt for Arc Studio to generate SimulationRegistry and RebateVault. | Specified exact APIs, 0x3600... native USDC, ReentrancyGuard, and double-claim tests. |
 | `arc-studio/README.md` | Yes | Authored 14-step checklist for manual Arc Studio workflow. | Step-by-step guidance from studio.arc.io to Vercel redeployment. |
 | `arc-studio/report.md` | Yes | Authored template for Studio project URL, deployed addresses, and test results. | Retained original Foundry deployments for full reproducibility. |

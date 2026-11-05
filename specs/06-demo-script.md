@@ -1,18 +1,26 @@
 # DarkTrace — 3-Minute Video Demo Script
 
 **Event**: ETHGlobal Mumbai 2026  
-**Format**: 3 minutes, 1080p, real voiceover (no text-to-speech, no video speedup)  
+**Format**: ~3:00, 1080p, real voiceover (no text-to-speech, no video speedup)  
 **Target Prizes**: Uniswap Foundation, Arc, Arkiv  
 
 ---
 
-### [0:00 – 0:15] Hook & Problem Statement
-* **Visual**: Screen recording opens on `http://localhost:3000/dashboard`. Camera zooms slightly into the top surveillance metrics showing:
+## Pre-Recording Setup Checklist
+- [ ] Have an Arc Studio tab open at [https://studio.arc.io](https://studio.arc.io) showing the generated and verified `SimulationRegistry` and `RebateVault` contracts (60 passing tests).
+- [ ] Have `https://rabdi.explorer.arkiv.network/entity/0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca` open in an adjacent browser tab.
+- [ ] Verify both tabs and the live application (`https://darktrace-lovat.vercel.app`) load crisply from a clean profile at 100% zoom.
+- [ ] Wallet connected to Arc Testnet with address holding testnet gas.
+
+---
+
+### [0:00 – 0:15] Arc Studio Provenance & Problem Statement
+* **Visual**: One frame of the Arc Studio project page on `studio.arc.io` displaying `SimulationRegistry.sol` and `RebateVault.sol` (60 passing unit and invariant tests). Then snap directly to `http://localhost:3000/dashboard` (or `https://darktrace-lovat.vercel.app/dashboard`). Camera zooms slightly into the surveillance metrics showing:
   - 3 Monitored Pools `[DEMO DATA]`
   - $3.75 Extracted (24h) `[DEMO DATA]`
   - $5.00 USDC Vault Reserve on Arc (Live On-Chain)
 * **Voiceover**:
-  > *"LPs are losing over a billion dollars annually to MEV extraction. Current solutions force a painful trade-off: either block trades and kill routing flow, or let LPs bleed value silently. DarkTrace solves this: hooks detect the extraction, Arkiv seals the proof, and LPs get their USDC back on Arc."*
+  > *"Every contract in DarkTrace was written and deployed through Arc Studio. The SimulationRegistry and RebateVault on Arc Testnet are here—at studio.arc.io—the same code you're about to watch settle a live USDC rebate. LPs are losing over a billion dollars annually to MEV extraction. DarkTrace solves this: Uniswap v4 hooks detect the extraction, Arkiv seals the proof, and LPs get their USDC back on Arc."*
 
 ---
 
@@ -40,11 +48,12 @@
 
 ---
 
-### [1:30 – 2:05] Cryptographic Proof Sealing on Arkiv
+### [1:30 – 2:05] Cryptographic Proof Sealing on Arkiv Rabdi Testnet
 * **Visual**: The status pill turns to `ARCHIVED` (purple).
-* **Visual**: Highlight the `Canonical Receipt Hash` (`0x9c8d…abcd`) and the `Arkiv Proof Record` (`arkiv://darktrace.v1/receipt/...`). Click through to `/receipt/[hash]` to show the full immutable receipt record and transaction hashes.
+* **Visual**: Highlight the `Canonical Receipt Hash` (`0x9c8d…abcd`) and the `Arkiv Proof Record` (`arkiv://darktrace.v1/receipt/...`).
+* **Visual**: Cut for 3 seconds to `rabdi.explorer.arkiv.network` showing the live verified entity (`0xc327...f8ca`) on chain. Cut back to `/receipt/[hash]` to show the full immutable receipt record and transaction hashes.
 * **Voiceover**:
-  > *"The simulator serializes this forensic evidence into an immutable `ExtractionReceipt` and commits it to Arkiv. Arkiv acts as the permanent, decentralized proof ledger. Once sealed, neither the searcher nor the LP can alter the facts of what happened in that block."*
+  > *"The simulator serializes this forensic evidence into an immutable `ExtractionReceipt` under `darktrace.v1` on Arkiv. Written by wallet 0xb491fe5846DE735B6Cb03a677A3C6296FAB0aDA5. The entity is live on rabdi.explorer.arkiv.network—the exact query to verify it is in our README. Arkiv acts as the permanent, decentralized proof ledger. Once sealed, neither the searcher nor the LP can alter the facts of what happened in that block."*
 
 ---
 
@@ -59,19 +68,11 @@
 
 ---
 
-### [2:45 – 3:15] Network Effects & The Credit Score for MEV
-* **Visual**: Switch to `/dashboard` and show the monitored pools list.
-* **Voiceover**:
-  > *"Any Uniswap v4 pool can opt into DarkTrace by attaching our lightweight hook. It requires no changes to user routing, no latency overhead, and no impossible single-tx cross-chain assumptions. The Arkiv receipt becomes the searcher's on-chain credit score, and Arc provides predictable, low-cost USDC settlement."*
-
----
-
-### [3:15 – 3:30] Architecture Summary & Closing
-* **Visual**: Slide displaying the three buildings:
+### [2:45 – 3:00] Architecture Summary & Closing
+* **Visual**: Switch to `/dashboard` showing the monitored pools list and architecture summary:
   1. Base Sepolia (Uniswap v4 Hook)
-  2. Arc Testnet (Rebate Vault & Simulator)
-  3. Arkiv (Decentralized Proof Ledger)
+  2. Arc Testnet (Arc Studio Deployed Vault & Simulation Registry)
+  3. Arkiv Rabdi Testnet (Decentralized Proof Ledger)
   - GitHub repo URL + MIT License.
 * **Voiceover**:
-  > *"DarkTrace: MEV forensics for Uniswap v4 LPs. Hooks detect it, Arkiv seals it, and Arc pays it back. Thank you."*
-
+  > *"Any Uniswap v4 pool can opt into DarkTrace by attaching our lightweight hook. The Arkiv receipt becomes the searcher's on-chain credit score, and Arc provides predictable, low-cost USDC settlement. DarkTrace: MEV forensics for Uniswap v4 LPs. Hooks detect it, Arkiv seals it, and Arc pays it back. Thank you."*
