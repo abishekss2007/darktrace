@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useReadContract } from "wagmi";
 import { HashDisplay } from "@/components/ui/HashDisplay";
 import { StatusPill } from "@/components/ui/StatusPill";
@@ -30,6 +31,8 @@ interface LiveFeedItem {
   lpLvrDelta: string;
   status: "DETECTED" | "SIMULATED" | "ARCHIVED" | "REBATED";
   receiptHash: string;
+  arkivEntityKey?: string;
+  arkivWriteTxHash?: string;
   simulationHash: string;
   arkivURI: string;
   arcClaimTx?: string;
@@ -62,6 +65,8 @@ const INITIAL_FEED: LiveFeedItem[] = [
     lpLvrDelta: "-$1.21",
     status: "ARCHIVED",
     receiptHash: "0xe9e56b6adbf0cae90f08b28a0ae3dccd9fc4ece42eb7b0126e4f208646eae6ce",
+    arkivEntityKey: "0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca",
+    arkivWriteTxHash: "0x544ee730bb736cdbafcd837bad62f857c8ed0e0eaedf7afce807ffb060c6e0f6",
     simulationHash: "0xc9ddedeba69e600924875d3ce6c3e2cd554170c510cec4bfd5016182dc156309",
     arkivURI: "arkiv://darktrace.v1/receipt/0xe9e56b6adbf0cae90f08b28a0ae3dccd9fc4ece42eb7b0126e4f208646eae6ce",
   },
@@ -357,8 +362,37 @@ export default function DemoPage() {
             {/* Cryptographic Identifiers */}
             <div className="space-y-2.5 pt-1 border-t border-border">
               <div>
-                <div className="text-[10px] text-muted uppercase">Canonical Receipt Hash (Arkiv)</div>
-                <HashDisplay hash={selectedItem.receiptHash} truncate={true} prefixLength={10} suffixLength={8} />
+                <div className="text-[10px] text-muted uppercase">Canonical Receipt Hash</div>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <HashDisplay hash={selectedItem.receiptHash} truncate={true} prefixLength={10} suffixLength={8} />
+                  <Link
+                    href={`/receipt/${selectedItem.receiptHash}`}
+                    className="text-muted hover:text-text"
+                    title="View Receipt Dossier"
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                  </Link>
+                </div>
+              </div>
+
+              <div>
+                <div className="text-[10px] text-muted uppercase">Arkiv Rabdi Entity Key</div>
+                {selectedItem.arkivEntityKey ? (
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <HashDisplay hash={selectedItem.arkivEntityKey} truncate={true} prefixLength={10} suffixLength={8} />
+                    <a
+                      href={`https://rabdi.explorer.arkiv.network/entity/${selectedItem.arkivEntityKey}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-accent hover:underline flex items-center gap-1 text-[11px]"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      <span>Explorer</span>
+                    </a>
+                  </div>
+                ) : (
+                  <span className="text-muted text-[11px]">Unpublished in test session</span>
+                )}
               </div>
 
               <div>
@@ -367,8 +401,8 @@ export default function DemoPage() {
               </div>
 
               <div>
-                <div className="text-[10px] text-muted uppercase">Decentralized Proof URI</div>
-                <div className="text-accent text-[11px] flex items-center gap-1 mt-0.5">
+                <div className="text-[10px] text-muted uppercase">Internal App URI Reference</div>
+                <div className="text-muted text-[11px] flex items-center gap-1 mt-0.5">
                   <Database className="w-3 h-3" />
                   <span className="truncate">{selectedItem.arkivURI}</span>
                 </div>

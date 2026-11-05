@@ -16,6 +16,16 @@ export default function ReceiptPage({ params }: ReceiptPageProps) {
     (r) => r.receiptHash.toLowerCase() === params.hash.toLowerCase()
   ) || {
     receiptHash: params.hash,
+    arkivEntityKey:
+      params.hash.toLowerCase() ===
+      "0xe9e56b6adbf0cae90f08b28a0ae3dccd9fc4ece42eb7b0126e4f208646eae6ce"
+        ? "0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca"
+        : undefined,
+    arkivWriteTxHash:
+      params.hash.toLowerCase() ===
+      "0xe9e56b6adbf0cae90f08b28a0ae3dccd9fc4ece42eb7b0126e4f208646eae6ce"
+        ? "0x544ee730bb736cdbafcd837bad62f857c8ed0e0eaedf7afce807ffb060c6e0f6"
+        : undefined,
     poolId: "0x835c24ae58a98118715d7541b2c5f0df8f11ca328b8e9c9c3850441c632e8d21",
     poolName: "WETH / USDC",
     searcher: "0x1111111111111111111111111111111111111111",
@@ -58,7 +68,9 @@ export default function ReceiptPage({ params }: ReceiptPageProps) {
           <div>
             <div className="text-xs font-mono text-accent uppercase tracking-wider flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-good" />
-              Arkiv Attested Forensic Receipt
+              {receipt.arkivEntityKey
+                ? "Arkiv Testnet Attested Record"
+                : "Illustrative Forensic Receipt · Benchmark Scenario"}
             </div>
             <h1 className="text-xl font-bold font-mono text-text mt-1">
               Extraction Receipt
@@ -153,11 +165,31 @@ export default function ReceiptPage({ params }: ReceiptPageProps) {
             <HashDisplay hash={receipt.simulationHash} truncate={false} />
           </div>
 
+          {receipt.arkivEntityKey ? (
+            <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+              <span className="text-muted">Arkiv Rabdi Entity Key:</span>
+              <a
+                href={`https://rabdi.explorer.arkiv.network/entity/${receipt.arkivEntityKey}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-accent hover:underline flex items-center gap-1"
+              >
+                <HashDisplay hash={receipt.arkivEntityKey} truncate={false} />
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+          ) : (
+            <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+              <span className="text-muted">Arkiv Rabdi Entity Key:</span>
+              <span className="text-muted italic">Unpublished test fixture (no on-chain entity)</span>
+            </div>
+          )}
+
           <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-            <span className="text-muted">Arkiv Record URI:</span>
-            <span className="text-accent flex items-center gap-1">
+            <span className="text-muted">Internal Schema URI:</span>
+            <span className="text-muted flex items-center gap-1">
               <Database className="w-3.5 h-3.5" />
-              {receipt.arkivURI}
+              <span>{receipt.arkivURI} (Internal darktrace.v1 reference)</span>
             </span>
           </div>
 

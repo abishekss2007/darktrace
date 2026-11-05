@@ -12,6 +12,8 @@ export interface MockPool {
 
 export interface MockReceipt {
   receiptHash: string;
+  arkivEntityKey?: string;
+  arkivWriteTxHash?: string;
   poolId: string;
   poolName: string;
   searcher: string;
@@ -68,7 +70,9 @@ export const MOCK_POOLS: MockPool[] = [
 
 export const MOCK_RECEIPTS: MockReceipt[] = [
   {
-    receiptHash: "0x9c8d1f2b3e4a5061728394a5b6c7d8e9f01234567890abcdef1234567890abcd",
+    receiptHash: "0xe9e56b6adbf0cae90f08b28a0ae3dccd9fc4ece42eb7b0126e4f208646eae6ce",
+    arkivEntityKey: "0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca",
+    arkivWriteTxHash: "0x544ee730bb736cdbafcd837bad62f857c8ed0e0eaedf7afce807ffb060c6e0f6",
     poolId: "0x835c24ae58a98118715d7541b2c5f0df8f11ca328b8e9c9c3850441c632e8d21",
     poolName: "WETH / USDC",
     searcher: "0x1111111111111111111111111111111111111111",
@@ -80,7 +84,7 @@ export const MOCK_RECEIPTS: MockReceipt[] = [
     legitSlippageBps: 12,
     lpLvrDelta: "-$1.21",
     simulationHash: "0xc9ddedeba69e600924875d3ce6c3e2cd554170c510cec4bfd5016182dc156309",
-    arkivURI: "arkiv://darktrace.v1/receipt/0x9c8d1f2b3e4a5061728394a5b6c7d8e9f01234567890abcdef1234567890abcd",
+    arkivURI: "arkiv://darktrace.v1/receipt/0xe9e56b6adbf0cae90f08b28a0ae3dccd9fc4ece42eb7b0126e4f208646eae6ce",
     status: "ARCHIVED",
     txHashes: [
       "0xaaaa1111aaaa1111aaaa1111aaaa1111aaaa1111aaaa1111aaaa1111aaaa1111",

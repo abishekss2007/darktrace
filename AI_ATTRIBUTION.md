@@ -48,6 +48,7 @@ This document tracks all AI-assisted versus human engineering contributions acro
 | `lib/arkiv/schemas.ts` | Partial | Scaffolded `ExtractionReceipt`, `SearcherProfile`, `LPClaim` interfaces. | Implemented recursive `canonicalStringify` with lexicographical key sorting and `computeReceiptHash` (`lines 51-82`). |
 | `lib/arkiv/client.ts` | Partial | Generated `ArkivClient` class with `TODO` annotations for remote RPC calls. | Implemented deterministic in-memory fallback maps (`memoryReceipts`, `memoryProfiles`, `memoryClaims`) and `_recordSearcherExtraction` (`lines 24-167`). |
 | `lib/arkiv/client.test.ts` | Yes | Scaffolded round-trip unit tests using `node:test`. | Verified canonical hash determinism, pool/searcher indexing, and LP claim persistence. |
+| `lib/arkiv/identity.test.ts` | Yes | Scaffolded identifier separation and explorer link unit tests. | Enforced strict boundary distinction between receiptHash and arkivEntityKey. |
 | `lib/simulator/package.json` | Yes | Defined `@darktrace/simulator` package metadata and test script. | Verified `viem` peer configuration. |
 | `lib/simulator/tsconfig.json` | Yes | Generated TypeScript compiler config for `@darktrace/simulator`. | `[TODO: fill from commits]` |
 | `lib/simulator/index.ts` | Yes | Re-exported `computeCounterfactual` and simulator types. | Verified module exports. |
@@ -113,6 +114,8 @@ This document tracks all AI-assisted versus human engineering contributions acro
 | `specs/hardening/13-readme-arkiv.md` | Yes | Recorded Stage 4 README section addition for Arkiv rabdi qualification. | Verified reproducible query and explorer links. |
 | `specs/hardening/14-arc-studio-package.md` | Yes | Recorded Stage 5 Arc Studio qualification package creation. | Verified prompt, checklist, and report template. |
 | `specs/hardening/15-demo-script-update.md` | Yes | Recorded Stage 6 demo script update with Arc Studio and Arkiv rabdi beats. | Verified runtime and voiceover lines. |
+| `specs/hardening/24-read-only-link-audit.md` | Yes | Stage 0 baseline audit and clickable link verification across all documentation and routes. | Verified local/remote HEAD parity, entity key vs receipt hash proof, and link table. |
+| `specs/hardening/25-arkiv-identifier-fix.md` | Yes | Stage 1 Arkiv identity model correction and boundary enforcement specification. | Documented data model updates, explorer route disambiguation, and unit test results. |
 | `specs/submission/FINAL-SUBMISSION-CHECKLIST.md` | Yes | Compiled final submission qualification freeze checklist for Uniswap, Arc, and Arkiv. | Verified all qualifying evidence, file pointers, and live transaction hashes. |
 | `arc-studio/prompt.md` | Yes | Authored paste-ready prompt for Arc Studio to generate SimulationRegistry and RebateVault. | Specified exact APIs, 0x3600... native USDC, ReentrancyGuard, and double-claim tests. |
 | `arc-studio/README.md` | Yes | Authored 14-step checklist for manual Arc Studio workflow. | Step-by-step guidance from studio.arc.io to Vercel redeployment. |

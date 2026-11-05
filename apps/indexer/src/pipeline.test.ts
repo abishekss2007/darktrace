@@ -4,7 +4,7 @@ import { ForensicPipeline, ExtractionEventPayload } from "./pipeline";
 import { ArkivClient } from "@darktrace/arkiv";
 
 test("ForensicPipeline end-to-end event processing", async (t) => {
-  const arkiv = new ArkivClient({ namespace: "darktrace.test" });
+  const arkiv = new ArkivClient({ namespace: "darktrace.test", devMode: "memory" });
   const pipeline = new ForensicPipeline({
     arkivClient: arkiv,
     demoFast: true,
