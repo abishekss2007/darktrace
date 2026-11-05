@@ -19,6 +19,9 @@ contract DeployBaseSepoliaScript is Script {
     uint160 public constant REQUIRED_FLAGS = uint160((1 << 7) | (1 << 6)); // 0x00C0
     uint160 public constant HOOK_MASK = uint160((1 << 14) - 1); // 0x3FFF
 
+    // Canonical CREATE2 Deployer used by Foundry on EVM networks
+    address public constant CREATE2_DEPLOYER = 0x4e59b44847b379578588920cA78FbF26c0B4956C;
+
     function run() external returns (address hookAddress, address registryAddress) {
         uint256 deployerPrivateKey = vm.envOr(
             "DEPLOYER_PRIVATE_KEY",
@@ -52,14 +55,14 @@ contract DeployBaseSepoliaScript is Script {
 
         for (uint256 i = 0; i < 100000; i++) {
             bytes32 salt = bytes32(i);
-            // CREATE2 prediction formula from current deployer (broadcast caller)
+            // CREATE2 prediction formula from canonical Foundry CREATE2 deployer
             predictedAddress = address(
                 uint160(
                     uint256(
                         keccak256(
                             abi.encodePacked(
                                 bytes1(0xff),
-                                deployer,
+                                CREATE2_DEPLOYER,
                                 salt,
                                 bytecodeHash
                             )
