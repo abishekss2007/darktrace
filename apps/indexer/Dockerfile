@@ -15,4 +15,5 @@ WORKDIR /app
 COPY --from=builder /app /app
 
 ENV NODE_ENV=production
+EXPOSE 8080
 CMD ["node", "apps/indexer/dist/index.js"]
