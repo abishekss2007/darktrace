@@ -48,14 +48,14 @@
 
 ---
 
-### [2:05 – 2:45] USDC Restitution Claim on Arc & Slashing
+### [2:05 – 2:45] USDC Restitution Claim on Arc & Base Sepolia Bond Attestation
 * **Visual**: Return to `/demo`. The green button unlocks: **`[Claim $1.25 USDC Rebate]`**.
 * **Visual**: Click the claim button. A brief confirmation pulse appears.
 * **Visual**: Status switches to `REBATED` (mint green).
 * **Visual**: The top counter **`LP USDC BALANCE (ARC)`** ticks up from `$15.00` to **`$16.25 USDC`** (drawing against the **`$5.00 USDC`** live `RebateVault` reserve).
-* **Visual**: Click through to `/searcher/0x1111...` showing searcher bonded collateral (`$25.00 USDC`) reduced by `$2.10 USDC` across observed Base Sepolia extractions.
+* **Visual**: Click through to `/searcher/0x1111...` showing `bond reduced (Base Sepolia, forensic only)` by `$2.10 USDC` across observed Base Sepolia extractions.
 * **Voiceover**:
-  > *"Now, the restitution. On Arc, Circle's USDC-native Layer-1, `SimulationRegistry.sol` verifies the simulation hash, and `RebateVault.sol`—pre-funded with 5.00 USDC on-chain—releases $1.25 USDC directly to the LP. Watch the balance tick up in real time from $15.00 to $16.25 USDC."*
+  > *"Now, the restitution. On Arc, Circle's USDC-native Layer-1, `SimulationRegistry.sol` verifies the simulation hash, and `RebateVault.sol`—pre-funded with 5.00 USDC on-chain—releases $1.25 USDC directly to the LP. Watch the balance tick up in real time from $15.00 to $16.25 USDC. Independently on Base Sepolia, `SearcherRegistry` records a local forensic bond reduction against the searcher."*
 
 ---
 

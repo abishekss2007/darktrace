@@ -26,7 +26,7 @@
 │ • beforeSwap / afterSwap hooks │     │ • Counterfactual Simulator     │     │ • Immutable ExtractionReceipts │
 │ • Transient storage metrics    │     │ • SimulationRegistry.sol       │     │ • SearcherProfile reputations  │
 │ • ExtractionDetected event     │     │ • RebateVault.sol (USDC claims)│     │ • LPClaim audit trail          │
-│ • SearcherRegistry (bonds)     │     │ • Searcher bond slashing       │     │ • Queryable forensic ledger    │
+│ • SearcherRegistry (bonds)     │     │ • Pre-funded USDC restitution  │     │ • Queryable forensic ledger    │
 └────────────────────────────────┘     └────────────────────────────────┘     └────────────────────────────────┘
 ```
 

@@ -49,7 +49,7 @@ export interface SearcherProfile {
   searcher: string;            // Ethereum address of searcher bot
   extractions: number;         // Count of detected extractions
   bondedUSDC: string;          // Current active bond collateral (formatted string)
-  slashedUSDC: string;         // Cumulative slashed collateral sent to RebateVault
+  slashedUSDC: string;         // Cumulative bond reduced on Base Sepolia (forensic only)
   lastSeenBlock: number;       // Most recent block with observed activity
 }
 ```

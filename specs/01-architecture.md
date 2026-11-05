@@ -9,11 +9,12 @@ sequenceDiagram
     autonumber
     participant Attacker as Searcher / MEV Bot
     participant Pool as Uniswap v4 Pool (Base Sepolia)
-    participant Hook as DarkTraceHook.sol
+    participant Hook as DarkTraceHook.sol (Base Sepolia)
+    participant Registry as SearcherRegistry.sol (Base Sepolia)
     participant Indexer as Node Indexer & Watchdog
     participant Simulator as Arc Counterfactual Engine
     participant Arkiv as Arkiv Ledger
-    participant ArcVault as RebateVault.sol (Arc)
+    participant ArcVault as RebateVault.sol (Arc Testnet)
     participant Victim as Victim LP / Trader
 
     Note over Attacker,Pool: Sandwich Attack (Tx A: Frontrun, Tx B: Victim, Tx C: Backrun)
@@ -27,18 +28,20 @@ sequenceDiagram
 
     Note over Indexer,Simulator: Asynchronous Forensic Processing
     Indexer->>Simulator: Trigger Counterfactual Simulation(block, txs, poolState)
-    Simulator->>Simulator: Fork pre-attack pool state & re-simulate clean execution
+    Simulator->>Simulator: Compute counterfactual execution against pre-attack reserves
     Simulator->>Simulator: Compute injectedSlippageBps, legitSlippageBps, extractedUSDC
     
     Simulator->>Arkiv: Publish ExtractionReceipt & update SearcherProfile
     Arkiv-->>Simulator: Return Immutable Record URI & Hash
-    
+
+    Note over Registry,Indexer: Flow 1 — Base Sepolia Local Bond Decrement (Forensic Only, No Cross-Chain Bridge)
+    Indexer->>Registry: slashBond(searcher, localRecipient, amount) [Base Sepolia only]
+
+    Note over Simulator,Victim: Flow 2 — Arc Testnet Pre-Funded LP Restitution (Independent Flow)
     Simulator->>ArcVault: SimulationRegistry.recordSimulation(simHash, receiptHash, extractedUSDC)
-    
-    Note over Victim,ArcVault: Restitution Settlement (Next Block+)
     Victim->>ArcVault: claimRebate(receiptHash, proofBundle)
     ArcVault->>ArcVault: Verify attestation in SimulationRegistry & mark claimed
-    ArcVault-->>Victim: Transfer USDC Rebate
+    ArcVault-->>Victim: Transfer pre-funded USDC Rebate (Arc Testnet)
 ```
 
 ---
@@ -79,7 +82,7 @@ sequenceDiagram
     - $\text{LP\_LVR\_delta} = \text{Loss incurred by LPs due to toxic arbitrage}$.
 - **Contracts on Arc**:
   - `SimulationRegistry.sol`: Admin/worker authenticated registry storing verifiable `(simulationHash, receiptHash, extractedUSDC, blockNumber)`.
-  - `RebateVault.sol`: Holds USDC deposited via searcher bonds, protocol reserves, or sponsor seeding. Allows victims or affected LPs to execute `claimRebate(...)` verified against `SimulationRegistry`. Prevents double-claims via nullifier mapping `mapping(bytes32 => bool) public claimedReceipts`.
+  - `RebateVault.sol`: Holds pre-funded USDC deposited on Arc Testnet via protocol reserves or sponsor seeding (independent of Base Sepolia searcher bonds). Allows victims or affected LPs to execute `claimRebate(...)` verified against `SimulationRegistry`. Prevents double-claims via nullifier mapping `mapping(bytes32 => bool) public claimedReceipts`.
 
 ### Building 3: Arkiv Decentralized Forensic Ledger
 - **Role**: Permanent, tamper-evident proof ledger for decentralized auditing and searcher credit scoring.

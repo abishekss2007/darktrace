@@ -3,8 +3,9 @@ pragma solidity 0.8.26;
 
 /**
  * @title SearcherRegistry
- * @notice Manages voluntary MEV searcher collateral bonds and governance slashing.
- * @dev Slashed searcher bonds are routed directly to the RebateVault to compensate LPs.
+ * @notice Manages voluntary MEV searcher collateral bonds and governance slashing on Base Sepolia.
+ * @dev Records bond decrements as a local forensic attestation on Base Sepolia.
+ * // NOTE: does not settle across chains; see specs/03
  */
 contract SearcherRegistry {
     address public owner;
@@ -54,9 +55,10 @@ contract SearcherRegistry {
     }
 
     /**
-     * @notice Governance/admin slashes a toxic searcher's bond and forwards it to the Rebate Vault.
+     * @notice Governance/admin reduces a toxic searcher's bond on Base Sepolia as a local forensic penalty.
+     * // NOTE: does not settle across chains; see specs/03
      * @param searcher Address of the offending searcher bot.
-     * @param recipient Target rebate vault or compensation address.
+     * @param recipient Local Base Sepolia recipient address.
      * @param amount Slashed bond amount.
      */
     function slashBond(address searcher, address recipient, uint256 amount) external onlyOwner {

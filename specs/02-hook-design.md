@@ -91,8 +91,8 @@ event ExtractionDetected(
 
 ## 6. Searcher Bond Registry (`SearcherRegistry.sol`)
 
-- Allows searchers to bond collateral (USDC/ETH).
-- Records `mapping(address => uint256) public searcherBonds`.
+- Allows searchers to bond collateral on Base Sepolia.
+- Records `mapping(address => uint256) public bonds` and `mapping(address => uint256) public totalSlashed`.
 - Provides `slashBond(address searcher, address recipient, uint256 amount)` callable strictly by governance/admin key.
-- Slashed bond capital directly replenishes the `RebateVault` on Arc or local vault balance.
+- Bond reduction executes strictly on Base Sepolia as a local forensic attestation; it does not settle or bridge USDC to `RebateVault` on Arc Testnet (see `specs/03-arc-simulator.md` §5).
 
