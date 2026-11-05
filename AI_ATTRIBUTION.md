@@ -23,6 +23,12 @@ This document tracks all AI-assisted versus human engineering contributions acro
 | `contracts/test/RebateVault.t.sol` | Partial | Scaffolded claim and revert test cases. | Implemented attestation checks, replay verification, and reentrancy test cases. |
 | `lib/simulator/counterfactual.ts` | Partial | Generated viem call structure and type interfaces. | Implemented exact constant-product counterfactual replay, legit vs injected slippage math, and deterministic simulation hash. |
 | `lib/simulator/counterfactual.test.ts` | Yes | Scaffolded test suite using node:test. | Tested deterministic hash repeatability and positive injected slippage assertions. |
+| `apps/indexer/package.json` | Yes | Defined indexer package dependencies and workspace links. | Configured run scripts and viem peer configurations. |
+| `apps/indexer/src/pipeline.ts` | Partial | Scaffolded pipeline event router. | Implemented deduplication cache, demo fast fallback mode, structured log schema, and Arc attestation calls. |
+| `apps/indexer/src/watcher.ts` | Yes | Scaffolded viem contract event listener on Base Sepolia. | Handled event log filtering, payload normalization, and watcher error handling. |
+| `apps/indexer/src/index.ts` | Yes | Drafted service entry point and graceful SIGINT handling. | Configured environment bootstrapping and pipeline lifecycle. |
+| `apps/indexer/src/pipeline.test.ts` | Yes | Scaffolded integration test cases. | Validated end-to-end receipt writing, profile updating, and event deduplication. |
+| `apps/indexer/Dockerfile` | Yes | Drafted multi-stage Dockerfile for indexer service. | Pinned Node.js 20 Alpine builder and runner environments. |
 | `docker-compose.yml` | Yes | Drafted local worker composition for indexer and simulator. | Pinned environment variables and container profiles. |
 | `lib/arkiv/schemas.ts` | Yes | Scaffolded TypeScript interfaces and computeReceiptHash utility. | Enforced deterministic key ordering and viem keccak256 encoding. |
 | `lib/arkiv/client.ts` | Partial | Generated client adapter boilerplate with TODO annotations for Arkiv RPC methods. | Implemented offline fallback memory registries, profile auto-incrementation, and indexing methods. |
