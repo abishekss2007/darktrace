@@ -30,4 +30,6 @@ Welcome to the technical specification directory for **DarkTrace** (MEV Forensic
 | [`hardening/04-attribution-and-history.md`](./hardening/04-attribution-and-history.md) | Stage 4 commit history diagnosis (`31+` commits), `RESTRUCTURE_NOTES.md`, per-file `/AI_ATTRIBUTION.md` matrix, and spec index. |
 | [`hardening/05-simulator-honesty.md`](./hardening/05-simulator-honesty.md) | Stage 5 audit and alignment of `lib/simulator/counterfactual.ts` and `specs/03-arc-simulator.md` with constant-product (CPMM) counterfactual computation. |
 | [`hardening/06-mev-claim-citation.md`](./hardening/06-mev-claim-citation.md) | Stage 6 replacement of uncited `$1.2B` claims with conservative `$1B+ annually` floor and methodology footnote. |
+| [`hardening/07-partner-feedback.md`](./hardening/07-partner-feedback.md) | Stage 7 verification of 200–250 word partner feedback paragraphs for Uniswap Foundation, Arc, and Arkiv. |
+| [`submission/partner-feedback.md`](./submission/partner-feedback.md) | First-person engineering feedback and feature requests for Uniswap Foundation, Arc, and Arkiv. |
 
