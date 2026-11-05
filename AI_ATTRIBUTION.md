@@ -1,67 +1,105 @@
 # AI Attribution Ledger
 
-This document tracks all AI-assisted versus human engineering contributions across the DarkTrace repository in compliance with ETHGlobal Mumbai 2026 hackathon criteria.
+This document tracks all AI-assisted versus human engineering contributions across the DarkTrace repository (`git ls-files`) in compliance with ETHGlobal Mumbai 2026 hackathon criteria.
 
 ## Policy & Transparency
-- All architecture, protocol design decisions, and system verification are reviewed and validated by the lead engineer.
-- Every commit is reviewed line-by-line prior to staging.
+- All architecture, protocol design decisions, on-chain deployments, and system verification were directed, reviewed, and validated by the human author.
+- Every stage commit was reviewed line-by-line prior to staging.
+- `HUMAN_NOTES` placeholders (`[TODO: fill from commits]` where additional personal notes apply) are explicitly preserved for final author sign-off.
 
 ---
 
-## Attribution Matrix
+## Per-File Attribution Table (`git ls-files`)
 
-| File Path | AI-Assisted | What AI Did | What I Did |
+| File | AI-assisted | What AI drafted | What I rewrote / verified |
 | :--- | :--- | :--- | :--- |
-| `specs/00-plan.md` | Yes | Scaffolded implementation stage breakdown and partner alignments. | Defined honest boundary criteria, prize eligibility focus, and separated Base Sepolia bonds from Arc pre-funded restitution. |
-| `specs/01-architecture.md` | Yes | Generated initial sequence flow diagram and data models. | Formulated transient storage layout, counterfactual slippage math, and separated Flow 1 (Base Sepolia bond reduction) from Flow 2 (Arc pre-funded vault claim) in Mermaid diagram. |
-| `specs/02-hook-design.md` | Yes | Drafted transient storage slots and detection condition. | Verified bitmask calculation (`0x00C0`), inversion thresholds, and clarified Base Sepolia-only scope of `SearcherRegistry.sol`. |
-| `specs/03-arc-simulator.md` | Yes | Documented counterfactual simulation math and Arc USDC dual interface. | Formulated slippage breakdown formula, Section 4.3 (5.00 USDC live vault funding & 2.00 USDC cap), and Section 5 (Cross-Chain Restitution Out of Scope). |
-| `specs/04-arkiv-schema.md` | Yes | Documented Arkiv JSON schemas and indexing attributes. | Structured canonical receipt hash ordering, LP claim linkage, and clarified `slashedUSDC` as Base Sepolia forensic bond reduction. |
-| `specs/05-ui-ux.md` | Yes | Authored UI design tokens, color palette, and anti-slop rules. | Enforced Geist Sans/Mono typography, border-only structure, tabular numbers, and Section 4 (Testnet & Demo Data Policy). |
-| `apps/web/src/components/ui/HashDisplay.tsx` | Yes | Scaffolded hash shortener with clipboard copy button. | Added copy state feedback and monospace formatting. |
-| `apps/web/src/components/ui/StatusPill.tsx` | Yes | Generated color-coded status pills for forensic pipeline states. | Configured border-only badges for DETECTED, SIMULATED, ARCHIVED, REBATED. |
-| `apps/web/src/components/ui/DemoData.tsx` | Yes | Drafted inline `[DEMO]` badge wrapper component (`DemoData` / `DemoDataBadge`). | Enforced default-visible muted monospace `[DEMO]` pill styling for all seeded figures. |
-| `apps/web/src/components/ui/NetworkBadge.tsx` | Yes | Scaffolded header network pill component. | Configured always-visible `BASE SEPOLIA · ARC TESTNET` monospace indicator. |
-| `apps/web/src/components/layout/Header.tsx` | Partial | Scaffolded top navigation bar and RainbowKit custom connect button. | Integrated persistent `<NetworkBadge />` in header layout. |
-| `apps/web/src/app/api/stats/route.ts` | Partial | Drafted Next.js route handler with 10s cache structure. | Implemented `<450ms` bounded JSON-RPC queries to Arc Testnet USDC `balanceOf(RebateVault)` and Arkiv `darktrace.v1` namespace. |
-| `apps/web/src/data/mockData.ts` | Partial | Generated mock data structures for pools and receipts. | Rescaled all seeded receipts ($1.25, $0.85, $1.65 = $3.75) and pool totals ($2.10, $1.65, $0.00) to match the 5.00 USDC live RebateVault balance to the cent. |
-| `apps/web/src/app/page.tsx` | Partial | Scaffolded home page hero banner and 4-column metric cards. | Replaced unbacked hero numbers with 3 extractions, $3.75 extracted volume, and live $5.00 USDC RebateVault reserve wrapped in `<DemoData>`. |
-| `apps/web/src/app/dashboard/page.tsx` | Yes | Scaffolded monitored pools and receipts surveillance tables. | Implemented right-aligned tabular numbers, live $5.00 USDC vault reserve pill, and `<DemoData>` wrappers on seeded rows. |
-| `apps/web/src/app/pool/[id]/page.tsx` | Yes | Scaffolded pool inspector with TVL and volume metrics. | Rescaled fallback pool metrics ($500.00 TVL, $120.00 volume) and wrapped seeded figures in `<DemoData>`. |
-| `apps/web/src/app/receipt/[hash]/page.tsx` | Partial | Scaffolded forensic receipt detail card layout. | Rescaled fallback receipt ($1.25 / -$1.21), built toxic vs legit slippage decomposition box, and separated Flow 1 (Base Sepolia bond reduced) from Flow 2 (Arc pre-funded vault claim). |
-| `apps/web/src/app/searcher/[address]/page.tsx` | Yes | Scaffolded searcher profile and historical extractions view. | Rescaled collateral bond ($25.00 USDC) and labeled `$2.10 USDC` as `bond reduced (Base Sepolia, forensic only)` with `<DemoData>`. |
-| `apps/web/src/app/lp/[address]/page.tsx` | Yes | Scaffolded LP restitution view and claim statistics. | Wrapped seeded LP extraction and claim totals in `<DemoData>` and linked Arc Testnet settlement balances. |
-| `apps/web/src/app/demo/page.tsx` | Partial | Scaffolded two-column terminal layout. | Wired live on-chain `RebateVault` balanceOf read via wagmi (`$5.00 USDC`), rescaled demo attack to `$1.25 USDC` (`$15.00 -> $16.25 USDC`), removed fake claim tx hashes, and added `<DemoData>` badges. |
-| `contracts/src/RebateVault.sol` | Partial | Scaffolded ERC-20 USDC custody vault. | Designed replay nullifier checks, SimulationRegistry attestation verification, and self-payout guards. |
-| `contracts/src/SimulationRegistry.sol` | Yes | Scaffolded attestation storage mapping. | Implemented immutable simulation record storage and unauthorized write protections. |
-| `contracts/test/mocks/MockUSDC.sol` | Yes | Generated standard 6-decimal ERC20 test mock. | Verified transfer and allowance behavior for vault testing. |
-| `contracts/test/RebateVault.t.sol` | Partial | Scaffolded claim and revert test cases. | Implemented attestation checks, replay verification, and reentrancy test cases. |
-| `lib/simulator/counterfactual.ts` | Partial | Generated viem call structure and type interfaces. | Implemented exact constant-product counterfactual replay, legit vs injected slippage math, and deterministic simulation hash. |
-| `lib/simulator/counterfactual.test.ts` | Yes | Scaffolded test suite using node:test. | Tested deterministic hash repeatability and positive injected slippage assertions. |
-| `apps/indexer/package.json` | Yes | Defined indexer package dependencies and workspace links. | Configured run scripts and viem peer configurations. |
-| `apps/indexer/src/pipeline.ts` | Partial | Scaffolded pipeline event router. | Implemented deduplication cache, demo fast fallback mode, structured log schema, and Arc attestation calls. |
-| `apps/indexer/src/watcher.ts` | Yes | Scaffolded viem contract event listener on Base Sepolia. | Handled event log filtering, payload normalization, and watcher error handling. |
-| `apps/indexer/src/index.ts` | Yes | Drafted service entry point and graceful SIGINT handling. | Configured environment bootstrapping and pipeline lifecycle. |
-| `apps/indexer/src/pipeline.test.ts` | Yes | Scaffolded integration test cases. | Validated end-to-end receipt writing, profile updating, and event deduplication. |
-| `apps/indexer/Dockerfile` | Yes | Drafted multi-stage Dockerfile for indexer service. | Pinned Node.js 20 Alpine builder and runner environments. |
-| `docker-compose.yml` | Yes | Drafted local worker composition for indexer and simulator. | Pinned environment variables and container profiles. |
-| `lib/arkiv/schemas.ts` | Yes | Scaffolded TypeScript interfaces and computeReceiptHash utility. | Enforced deterministic key ordering and viem keccak256 encoding. |
-| `lib/arkiv/client.ts` | Partial | Generated client adapter boilerplate with TODO annotations for Arkiv RPC methods. | Implemented offline fallback memory registries, profile auto-incrementation, and indexing methods. |
-| `lib/arkiv/client.test.ts` | Yes | Scaffolded round-trip test harness using node:test. | Configured full cycle assertion suite across receipts, profiles, and claims. |
-| `pnpm-workspace.yaml` | Yes | Defined workspace package structure. | Verified package inclusion and module boundaries. |
-| `package.json` | Yes | Drafted monorepo root scripts. | Configured workspace target script pipeline. |
-| `contracts/foundry.toml` | Yes | Generated standard Foundry configuration profile. | Tuned EVM version to Cancun, enabled via_ir, and configured remappings. |
-| `contracts/src/DarkTraceHook.sol` | Partial | Generated beforeSwap/afterSwap transient-storage skeleton. | Optimized packed transient state struct to prevent stack depth; designed sandwich footprint heuristic preserving frontrun push delta. |
-| `contracts/src/SearcherRegistry.sol` | Yes | Scaffolded searcher bond deposit and slashing logic. | Added recipient validations, emergency administration protections, and `// NOTE: does not settle across chains; see specs/03` annotations. |
-| `contracts/test/mocks/MockPoolManager.sol` | Partial | Provided minimal extsload mock for StateLibrary integration. | Formatted bit-packed slot0 data representation matching v4 core layout. |
-| `contracts/test/DarkTraceHook.t.sol` | Partial | Generated unit test scaffolding. | Implemented sandwich frontrun/victim/backrun sequences, clean swap assertions, and cross-block defensive fallbacks. |
-| `contracts/test/SearcherRegistry.t.sol` | Yes | Generated happy path and revert test cases for staking and slashing. | Verified unauthorized slash reverts and balance accounting. |
-| `apps/web/package.json` | Yes | Listed dependencies for Next.js 14, wagmi v2, RainbowKit. | Pinned dependency versions and workspace aliases. |
-| `apps/web/src/config/wagmi.ts` | Partial | Generated chain configuration template for Base Sepolia and Arc Testnet. | Configured RPC fallbacks and custom chain metadata for Arc. |
-| `.github/workflows/ci.yml` | Yes | Drafted GitHub Actions workflow for Foundry and Next.js. | Configured matrix and pnpm caching steps. |
-| `specs/06-demo-script.md` | Yes | Scaffolded 3-minute video presentation script and narrative arc. | Aligned all spoken and visual numbers ($3.75 24h extracted, $5.00 USDC vault reserve, $1.25 rebate claim, $15.00 -> $16.25 LP balance) with funded Arc vault. |
-| `specs/07-deployment.md` | Yes | Drafted deployment runbook and parameter matrix. | Verified Base Sepolia and Arc Testnet addresses and verification steps. |
-| `contracts/script/DeployBaseSepolia.s.sol` | Partial | Scaffolded Forge Script deployment boilerplate. | Implemented 0x00C0 CREATE2 salt-mining search loop and verification checks. |
-| `contracts/script/DeployArcTestnet.s.sol` | Yes | Drafted Forge Script deployment for SimulationRegistry and RebateVault. | Verified native USDC ERC-20 contract target and deployment parameters. |
-| `README.md` | Partial | Scaffolded Markdown documentation layout and architecture diagram. | Authored honest boundary guarantees, terminal walkthrough, and verified contract addresses. |
-
+| `.github/workflows/ci.yml` | Yes | Drafted GitHub Actions workflow for Foundry test suite and Next.js build. | Verified Ubuntu matrix, Foundry toolchain step, and pnpm workspace build commands. |
+| `.gitignore` | Yes | Generated monorepo ignore rules for `node_modules`, `.next`, `out`, `cache`. | Added explicit `!apps/indexer/dist/**` exception for Vercel container build context. |
+| `.gitmodules` | No | Generated by `forge install` for `forge-std` and `v4-core`. | Verified submodule commit pointers for Uniswap v4 core compatibility. |
+| `.npmrc` | Yes | Drafted pnpm workspace hoisting settings. | Verified workspace dependency resolution. |
+| `AI_ATTRIBUTION.md` | Partial | Generated markdown table structure from `git ls-files`. | Populated per-file verification notes and human rewrite boundaries (`[HUMAN_NOTES]`). |
+| `LICENSE` | No | Standard MIT License text. | Selected MIT license for open-source hackathon compliance. |
+| `README.md` | Partial | Scaffolded Markdown documentation layout and architecture overview. | Authored honest boundary guarantees, verified Base Sepolia & Arc Testnet addresses, and terminal runbook. |
+| `RESTRUCTURE_NOTES.md` | Yes | Drafted commit history guide explaining initial scaffold commit `77074c6` and Vercel bundle `ec73cd7`. | Verified commit hashes and line-count explanations against `git log --shortstat`. |
+| `package.json` | Yes | Drafted root workspace script aliases (`build`, `test`, `dev`). | Verified pnpm filter targets across `@darktrace/web`, `@darktrace/indexer`, and `lib/*`. |
+| `pnpm-workspace.yaml` | Yes | Defined `apps/*` and `lib/*` workspace globs. | Verified workspace package discovery. |
+| `pnpm-lock.yaml` | No | Deterministically generated by `pnpm install`. | Verified lockfile integrity in CI. |
+| `docker-compose.yml` | Yes | Drafted local worker composition for `indexer` and `simulator`. | Pinned `ARC_RPC_URL` (`https://rpc.testnet.arc.network`) and Base Sepolia environment variables. |
+| `vercel.json` | Partial | Adapted from Vercel multi-service configuration prompt. | Configured `envPrefix: "INDEXER_"` binding on `web` service and top-level catch-all rewrite. |
+| `contracts/foundry.toml` | Yes | Generated standard Foundry configuration profile. | Tuned `evm_version = "cancun"`, `solc = "0.8.26"`, `via_ir = true`, and `@uniswap/v4-core` remappings. |
+| `contracts/foundry.lock` | No | Generated by Foundry dependency manager. | Verified pinned submodule revisions. |
+| `contracts/.gitignore` | No | Generated by `forge init`. | Verified `broadcast/` and `cache/` exclusions. |
+| `contracts/.github/workflows/test.yml` | No | Generated by `forge init` template. | Superseded by root `.github/workflows/ci.yml`. |
+| `contracts/README.md` | No | Default Foundry template README. | `[TODO: fill from commits]` |
+| `contracts/src/DarkTraceHook.sol` | Partial | Generated `beforeSwap`/`afterSwap` transient-storage skeleton (`lines 1-65`). | Rewrote packed transient state layout (`PoolTransientState`, `lines 31-58`), sandwich tick-inversion heuristic (`lines 118-174`), and `tload` -> `sload` cross-tx fallback (`commit 1de0871`). |
+| `contracts/src/SearcherRegistry.sol` | Partial | Scaffolded searcher bond deposit, withdrawal, and `slashBond` (`lines 1-80`). | Verified `onlyOwner` access control, zero-address checks, and added `// NOTE: does not settle across chains; see specs/03` (`lines 8, 59`). |
+| `contracts/src/SimulationRegistry.sol` | Yes | Scaffolded attestation storage mapping (`lines 1-62`). | Verified `recordSimulation` overwrite protection and `getAttestation` tuple return for `RebateVault`. |
+| `contracts/src/RebateVault.sol` | Partial | Scaffolded ERC-20 USDC custody vault (`lines 1-84`). | Designed `claimedReceipts` replay nullifier (`line 16`), `SimulationRegistry.getAttestation` verification (`lines 52-55`), and `ReentrancyGuard`. |
+| `contracts/test/DarkTraceHook.t.sol` | Partial | Generated Foundry test harness and swap helper (`lines 1-70`). | Wrote 3-tx sandwich detection test (`test_SandwichAttackEmitsExtractionDetected`), clean swap non-emission tests, and cross-block reset assertion. |
+| `contracts/test/SearcherRegistry.t.sol` | Yes | Generated happy-path and revert tests for staking and slashing (`lines 1-64`). | Verified unauthorized slash revert and bond accounting assertions. |
+| `contracts/test/RebateVault.t.sol` | Partial | Scaffolded claim and revert test cases (`lines 1-92`). | Verified replay rejection (`AlreadyClaimed`), unverified attestation revert, and insufficient vault balance guard. |
+| `contracts/test/mocks/MockPoolManager.sol` | Partial | Provided minimal `extsload` mock for v4 `StateLibrary.getSlot0`. | Bit-packed signed `int24` tick and `uint160` `sqrtPriceX96` matching Uniswap v4 `Slot0` layout (`lines 18-32`). |
+| `contracts/test/mocks/MockUSDC.sol` | Yes | Generated standard 6-decimal ERC-20 mock (`lines 1-42`). | Verified 6-decimal `mint` and `transfer` behavior for `RebateVault.t.sol`. |
+| `contracts/script/DeployBaseSepolia.s.sol` | Partial | Scaffolded Forge deployment script boilerplate. | Rewrote CREATE2 salt-mining loop against Foundry's canonical `CREATE2_DEPLOYER` (`0x4e59b44847b379578588920cA78FbF26c0B4956C`), mining salt `0x139d` for `0x00C0` flags (`commit f10f121`). |
+| `contracts/script/DeployArcTestnet.s.sol` | Yes | Drafted Forge deployment script for `SimulationRegistry` and `RebateVault`. | Pinned Arc native USDC ERC-20 (`0x3600000000000000000000000000000000000000`) and verified live deployment (`commit 1e01c48`). |
+| `lib/arkiv/package.json` | Yes | Defined `@darktrace/arkiv` package metadata and test script. | Verified TypeScript and `viem` dependencies. |
+| `lib/arkiv/tsconfig.json` | Yes | Generated TypeScript compiler config for `@darktrace/arkiv`. | `[TODO: fill from commits]` |
+| `lib/arkiv/index.ts` | Yes | Re-exported `ArkivClient` and schema types. | Verified public module exports. |
+| `lib/arkiv/schemas.ts` | Partial | Scaffolded `ExtractionReceipt`, `SearcherProfile`, `LPClaim` interfaces. | Implemented recursive `canonicalStringify` with lexicographical key sorting and `computeReceiptHash` (`lines 51-82`). |
+| `lib/arkiv/client.ts` | Partial | Generated `ArkivClient` class with `TODO` annotations for remote RPC calls. | Implemented deterministic in-memory fallback maps (`memoryReceipts`, `memoryProfiles`, `memoryClaims`) and `_recordSearcherExtraction` (`lines 24-167`). |
+| `lib/arkiv/client.test.ts` | Yes | Scaffolded round-trip unit tests using `node:test`. | Verified canonical hash determinism, pool/searcher indexing, and LP claim persistence. |
+| `lib/simulator/package.json` | Yes | Defined `@darktrace/simulator` package metadata and test script. | Verified `viem` peer configuration. |
+| `lib/simulator/tsconfig.json` | Yes | Generated TypeScript compiler config for `@darktrace/simulator`. | `[TODO: fill from commits]` |
+| `lib/simulator/index.ts` | Yes | Re-exported `computeCounterfactual` and simulator types. | Verified module exports. |
+| `lib/simulator/counterfactual.ts` | Partial | Generated `CounterfactualInput` / `CounterfactualOutput` interfaces and `viem` client setup. | Implemented constant-product (`x * y = k`) counterfactual pricing math, `legitSlippageBps` vs `injectedSlippageBps` decomposition, and `keccak256(encodeAbiParameters(...))` (`lines 39-140`). |
+| `lib/simulator/counterfactual.test.ts` | Yes | Scaffolded unit test suite using `node:test`. | Verified deterministic `simulationHash` repeatability and positive `injectedSlippageBps` under frontrun distortion. |
+| `apps/indexer/package.json` | Partial | Defined `@darktrace/indexer` dependencies and scripts. | Added `esbuild` standalone bundler script (`bundle`) for Vercel container isolation (`commit ec73cd7`). |
+| `apps/indexer/tsconfig.json` | Yes | Generated TypeScript compiler config for `@darktrace/indexer`. | `[TODO: fill from commits]` |
+| `apps/indexer/Dockerfile` | Partial | Drafted multi-stage Node 20 Alpine Dockerfile. | Rewrote into self-contained single-stage runner copying local `dist/index.js` so Vercel `buildah` succeeds within `apps/indexer` root (`commit ec73cd7`). |
+| `apps/indexer/src/index.ts` | Yes | Drafted HTTP health server (`/health`) and watcher bootstrap. | Configured `PORT` binding and graceful `SIGINT`/`SIGTERM` shutdown. |
+| `apps/indexer/src/watcher.ts` | Yes | Scaffolded `viem` event poller for `ExtractionDetected` on Base Sepolia. | Configured `EXTRACTION_DETECTED_ABI` and polling fallback handling. |
+| `apps/indexer/src/pipeline.ts` | Partial | Scaffolded 4-stage pipeline (`DETECTED` -> `SIMULATED` -> `ARCHIVED` -> `REBATED`). | Implemented `processedProofHashes` deduplication cache, `DEMO_FAST` mode, structured JSON logging, and `SimulationRegistry.recordSimulation` call (`lines 54-230`). |
+| `apps/indexer/src/pipeline.test.ts` | Yes | Scaffolded end-to-end pipeline test with `node:test`. | Verified receipt archival, searcher profile increment, and duplicate event suppression. |
+| `apps/web/package.json` | Yes | Listed Next.js 14, wagmi v2, viem, RainbowKit, Tailwind dependencies. | Pinned compatible package versions. |
+| `apps/web/tsconfig.json` | Yes | Standard Next.js TypeScript configuration with `@/*` path alias. | `[TODO: fill from commits]` |
+| `apps/web/next-env.d.ts` | No | Auto-generated by Next.js. | N/A |
+| `apps/web/next.config.mjs` | Yes | Configured webpack fallbacks (`fs`, `net`, `tls`) and externals (`pino-pretty`). | Verified clean production build with wagmi/RainbowKit. |
+| `apps/web/postcss.config.mjs` | Yes | Standard Tailwind CSS PostCSS configuration. | `[TODO: fill from commits]` |
+| `apps/web/tailwind.config.ts` | Yes | Configured custom forensic color tokens (`bg`, `surface`, `border`, `accent`, `danger`, `good`). | Verified strict 6px border radius and zero box-shadow defaults. |
+| `apps/web/src/app/globals.css` | Yes | Defined CSS custom properties, `.tabular-nums`, and dark scrollbars. | Verified terminal contrast and tabular numeral alignment. |
+| `apps/web/src/config/chains.ts` | Partial | Drafted custom `defineChain` definition for Arc Testnet. | Configured Chain ID `5042002`, native USDC (6 decimals), and verified RPC `https://rpc.testnet.arc.network`. |
+| `apps/web/src/config/wagmi.ts` | Yes | Configured `getDefaultConfig` for `baseSepolia` and `arcTestnet`. | Enabled SSR and WalletConnect project ID fallback. |
+| `apps/web/src/components/providers/AppClientProviders.tsx` | Yes | Wrapped `WagmiProvider`, `QueryClientProvider`, and `RainbowKitProvider`. | Customized RainbowKit dark theme tokens (`#121418`, `#1F2328`, `#F0B429`). |
+| `apps/web/src/components/layout/Header.tsx` | Partial | Scaffolded 40px top navigation bar and custom connect button. | Replaced dynamic wallet network text with persistent `<NetworkBadge />` (`BASE SEPOLIA · ARC TESTNET`). |
+| `apps/web/src/components/layout/Footer.tsx` | Partial | Scaffolded footer bar with contract address links. | Updated with live deployed Base Sepolia (`0xBCC9…80c0`) and Arc Testnet (`0x2ab7…28CD`, `0xb841…5CF8`) addresses (`commit f10f121`, `1e01c48`). |
+| `apps/web/src/components/ui/HashDisplay.tsx` | Yes | Scaffolded hex hash shortener with copy-to-clipboard button. | Verified `COPIED` state feedback and monospace formatting. |
+| `apps/web/src/components/ui/StatusPill.tsx` | Yes | Generated status badge component for `DETECTED`, `SIMULATED`, `ARCHIVED`, `REBATED`, `CLEAN`. | Verified 1px border-only terminal styling. |
+| `apps/web/src/components/ui/DemoData.tsx` | Yes | Created `<DemoData>` and `<DemoDataBadge>` inline wrapper components. | Standardized default-visible `[DEMO]` pill on all seeded figures (`Stage 1 & Stage 3`). |
+| `apps/web/src/components/ui/NetworkBadge.tsx` | Yes | Created `<NetworkBadge>` component. | Enforced always-visible `BASE SEPOLIA · ARC TESTNET` header badge (`Stage 3`). |
+| `apps/web/src/data/mockData.ts` | Partial | Generated typed mock structures (`MOCK_POOLS`, `MOCK_RECEIPTS`). | Rescaled all seeded receipts (`$1.25`, `$0.85`, `$1.65` = `$3.75`) and pool totals (`$2.10`, `$1.65`, `$0.00`) to match the `5.00 USDC` live `RebateVault` balance and removed fake claim tx hashes (`Stage 1`). |
+| `apps/web/src/app/layout.tsx` | Yes | Root Next.js layout wrapping `Header`, `<main>`, and `Footer`. | Verified metadata and dark terminal viewport layout. |
+| `apps/web/src/app/page.tsx` | Partial | Scaffolded home page banner, 4-metric grid, and architecture summary. | Bound metrics to `3` extractions `[DEMO]`, `$3.75` extracted `[DEMO]`, `$5.00 USDC` live `RebateVault` reserve, and added illustrative data disclaimer (`Stage 1 & Stage 3`). |
+| `apps/web/src/app/dashboard/page.tsx` | Partial | Scaffolded monitored pools and forensic receipts tables. | Added live `$5.00 USDC` Vault Reserve counter, wrapped all seeded cells in `<DemoData>`, and added `"Illustrative data. Live counters reflect only on-chain activity."` (`Stage 1 & Stage 3`). |
+| `apps/web/src/app/pool/[id]/page.tsx` | Partial | Scaffolded pool detail view and filtered receipt table. | Rescaled fallback pool metrics (`$500.00` TVL) and wrapped all seeded figures in `<DemoData>` (`Stage 1 & Stage 3`). |
+| `apps/web/src/app/receipt/[hash]/page.tsx` | Partial | Scaffolded forensic receipt card and 3-tx sandwich sequence list. | Rescaled fallback receipt (`$1.25` / `-$1.21`), added `<DemoData>` badges, and split bottom banner into `Flow 1 · Base Sepolia` (`bond reduced (Base Sepolia, forensic only)`) and `Flow 2 · Arc Testnet` (`Stage 1–3`). |
+| `apps/web/src/app/searcher/[address]/page.tsx` | Partial | Scaffolded searcher reputation and extraction history view. | Rescaled bond to `$25.00 USDC [DEMO]`, relabeled `$2.10 USDC [DEMO]` as `bond reduced (Base Sepolia, forensic only)`, and added local attestation caption (`Stage 1–3`). |
+| `apps/web/src/app/lp/[address]/page.tsx` | Partial | Scaffolded LP restitution account view. | Wrapped seeded extraction and claim totals in `<DemoData>` (`Stage 1 & Stage 3`). |
+| `apps/web/src/app/demo/page.tsx` | Partial | Scaffolded two-column interactive forensic terminal. | Wired live `RebateVault` `balanceOf` read via wagmi (`$5.00 USDC`), rescaled demo attack to `$1.25 USDC` (`$15.00 -> $16.25 USDC`), removed synthetic claim tx hashes, added `<DemoData>` pills, and labeled `Flow 1 · Base Sepolia` bond reduction (`Stage 1 & Stage 2`). |
+| `apps/web/src/app/api/status/route.ts` | Yes | Created `/api/status` route probing `INDEXER_URL/health`. | Verified Vercel multi-service internal binding health check (`commit fa0a528`). |
+| `apps/web/src/app/api/stats/route.ts` | Partial | Drafted `/api/stats` route with 10-second cache. | Implemented `<450ms` bounded JSON-RPC queries to Arc Testnet USDC `balanceOf(RebateVault)` and Arkiv `darktrace.v1` namespace (`Stage 3`). |
+| `specs/README.md` | Yes | Drafted specification index table with one-line descriptions and links. | Verified all core and hardening spec links (`Stage 4`). |
+| `specs/00-plan.md` | Partial | Scaffolded master plan and three-building diagram. | Defined honest boundary rules and separated Base Sepolia bonds from Arc pre-funded restitution (`Stage 2`). |
+| `specs/01-architecture.md` | Partial | Generated Mermaid sequence diagram and data models. | Updated Mermaid diagram to visually separate Flow 1 (Base Sepolia `slashBond`) and Flow 2 (Arc `claimRebate`) (`Stage 2`). |
+| `specs/02-hook-design.md` | Partial | Drafted transient storage slots and sandwich detection invariant. | Verified `0x00C0` bitmask math and documented Base Sepolia-only scope of `SearcherRegistry.sol` (`Stage 2`). |
+| `specs/03-arc-simulator.md` | Partial | Documented counterfactual slippage math and Arc USDC dual interface. | Added Section 4.3 (`5.00 USDC` live vault funding & `2.00 USDC` cap) and Section 5 (`Cross-Chain Restitution: Out of Scope for Hackathon`) (`Stage 1 & Stage 2`). |
+| `specs/04-arkiv-schema.md` | Partial | Documented `darktrace.v1` entity schemas and indexing keys. | Clarified `slashedUSDC` as cumulative bond reduced on Base Sepolia (forensic only) (`Stage 2`). |
+| `specs/05-ui-ux.md` | Partial | Authored terminal color tokens and anti-slop constraints. | Added Section 4 (`Testnet & Demo Data Policy`) covering `<NetworkBadge>`, `[DEMO]` pills, and `/api/stats` (`Stage 3`). |
+| `specs/06-demo-script.md` | Partial | Scaffolded 3-minute video demo script. | Aligned all spoken and visual numbers (`$3.75` 24h extracted, `$5.00 USDC` vault reserve, `$1.25` rebate claim, `$15.00 -> $16.25 USDC` LP balance) and separated Base Sepolia bond reduction (`Stage 1 & Stage 2`). |
+| `specs/07-deployment.md` | Partial | Drafted deployment runbook and verification commands. | Recorded live Base Sepolia (`0xBCC9…80c0`, `0x24A2…3551`) and Arc Testnet (`0xb841…5CF8`, `0x2ab7…28CD`) addresses and `5.0 USDC` funding tx (`commit f10f121`, `1e01c48`). |
+| `specs/hardening/00-audit.md` | Yes | Compiled Stage 0 diagnostic outputs (`a`–`j`). | Verified all grep counts, live `cast call` vault balance (`5000000`), and remediation order. |
+| `specs/hardening/01-vault-consistency.md` | Yes | Documented Stage 1 cent-for-cent number reconciliation. | Verified `$3.75` seeded + `$1.25` demo attack = `$5.00 USDC` vault balance. |
+| `specs/hardening/02-cross-chain-scope.md` | Yes | Documented Stage 2 two-flow separation across specs, contracts, and UI. | Verified verbatim 3-sentence out-of-scope declaration. |
+| `specs/hardening/03-demo-data-labeling.md` | Yes | Documented Stage 3 `<NetworkBadge>`, `[DEMO]` pills, and `/api/stats`. | Verified `tsc --noEmit` and UI disclaimer placement. |
+| `specs/hardening/04-attribution-and-history.md` | Yes | Documented Stage 4 commit history audit and per-file attribution rewrite. | Verified complete `git ls-files` coverage. |
+| `apps/indexer/dist/*` | No | Generated by `esbuild` (`pnpm --filter @darktrace/indexer run bundle`). | Self-contained bundle required for Vercel `apps/indexer` Docker build context (`commit ec73cd7`). |
+| `contracts/lib/*` | No | Third-party Foundry dependencies (`forge-std`, `uniswap/v4-core`). | Unmodified upstream libraries installed via `forge install`. |
