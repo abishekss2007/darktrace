@@ -45,16 +45,17 @@ flowchart LR
 
 ---
 
-## Deployed Addresses
+## Deployed Addresses & Contracts
 
-| Network | Contract / Component | Address |
-| :--- | :--- | :--- |
-| **Base Sepolia** | Uniswap v4 `PoolManager` | `0x05FF2B0E24E15B20C9Ed8704337ca525Bc3095F6` |
-| **Base Sepolia** | `DarkTraceHook` | `[Deploying in Stage 2]` |
-| **Base Sepolia** | `SearcherRegistry` | `[Deploying in Stage 2]` |
-| **Arc Testnet** | `SimulationRegistry` | `[Deploying in Stage 4]` |
-| **Arc Testnet** | `RebateVault` (USDC) | `[Deploying in Stage 4]` |
-| **Arkiv** | Namespace / Schema | `darktrace.v1.extractions` |
+| Network | Contract / Component | Address | Description |
+| :--- | :--- | :--- | :--- |
+| **Base Sepolia** | Uniswap v4 `PoolManager` | `0x05E73354cFDd6745C338b50BcFDfA3Aa6fA03408` | Canonical v4 Pool Manager |
+| **Base Sepolia** | `DarkTraceHook` | `0x712aA9D79F12A13d8031E5dE2C485A52A68400C0` | Hook with `0x00C0` (`beforeSwap`/`afterSwap`) flags |
+| **Base Sepolia** | `SearcherRegistry` | `0x83A89736c0aA13A6eE03d157640c265696d74E51` | Searcher bond escrow and governance slashing |
+| **Arc Testnet** | `SimulationRegistry` | `0xa91B334B80dEAc5a730B29311317b9bA82e4e7c8` | Attestation registry for counterfactual proofs |
+| **Arc Testnet** | `RebateVault` | `0x4De85311B930263CE81D3C89B5F942475beA798C` | Restitution vault paying USDC to victims |
+| **Arc Testnet** | `Arc Native USDC (ERC-20)`| `0x3600000000000000000000000000000000000000` | Native 6-decimal USDC interface on Arc |
+| **Arkiv Ledger** | Namespace / Schemas | `darktrace.v1` | `ExtractionReceipt`, `SearcherProfile`, `LPClaim` |
 
 ---
 
@@ -104,12 +105,12 @@ All contracts, tokens, and data feeds operate strictly on Base Sepolia and Arc T
 Comprehensive specifications are maintained in `/specs`:
 - [`00-plan.md`](specs/00-plan.md): Master hackathon execution plan.
 - [`01-architecture.md`](specs/01-architecture.md): Full technical architecture and boundary guarantees.
-- `02-hook-design.md`: Uniswap v4 hook transient storage specification (Stage 2).
-- `03-arc-simulator.md`: Counterfactual LVR mathematical specification (Stage 4).
-- `04-arkiv-schema.md`: Arkiv JSON-LD forensic schema (Stage 3).
-- `05-ui-ux.md`: Forensic terminal styling guidelines (Stage 6).
-- `06-demo-script.md`: 3-minute video presentation script (Stage 8).
-- `07-deployment.md`: Reproducible deployment instructions (Stage 8).
+- [`02-hook-design.md`](specs/02-hook-design.md): Uniswap v4 hook transient storage specification.
+- [`03-arc-simulator.md`](specs/03-arc-simulator.md): Counterfactual LVR mathematical specification.
+- [`04-arkiv-schema.md`](specs/04-arkiv-schema.md): Arkiv JSON-LD forensic schema.
+- [`05-ui-ux.md`](specs/05-ui-ux.md): Forensic terminal styling guidelines.
+- [`06-demo-script.md`](specs/06-demo-script.md): 3-minute video presentation script.
+- [`07-deployment.md`](specs/07-deployment.md): Reproducible deployment instructions.
 
 ---
 

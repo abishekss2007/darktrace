@@ -54,4 +54,9 @@ This document tracks all AI-assisted versus human engineering contributions acro
 | `apps/web/package.json` | Yes | Listed dependencies for Next.js 14, wagmi v2, RainbowKit. | Pinned dependency versions and workspace aliases. |
 | `apps/web/src/config/wagmi.ts` | Partial | Generated chain configuration template for Base Sepolia and Arc Testnet. | Configured RPC fallbacks and custom chain metadata for Arc. |
 | `.github/workflows/ci.yml` | Yes | Drafted GitHub Actions workflow for Foundry and Next.js. | Configured matrix and pnpm caching steps. |
+| `specs/06-demo-script.md` | Yes | Scaffolded 3-minute video presentation script and narrative arc. | Refined timing breakdowns, voiceover phrasing, and live clickthrough steps. |
+| `specs/07-deployment.md` | Yes | Drafted deployment runbook and parameter matrix. | Verified Base Sepolia and Arc Testnet addresses and verification steps. |
+| `contracts/script/DeployBaseSepolia.s.sol` | Partial | Scaffolded Forge Script deployment boilerplate. | Implemented 0x00C0 CREATE2 salt-mining search loop and verification checks. |
+| `contracts/script/DeployArcTestnet.s.sol` | Yes | Drafted Forge Script deployment for SimulationRegistry and RebateVault. | Verified native USDC ERC-20 contract target and deployment parameters. |
+| `README.md` | Partial | Scaffolded Markdown documentation layout and architecture diagram. | Authored honest boundary guarantees, terminal walkthrough, and verified contract addresses. |
 
