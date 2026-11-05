@@ -108,6 +108,10 @@ This document tracks all AI-assisted versus human engineering contributions acro
 | `specs/hardening/FINAL-CHECKLIST.md` | Yes | Compiled flat verification checklist across Rules 1–8 and Stages 0–8. | Verified every `✅` cites exact file and line numbers and every `⚠️` names the honest reason. |
 | `specs/hardening/09-baseline-audit.md` | Yes | Compiled Stage 0 baseline audit for submission qualification pass. | Verified git commits, file existence, Arkiv client grep, and frontend env consumption. |
 | `specs/hardening/10-uniswap-feedback.md` | Yes | Recorded Stage 1 Uniswap FEEDBACK.md creation and line verification. | Verified exact line citations in DarkTraceHook.sol. |
+| `specs/hardening/11-arkiv-rabdi-client.md` | Yes | Recorded Stage 2 Arkiv rabdi client binding and fail-loud migration. | Verified ArkivRpcError and scripts/arkiv-write-test.ts. |
+| `.env.example` | Yes | Created environment variable template for Arkiv rabdi, Arc, and Base Sepolia. | Verified placeholder values and comments. |
+| `scripts/arkiv-write-test.ts` | Yes | Authored one-shot Arkiv live verification script for write/read roundtrip. | Tested non-zero exit on missing credentials and WRITE_OK/READ_OK outputs. |
+| `package.json` | Yes | Added `arkiv:write-test` runner script to monorepo root. | Routed command through `@darktrace/arkiv` workspace. |
 | `FEEDBACK.md` | Yes | Structured Uniswap Foundation feedback document with exact sections. | Verified line citations (103–120, 125–205, 245–301) against DarkTraceHook.sol. |
 | `specs/submission/partner-feedback.md` | Partial | Structured 3-section markdown template for Uniswap Foundation, Arc, and Arkiv. | Authored first-person engineering friction notes (`DarkTraceHook.sol` `tload`/`sload` fallback, Arc `0x3600...` vs 18-dec gas, Arkiv `computeReceiptHash` canonical ordering) and feature requests. |
 | `specs/submission/qa-prep.md` | Partial | Structured 5-question Q&A rehearsal document (`60–80` words each). | Authored direct first-person answers explaining passive hook liveness, production vault funding, CPMM counterfactual math, cluster Sybil extensions, and `[DEMO]` vs live data labeling. |
