@@ -3,20 +3,20 @@ export function Footer() {
     {
       name: "v4 PoolManager",
       network: "Base Sepolia",
-      address: "0x05FF2B0E24E15B20C9Ed8704337ca525Bc3095F6",
-      explorerUrl: "https://sepolia.basescan.org/address/0x05FF2B0E24E15B20C9Ed8704337ca525Bc3095F6",
+      address: "0x05E73354cFDd6745C338b50BcFDfA3Aa6fA03408",
+      explorerUrl: "https://sepolia.basescan.org/address/0x05E73354cFDd6745C338b50BcFDfA3Aa6fA03408",
     },
     {
       name: "DarkTraceHook",
       network: "Base Sepolia",
-      address: "0x4000...hook",
-      explorerUrl: "https://sepolia.basescan.org",
+      address: "0xBCC9e1C474Ed195b3791f2c41EdAC2a25c5b80c0",
+      explorerUrl: "https://sepolia.basescan.org/address/0xBCC9e1C474Ed195b3791f2c41EdAC2a25c5b80c0",
     },
     {
       name: "RebateVault",
       network: "Arc Testnet",
-      address: "0xArc...vault",
-      explorerUrl: "https://explorer.testnet.arc.network",
+      address: "0x2ab745F51002Ce236A9A2dA81cDaA553B87f28CD",
+      explorerUrl: "https://explorer.testnet.arc.network/address/0x2ab745F51002Ce236A9A2dA81cDaA553B87f28CD",
     },
   ];
 

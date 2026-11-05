@@ -31,11 +31,11 @@ Comprehensive evidence checklist verifying submission qualification across the t
 - [x] ✅ Studio project URL responds on Arc Testnet explorer:
   - SimulationRegistry: `https://explorer.testnet.arc.io/address/0x52794Da13E573c9e73D32248a286843418Ba2983`
   - RebateVault: `https://explorer.testnet.arc.io/address/0x676065eb7c72ddf2048f21e6cb2ca6721827c1de`
-- [x] ✅ Original Foundry deployment retained for reproducibility:
+- [x] ✅ Original Foundry deployment retained and funded:
   - SimulationRegistry: `0xb8416cb4d82BA72b70C3EC55d7AC66b5DB415CF8`
   - RebateVault: `0x2ab745F51002Ce236A9A2dA81cDaA553B87f28CD` (funded with 5.00 USDC via tx `0x4289870dba2b919eac9e654e853ff45f38a03bb9a66e0be3d6da8d8e07deab9d`)
-- [ ] ⚠️ Vercel env points to Studio addresses: `[MANUAL: Optional update of NEXT_PUBLIC_REBATE_VAULT on Vercel to point to 0x6760...c1de if funded]`
-- [x] ✅ `/demo` runs end-to-end: Verified on Arc Testnet with `$1.25 USDC` rebate claim and `$15.00 -> $16.25 USDC` balance delta
+- [ ] ⚠️ Arc Studio vault unfunded: Studio's web deployer key (`0x5B12...`) is non-exportable; live demo settles against the funded Foundry deployment of the identical contracts.
+- [x] ✅ `/demo` runs end-to-end: Settles on funded RebateVault (`0x2ab7...28CD`) with `$1.25 USDC` rebate claim and `$15.00 -> $16.25 USDC` balance delta.
 
 ---
 

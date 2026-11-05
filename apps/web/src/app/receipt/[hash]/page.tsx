@@ -23,7 +23,7 @@ export default function ReceiptPage({ params }: ReceiptPageProps) {
     lp: "0x3333333333333333333333333333333333333333",
     blockNumber: 12489201,
     extractedUSDC: "1.25",
-    injectedSlippageBps: 185,
+    injectedSlippageBps: 187,
     legitSlippageBps: 12,
     lpLvrDelta: "-$1.21",
     simulationHash: "0xc9ddedeba69e600924875d3ce6c3e2cd554170c510cec4bfd5016182dc156309",
