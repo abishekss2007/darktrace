@@ -1,10 +1,24 @@
 # DarkTrace
 
-> **"LPs are losing $1B+ annually to MEV (over $1 billion annually by conservative estimates[^1]). DarkTrace gives it back, and proves it on-chain."**
+**MEV forensics and restitution for Uniswap v4 LPs.** A v4 hook fingerprints sandwich attacks on Base Sepolia. A counterfactual engine measures exactly how much the victim lost. Arkiv seals a verifiable receipt. Victims claim a USDC rebate on Arc Testnet.
 
-DarkTrace is MEV forensics for Uniswap v4 LPs: hooks detect extraction footprints, Arkiv seals the immutable proof receipt, and LPs claim USDC rebates on Arc Testnet. By separating extraction fingerprinting on-chain from deterministic counterfactual computation off-chain, DarkTrace delivers transparent restitution without interfering with trade execution or inventing synchronous cross-chain assumptions.
+> LPs and traders lose **over $1B a year** to MEV[^1]. DarkTrace measures that loss, proves it on-chain, and pays it back.
 
-[^1]: LVR/MEV loss estimates vary by methodology; see Flashbots/RAMS and Dune MEV dashboards. DarkTrace uses 'over $1B annually' as a conservative floor, not a canonical figure.
+[^1]: LVR/MEV loss estimates vary by methodology; see Flashbots/RAMS and Dune MEV dashboards. DarkTrace uses "over $1B annually" as a conservative floor, not a canonical figure.
+
+DarkTrace keeps detection and computation apart. Extraction fingerprinting happens **on-chain**, inside the hook, without touching swap execution. Loss computation happens **off-chain** and is deterministic. No step assumes synchronous cross-chain messaging.
+
+**Live app:** [darktrace-lovat.vercel.app](https://darktrace-lovat.vercel.app) · **Arc Studio project:** [studio.arc.io/app/c3240360…](https://studio.arc.io/app/c3240360-99a1-4a97-b03e-5e547be78a32?thread=c19d8800-048f-459f-8329-54f1e7b50d34) · **Arkiv entity:** [rabdi explorer](https://rabdi.explorer.arkiv.network/entity/0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca)
+
+---
+
+## Prize Tracks at a Glance
+
+| Partner | What DarkTrace uses | Where to look |
+| :--- | :--- | :--- |
+| **Uniswap Foundation** | v4 hook (`beforeSwap` / `afterSwap`) with block-scoped transient-storage state for sandwich detection, at a CREATE2-mined address | [`contracts/src/DarkTraceHook.sol`](contracts/src/DarkTraceHook.sol), [`FEEDBACK.md`](FEEDBACK.md) |
+| **Arkiv** | Every extraction receipt is written to Arkiv Rabdi with `@arkiv-network/sdk`, and every user-facing receipt view reads it back live | [Arkiv Integration](#arkiv-integration-rabdi-testnet-chain-7794095), [`/arkiv`](arkiv/README.md) |
+| **Arc** | `SimulationRegistry` + `RebateVault` paying native USDC restitution, generated, tested and deployed in Arc Studio | [Arc Integration](#arc-integration-arc-testnet-chain-5042002), [`arc-studio/report.md`](arc-studio/report.md) |
 
 ---
 
@@ -45,12 +59,18 @@ flowchart LR
     end
 ```
 
+**Flow:**
+1. A swap in a hooked v4 pool runs through `DarkTraceHook`. The hook records each swap's tick movement. When it sees a frontrun → victim → backrun pattern in one block, it emits `ExtractionDetected`.
+2. The indexer picks up the event. It prices the victim swap twice with the CPMM formula, once against the pre-attack reserves and once after the frontrun, and isolates the injected slippage.
+3. The result is sealed as an `ExtractionReceipt` entity on Arkiv. The searcher's reputation profile is updated.
+4. The simulation is attested in `SimulationRegistry` on Arc. `RebateVault` pays USDC only against an attested receipt, and only once per receipt.
+
 ---
 
 ## Product Preview
 
 ### 1. Interactive Forensic Terminal (`/demo`)
-> **Real-time Uniswap v4 sandwich detection, CPMM counterfactual slippage decomposition, and Arkiv proof verification:**
+> **Guided walkthrough of sandwich detection, CPMM counterfactual slippage decomposition, and Arkiv proof verification.**
 
 [![DarkTrace Interactive Forensic Terminal](docs/screenshots/demo-terminal.png)](https://darktrace-lovat.vercel.app/demo)
 
@@ -58,16 +78,32 @@ flowchart LR
 <summary><b>View Surveillance Dashboard & Extraction Receipt Screenshots</b></summary>
 
 ### 2. Forensics Surveillance Matrix (`/dashboard`)
-> **Live surveillance of Uniswap v4 pools, active Arc Vault USDC reserves, and recent extraction receipts:**
+> **Monitored Uniswap v4 pools, the Arc vault's USDC reserve, and recent extraction receipts read live from Arkiv.**
 
 [![DarkTrace Surveillance Matrix](docs/screenshots/dashboard.png)](https://darktrace-lovat.vercel.app/dashboard)
 
-### 3. Cryptographic Extraction Receipt (`/receipt/0xe9e5...`)
-> **Attested loss record with 3-tx sandwich breakdown, canonical receiptHash, and Arkiv Rabdi explorer deep-link:**
+### 3. Extraction Receipt (`/receipt/0xe9e5…`)
+> **Attested loss record: the 3-tx sandwich, the canonical `receiptHash`, the Arkiv entity key and owner, and an explorer deep-link.**
 
 [![DarkTrace Forensic Receipt](docs/screenshots/receipt.png)](https://darktrace-lovat.vercel.app/receipt/0xe9e56b6adbf0cae90f08b28a0ae3dccd9fc4ece42eb7b0126e4f208646eae6ce)
 
 </details>
+
+---
+
+## What Is Live vs. Simulated
+
+Judges should be able to tell at a glance what runs for real.
+
+| Component | Status |
+| :--- | :--- |
+| `DarkTraceHook`, `SearcherRegistry` on Base Sepolia | **Deployed** |
+| `SimulationRegistry`, `RebateVault` on Arc Testnet | **Deployed.** The Foundry vault holds a **5.00 USDC** reserve |
+| Indexer watching the hook | **Live** (`/api/indexer/health` reports the hook address and `arkivWriter`) |
+| Arkiv receipts | **Live.** Written with the SDK, read by `/dashboard`, `/receipt`, `/pool`, `/searcher`, `/lp`, `/api/stats` |
+| Arc vault USDC reserve | **Live** on-chain `balanceOf` read in `/api/stats` (the dashboard badge shows the funded amount) |
+| `/demo` walkthrough | **Simulated in the browser.** It replays the pipeline and does not broadcast the rebate claim |
+| Pool TVL / 24h volume on the dashboard | **Illustrative**, marked `[DEMO]` in the UI |
 
 ---
 
@@ -76,72 +112,83 @@ flowchart LR
 | Network | Contract / Component | Address | Description |
 | :--- | :--- | :--- | :--- |
 | **Base Sepolia** | Uniswap v4 `PoolManager` | `0x05E73354cFDd6745C338b50BcFDfA3Aa6fA03408` | Canonical v4 Pool Manager |
-| **Base Sepolia** | `DarkTraceHook` | `0xBCC9e1C474Ed195b3791f2c41EdAC2a25c5b80c0` | Hook with `0x00C0` (`beforeSwap`/`afterSwap`) flags |
-| **Base Sepolia** | `SearcherRegistry` | `0x24A2669C706CCE71BAea24a4De18D9D215713551` | Searcher bond escrow and governance slashing |
-| **Arc Testnet** | `SimulationRegistry` (Foundry) | `0xb8416cb4d82BA72b70C3EC55d7AC66b5DB415CF8` | Attestation registry for counterfactual proofs |
-| **Arc Testnet** | `RebateVault` (Foundry) | `0x2ab745F51002Ce236A9A2dA81cDaA553B87f28CD` | Active settlement vault funded with 5.00 USDC reserve |
-| **Arc Testnet** | `SimulationRegistry` (Arc Studio) | `0x52794Da13E573c9e73D32248a286843418Ba2983` | Studio deployment (60/60 passing tests) |
-| **Arc Testnet** | `RebateVault` (Arc Studio) | `0x676065eb7c72ddf2048f21e6cb2ca6721827c1de` | Studio provenance contract with advanced stablecoin logic |
-| **Arc Testnet** | `Arc Native USDC (ERC-20)`| `0x3600000000000000000000000000000000000000` | Native 6-decimal USDC interface on Arc |
-| **Arkiv (rabdi, 7794095)** | Namespace | `darktrace.v1` | `ExtractionReceipt` / `SearcherProfile` / `LPClaim` |
-| **Arkiv (rabdi, 7794095)** | Sample entity key | `0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca` | Verified on `rabdi.explorer.arkiv.network` |
+| **Base Sepolia** | `DarkTraceHook` | `0xBCC9e1C474Ed195b3791f2c41EdAC2a25c5b80c0` | Hook with `0x00C0` (`beforeSwap` / `afterSwap`) permission flags |
+| **Base Sepolia** | `SearcherRegistry` | `0x24A2669C706CCE71BAea24a4De18D9D215713551` | Searcher bond escrow and owner-governed slashing |
+| **Arc Testnet** | `SimulationRegistry` (Foundry) | `0xb8416cb4d82BA72b70C3EC55d7AC66b5DB415CF8` | Attestation registry used by the live app |
+| **Arc Testnet** | `RebateVault` (Foundry) | `0x2ab745F51002Ce236A9A2dA81cDaA553B87f28CD` | Settlement vault used by the live app, funded with 5.00 USDC |
+| **Arc Testnet** | `SimulationRegistry` (Arc Studio) | `0x52794Da13E573c9e73D32248a286843418Ba2983` | Generated, tested and deployed in Arc Studio |
+| **Arc Testnet** | `RebateVault` (Arc Studio) | `0x676065eb7c72ddf2048f21e6cb2ca6721827c1de` | Generated, tested and deployed in Arc Studio |
+| **Arc Testnet** | Arc native USDC (ERC-20) | `0x3600000000000000000000000000000000000000` | Native 6-decimal USDC interface |
+| **Arkiv (Rabdi, 7794095)** | Namespace | `darktrace.v1` | `ExtractionReceipt` / `SearcherProfile` / `LPClaim` |
+| **Arkiv (Rabdi, 7794095)** | Writer wallet | `0xb491fe5846DE735B6Cb03a677A3C6296FAB0aDA5` | Only entities owned by this wallet are trusted on read |
+| **Arkiv (Rabdi, 7794095)** | Sample entity key | `0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca` | Viewable on `rabdi.explorer.arkiv.network` |
 
 ---
 
-## Arkiv Integration (rabdi testnet, chain 7794095)
+## Arkiv Integration (Rabdi testnet, chain 7794095)
 
-- **Namespace**: `darktrace.v1`
-- **Writer wallet(s)**: `0xb491fe5846DE735B6Cb03a677A3C6296FAB0aDA5`
-- **Entities**: `ExtractionReceipt`, `SearcherProfile`, `LPClaim` (SDK schemas in [`lib/arkiv/sdk.ts`](./lib/arkiv/sdk.ts))
-- **Read by the app**: `/dashboard`, `/receipt/[hash]`, `/pool/[id]`, `/searcher/[address]`, `/lp/[address]` and `/api/stats` all query Arkiv server-side on each request, and each shows a "Live from Arkiv Rabdi" strip with the query it ran. See [`/arkiv/how-you-use-arkiv.md`](./arkiv/how-you-use-arkiv.md)
-- **Written by the indexer**: [`apps/indexer/src/pipeline.ts`](./apps/indexer/src/pipeline.ts) seals each detected extraction via `createEntity` (requires `ARKIV_PRIVATE_KEY`)
-- **Canonical receiptHash**: `0xe9e56b6adbf0cae90f08b28a0ae3dccd9fc4ece42eb7b0126e4f208646eae6ce` (stored as attribute inside `$key` `0xc327...`)
-- **Schema + freshness + expiry policy**: see [`/arkiv/schema.md`](./arkiv/schema.md)
-- **Feedback**: see [`/arkiv/friction.md`](./arkiv/friction.md)
-- **Reproducible verification query** (run from any machine with `ARKIV_RPC_URL` set to `https://rpc.rabdi.db-chain.testnet.arkiv.network`):
+- **Namespace:** `darktrace.v1`
+- **Writer wallet:** `0xb491fe5846DE735B6Cb03a677A3C6296FAB0aDA5`
+- **Entities:** `ExtractionReceipt`, `SearcherProfile`, `LPClaim`. SDK schemas are in [`lib/arkiv/sdk.ts`](lib/arkiv/sdk.ts).
+- **Written by** the indexer ([`apps/indexer/src/pipeline.ts`](apps/indexer/src/pipeline.ts)) via `createEntity` for every detected extraction. This requires `ARKIV_PRIVATE_KEY`.
+- **Read by** `/dashboard`, `/receipt/[hash]`, `/pool/[id]`, `/searcher/[address]`, `/lp/[address]` and `/api/stats`.
+  - Each queries Arkiv server-side on every request, filtered to the writer wallet.
+  - Each shows a **"Live from Arkiv Rabdi"** strip with the query it ran.
+  - If Arkiv is unreachable, the page shows an error. It never falls back to mock data.
+- **Docs:** [`schema.md`](arkiv/schema.md) (schemas, indexing, expiry) · [`how-you-use-arkiv.md`](arkiv/how-you-use-arkiv.md) · [`why-arkiv.md`](arkiv/why-arkiv.md) · [`reach.md`](arkiv/reach.md) · [`friction.md`](arkiv/friction.md)
 
-  ```typescript
-  import { createPublicClient, http } from "viem";
-  import { createPublicClient as createArkivClient } from "@arkiv-network/sdk";
-  import { rabdi } from "@arkiv-network/sdk/chains";
-  import { eq } from "@arkiv-network/sdk/query";
+**Query judges can run.** Node ≥ 22 with `@arkiv-network/sdk` and `viem` installed. `ARKIV_ACCESS_KEY` is optional; without it you use the rate-limited public endpoint.
 
-  const client = createArkivClient({
-    chain: rabdi({ accessKey: process.env.ARKIV_ACCESS_KEY }),
-    transport: http(),
-  });
+```typescript
+import { http } from "viem";
+import { createPublicClient } from "@arkiv-network/sdk";
+import { rabdi } from "@arkiv-network/sdk/chains";
+import { eq } from "@arkiv-network/sdk/query";
 
-  const res = await client
-    .select({
-      $key: true,
-      $owner: true,
-      receiptHash: true,
-      poolId: true,
-      searcher: true,
-      victim: true,
-      extractedUSDC: true,
-    })
-    .where(eq("$key", "0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca"))
-    .fetch();
+const client = createPublicClient({
+  chain: rabdi({ accessKey: process.env.ARKIV_ACCESS_KEY ?? "" }),
+  transport: http(),
+});
 
-  console.log("Verified entity:", res.entities[0]);
-  ```
+const res = await client
+  .select({ $key: true, $owner: true, receiptHash: true, poolId: true, searcher: true, victim: true, extractedUSDC: true })
+  .where(eq("receiptHash", "0xe9e56b6adbf0cae90f08b28a0ae3dccd9fc4ece42eb7b0126e4f208646eae6ce"))
+  .fetch();
 
-- **Explorer link to live entity**:
-  [https://rabdi.explorer.arkiv.network/entity/0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca](https://rabdi.explorer.arkiv.network/entity/0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca)
+console.log(res.entities[0]); // $key 0xc327d5db…f8ca, $owner 0xb491…aDA5, extractedUSDC 1.25
+```
 
-- **Sanity checks**:
-  - `pnpm arkiv:verify`: read-only, no key needed. Resolves the sample receipt and runs the pool, searcher and recent-receipt queries the UI uses.
-  - `pnpm arkiv:write-test`: needs `ARKIV_PRIVATE_KEY`. Writes one receipt and reads it back by `receiptHash`.
+Or, from this repo:
+
+```bash
+pnpm arkiv:verify       # read-only, no key needed: receipt by hash, by pool, by searcher, recent
+pnpm arkiv:write-test   # needs ARKIV_PRIVATE_KEY: writes one receipt and reads it back
+```
+
+---
+
+## Arc Integration (Arc Testnet, chain 5042002)
+
+- **Arc Studio project:** [studio.arc.io/app/c3240360-99a1-4a97-b03e-5e547be78a32](https://studio.arc.io/app/c3240360-99a1-4a97-b03e-5e547be78a32?thread=c19d8800-048f-459f-8329-54f1e7b50d34)
+- **Generated in Studio** from [`arc-studio/prompt.md`](arc-studio/prompt.md): `SimulationRegistry` and `RebateVault`, plus a Foundry suite (unit, fuzz, invariant and reentrancy tests). The suite passed in Studio.
+- **Deployed from Studio:** `SimulationRegistry` `0x52794Da1…2983` and `RebateVault` `0x676065eb…c1de`.
+- **Settlement asset:** Arc native USDC (`0x3600…0000`, 6 decimals).
+- **What the vault enforces:**
+  - pays only against a receipt attested in `SimulationRegistry`
+  - never pays more than the attested amount
+  - pays each receipt at most once (replay nullifier)
+  - checks-effects-interactions with a reentrancy guard
+  - blocks self-payout
+- **Live app settlement:** Studio's deployer key cannot be exported, so the live app uses a Foundry deployment of the registry and vault, funded with 5.00 USDC. Details: [`arc-studio/report.md`](arc-studio/report.md).
 
 ---
 
 ## Local Development Quickstart
 
 ### Prerequisites
-- Node.js >= 20.x, `pnpm` == 9.1.4
+- Node.js ≥ 20 (≥ 22 to run the Arkiv SDK scripts) and `pnpm` 9.1.4
 - Foundry (`forge`, `cast`, `anvil`)
-- Docker & Docker Compose (optional for containerized indexer daemon)
+- Docker & Docker Compose (optional, for the containerized indexer)
 
 ### Commands
 ```bash
@@ -154,63 +201,85 @@ pnpm contracts:test
 # 3. Run TypeScript test suites (simulator, arkiv, indexer)
 pnpm test
 
-# 4. Start local Next.js web application
+# 4. Start the Next.js web app
 pnpm dev
 
-# 5. Optional: Run indexer daemon in Docker
+# 5. Optional: run the indexer daemon in Docker
 docker compose build
 docker compose up -d
 curl http://localhost:8080/health
 docker compose down
 ```
 
+Copy [`.env.example`](.env.example) to `.env` first. Reads from Arkiv need no key. The indexer needs `ARKIV_PRIVATE_KEY` to write; set `ARKIV_DEV_MODE=memory` for offline runs.
+
 ---
 
 ## How the Demo Works
 
-Visit `/demo` in the web application for an interactive forensic walkthrough:
-1. **Trigger Sandwich**: Replays a 3-tx sandwich sequence (frontrun swap, victim swap, backrun swap) against Uniswap v4.
-2. **Forensic Fingerprint**: The hook observes the transient tick inversion and emits `ExtractionDetected`.
-3. **Counterfactual Engine**: Decomposes gross observed slippage into normal liquidity slippage (`12 bps`) and injected MEV slippage (`175 bps`), calculating the exact victim restitution ($1.25 USDC).
-4. **Arkiv Attestation**: Seals an immutable `ExtractionReceipt` into the proof ledger.
-5. **Rebate Claim**: The LP previews restitution against `RebateVault.sol` on Arc Testnet; the interactive demo simulates settlement in the frontend without broadcasting unverified transactions.
+Visit [`/demo`](https://darktrace-lovat.vercel.app/demo) for a guided forensic walkthrough:
+1. **Trigger sandwich:** replays a 3-tx sequence (frontrun swap, victim swap, backrun swap) against a Uniswap v4 pool.
+2. **Forensic fingerprint:** the hook sees the same-block tick push and reversal, and emits `ExtractionDetected`.
+3. **Counterfactual engine:** splits the victim's slippage into normal liquidity slippage (**12 bps**) and injected MEV slippage (**187 bps**), giving a **$1.25 USDC** restitution.
+4. **Arkiv attestation:** the receipt is sealed as an `ExtractionReceipt` entity. Open it from the dashboard to see it read back live.
+5. **Rebate claim:** the LP previews restitution against `RebateVault.sol` on Arc Testnet. The walkthrough simulates settlement in the browser and does not broadcast the transaction.
+
+---
+
+## Real End-to-End Run
+
+`/demo` is a browser walkthrough. This command runs the **real** pipeline on testnets, with no simulated steps:
+
+```bash
+PRIVATE_KEY=0x… pnpm e2e:real    # the DarkTrace writer wallet (0xb491…aDA5)
+```
+
+1. **Base Sepolia:** [`E2ESandwich.s.sol`](contracts/script/E2ESandwich.s.sol) creates a tUSDC/tWETH pool on the deployed `DarkTraceHook` and executes frontrun → victim → backrun.
+   - The searcher and the victim use different router contracts, because in v4 the hook's `sender` is the router.
+   - All three swaps land in one transaction, which guarantees the same block and the right order.
+2. **Hook:** emits `ExtractionDetected` naming the searcher and victim routers.
+3. **Indexer:** [`onchain.ts`](apps/indexer/src/onchain.ts) rebuilds the three swaps and the pre-attack price from the PoolManager's `Swap` events alone, then runs the CPMM counterfactual.
+4. **Arkiv + Arc:** seals the `ExtractionReceipt` on Arkiv and attests it in `SimulationRegistry`.
+5. **Rebate:** [`claim.ts`](apps/indexer/src/claim.ts) claims the attested USDC from `RebateVault`.
+
+Both sides of this sandwich are controlled by the operator. It is a scripted, real on-chain attack for verification, sized so that the searcher profits after fees and the victim's loss (about $3.6) is fully repayable from the vault reserve.
 
 ---
 
 ## Testnet Disclaimer
 
-All contracts, tokens, and data feeds operate strictly on Base Sepolia and Arc Testnet environments. No real user funds or production mainnet assets are involved.
+All contracts, tokens and data feeds run on Base Sepolia, Arc Testnet and Arkiv Rabdi testnet only. No real user funds or mainnet assets are involved.
 
 ---
 
 ## Submission Artifacts & Evidence
 
-- **Link Audit & Verification Matrix**: [`docs/evidence/link-audit.md`](docs/evidence/link-audit.md)
-- **Visual Evidence & Screenshots**: [`docs/screenshots/README.md`](docs/screenshots/README.md)
-- **Uniswap Foundation Feedback**: [`FEEDBACK.md`](FEEDBACK.md)
-- **Arc Studio Package & Test Report**: [`arc-studio/report.md`](arc-studio/report.md)
-- **Arkiv Integration Package**: [`arkiv/README.md`](arkiv/README.md)
-- **Final Submission Checklist**: [`specs/submission/FINAL-SUBMISSION-CHECKLIST.md`](specs/submission/FINAL-SUBMISSION-CHECKLIST.md)
+- **Link audit & verification matrix:** [`docs/evidence/link-audit.md`](docs/evidence/link-audit.md)
+- **Visual evidence & screenshots:** [`docs/screenshots/README.md`](docs/screenshots/README.md)
+- **Uniswap Foundation feedback:** [`FEEDBACK.md`](FEEDBACK.md)
+- **Arc Studio package & test report:** [`arc-studio/report.md`](arc-studio/report.md)
+- **Arkiv integration package:** [`arkiv/README.md`](arkiv/README.md)
+- **Final submission checklist:** [`specs/submission/FINAL-SUBMISSION-CHECKLIST.md`](specs/submission/FINAL-SUBMISSION-CHECKLIST.md)
 
 ---
 
 ## Specification Documents
 
-Comprehensive specifications are maintained in `/specs`:
-- [`00-plan.md`](specs/00-plan.md): Master hackathon execution plan.
-- [`01-architecture.md`](specs/01-architecture.md): Full technical architecture and boundary guarantees.
-- [`02-hook-design.md`](specs/02-hook-design.md): Uniswap v4 hook transient storage specification.
-- [`03-arc-simulator.md`](specs/03-arc-simulator.md): Counterfactual LVR mathematical specification.
-- [`04-arkiv-schema.md`](specs/04-arkiv-schema.md): Arkiv JSON-LD forensic schema.
-- [`05-ui-ux.md`](specs/05-ui-ux.md): Forensic terminal styling guidelines.
-- [`06-demo-script.md`](specs/06-demo-script.md): 3-minute video presentation script.
-- [`07-deployment.md`](specs/07-deployment.md): Reproducible deployment instructions.
+The full specifications are in [`/specs`](specs):
+- [`00-plan.md`](specs/00-plan.md): hackathon execution plan
+- [`01-architecture.md`](specs/01-architecture.md): technical architecture and boundary guarantees
+- [`02-hook-design.md`](specs/02-hook-design.md): Uniswap v4 hook transient-storage design
+- [`03-arc-simulator.md`](specs/03-arc-simulator.md): counterfactual LVR math
+- [`04-arkiv-schema.md`](specs/04-arkiv-schema.md): Arkiv forensic schema
+- [`05-ui-ux.md`](specs/05-ui-ux.md): forensic terminal styling guidelines
+- [`06-demo-script.md`](specs/06-demo-script.md): 3-minute video script
+- [`07-deployment.md`](specs/07-deployment.md): reproducible deployment instructions
 
 ---
 
 ## AI Attribution
 
-In compliance with ETHGlobal Mumbai 2026 transparency standards, all contributions are audited in [`AI_ATTRIBUTION.md`](AI_ATTRIBUTION.md).
+In line with ETHGlobal Mumbai 2026 transparency rules, AI-assisted and human contributions are recorded per file in [`AI_ATTRIBUTION.md`](AI_ATTRIBUTION.md).
 
 ---
 

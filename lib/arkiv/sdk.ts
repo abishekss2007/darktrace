@@ -133,29 +133,42 @@ function toReceipt(row: any): ArkivReceipt {
 }
 
 // ─── Client ─────────────────────────────────────────────────────────────────
+/** Trims whitespace and one pair of surrounding quotes (a common copy-paste artefact in env UIs). */
+const cleanEnv = (v: string | undefined) => (v ?? "").trim().replace(/^(['"])(.*)\1$/, "$2").trim();
+
+export type WriterKeyStatus = "ok" | "missing" | "invalid";
+
+/** Normalises a private key; returns null when it is not 32 bytes of hex. Never throws. */
+export function normalizePrivateKey(raw: string | undefined): Hex | null {
+  let pk = cleanEnv(raw);
+  if (!pk) return null;
+  if (!pk.startsWith("0x")) pk = `0x${pk}`;
+  return isHex(pk) && pk.length === 66 ? (pk as Hex) : null;
+}
+
 export class ArkivSdk {
   readonly writerAddress: Hex;
+  /** Write-key state. Reads never depend on it, so a bad key cannot take the UI down. */
+  readonly writerKeyStatus: WriterKeyStatus;
   private readonly accessKey: string;
   private readonly privateKey?: Hex;
 
   constructor(config: ArkivSdkConfig = {}) {
-    this.accessKey = config.accessKey ?? process.env.ARKIV_ACCESS_KEY ?? "";
-    const writer = config.writerAddress ?? process.env.ARKIV_WRITER_ADDRESS ?? DEFAULT_WRITER_ADDRESS;
+    this.accessKey = cleanEnv(config.accessKey ?? process.env.ARKIV_ACCESS_KEY);
+    const writer = cleanEnv(config.writerAddress ?? process.env.ARKIV_WRITER_ADDRESS) || DEFAULT_WRITER_ADDRESS;
     if (!isHex(writer) || writer.length !== 42) {
-      throw new Error(`[arkiv] ARKIV_WRITER_ADDRESS must be a 0x address, got "${writer}"`);
+      throw new Error(`[arkiv] ARKIV_WRITER_ADDRESS must be a 0x address (40 hex chars), got ${writer.length} chars`);
     }
-    this.writerAddress = writer;
+    this.writerAddress = writer as Hex;
 
-    let pk = (config.privateKey ?? process.env.ARKIV_PRIVATE_KEY ?? "").trim();
-    if (pk && !pk.startsWith("0x")) pk = `0x${pk}`;
-    if (pk) {
-      if (!isHex(pk) || pk.length !== 66) throw new Error("[arkiv] ARKIV_PRIVATE_KEY must be 32 bytes hex");
-      this.privateKey = pk;
-    }
+    const raw = config.privateKey ?? process.env.ARKIV_PRIVATE_KEY;
+    const pk = normalizePrivateKey(raw);
+    if (pk) this.privateKey = pk;
+    this.writerKeyStatus = pk ? "ok" : cleanEnv(raw) ? "invalid" : "missing";
   }
 
   get canWrite(): boolean {
-    return Boolean(this.privateKey);
+    return this.writerKeyStatus === "ok";
   }
 
   private chain() {
@@ -167,6 +180,9 @@ export class ArkivSdk {
   }
 
   private writer() {
+    if (this.writerKeyStatus === "invalid") {
+      throw new Error("[arkiv] ARKIV_PRIVATE_KEY is set but is not 32 bytes hex (check for quotes or extra characters)");
+    }
     if (!this.privateKey) throw new Error("[arkiv] ARKIV_PRIVATE_KEY is required to write to Arkiv");
     return createWalletClient({
       chain: this.chain(),
