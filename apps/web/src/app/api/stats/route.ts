@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { fromArkiv, sumUSDC } from "@/lib/arkiv";
+
+export const dynamic = "force-dynamic";
 
 const ARC_RPC_URL = process.env.NEXT_PUBLIC_ARC_RPC_URL || "https://rpc.testnet.arc.network";
-const ARKIV_RPC_URL = process.env.ARKIV_RPC_URL || "https://rpc.arkiv.network";
 const CACHE_TTL_MS = 10_000;
 
 interface StatsPayload {
@@ -9,8 +11,8 @@ interface StatsPayload {
   liveReceiptsCount: number;
   liveExtractedUSDC: string;
   vaultReserveUSDC: string;
-  seededReceiptsCount: number;
-  seededExtractedUSDC: string;
+  arkivSource: "rabdi" | "unreachable";
+  arkivError?: string;
   cachedAt: string;
 }
 
@@ -57,34 +59,11 @@ export async function GET() {
     // Fallback to verified on-chain balance (5.00 USDC)
   }
 
-  // 2. Live Arkiv darktrace.v1 namespace aggregation (<450ms timeout)
-  try {
-    const arkivRes = await fetch(ARKIV_RPC_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: 1,
-        method: "arkiv_queryEntities",
-        params: { namespace: "darktrace.v1", filter: { entityType: "ExtractionReceipt" } },
-      }),
-      signal: AbortSignal.timeout(450),
-    });
-    if (arkivRes.ok) {
-      const json = (await arkivRes.json()) as {
-        result?: Array<{ extractedUSDC?: string }>;
-      };
-      if (Array.isArray(json.result)) {
-        liveReceiptsCount = json.result.length;
-        const sum = json.result.reduce(
-          (acc, item) => acc + parseFloat(item.extractedUSDC || "0"),
-          0
-        );
-        liveExtractedUSDC = sum.toFixed(2);
-      }
-    }
-  } catch {
-    // Arkiv remote endpoint unreachable or empty; report 0 live records honestly
+  // 2. Live Arkiv aggregation via @arkiv-network/sdk (receipts owned by the DarkTrace writer)
+  const arkivRes = await fromArkiv((sdk) => sdk.listRecentReceipts(100));
+  if (arkivRes.ok) {
+    liveReceiptsCount = arkivRes.data.length;
+    liveExtractedUSDC = sumUSDC(arkivRes.data);
   }
 
   const data: StatsPayload = {
@@ -92,8 +71,8 @@ export async function GET() {
     liveReceiptsCount,
     liveExtractedUSDC,
     vaultReserveUSDC,
-    seededReceiptsCount: 3,
-    seededExtractedUSDC: "3.75",
+    arkivSource: arkivRes.ok ? "rabdi" : "unreachable",
+    arkivError: arkivRes.ok ? undefined : arkivRes.error,
     cachedAt: new Date(now).toISOString(),
   };
 

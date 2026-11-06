@@ -1,9 +1,12 @@
 import Link from "next/link";
-import { MOCK_RECEIPTS } from "@/data/mockData";
 import { HashDisplay } from "@/components/ui/HashDisplay";
-import { StatusPill } from "@/components/ui/StatusPill";
 import { DemoData } from "@/components/ui/DemoData";
+import { ArkivSource } from "@/components/arkiv/ArkivSource";
+import { ReceiptsTable } from "@/components/arkiv/ReceiptsTable";
+import { fromArkiv, sumUSDC, toView, writerAddress } from "@/lib/arkiv";
 import { ArrowLeft, AlertTriangle } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 interface SearcherPageProps {
   params: {
@@ -11,14 +14,13 @@ interface SearcherPageProps {
   };
 }
 
-export default function SearcherPage({ params }: SearcherPageProps) {
-  const searcherReceipts = MOCK_RECEIPTS.filter(
-    (r) => r.searcher.toLowerCase() === params.address.toLowerCase()
-  );
-
-  const totalExtracted = searcherReceipts
-    .reduce((acc, r) => acc + parseFloat(r.extractedUSDC), 0)
-    .toFixed(2);
+export default async function SearcherPage({ params }: SearcherPageProps) {
+  const valid = /^0x[0-9a-fA-F]{40}$/.test(params.address);
+  const res = valid
+    ? await fromArkiv((sdk) => sdk.listReceiptsBySearcher(params.address))
+    : { ok: false as const, error: "not a valid address", queriedAt: new Date().toISOString() };
+  const searcherReceipts = res.ok ? res.data.map((r) => toView(r)) : [];
+  const totalExtracted = sumUSDC(searcherReceipts);
 
   return (
     <div className="flex-1 p-6 max-w-7xl mx-auto w-full space-y-6">
@@ -48,9 +50,11 @@ export default function SearcherPage({ params }: SearcherPageProps) {
               <HashDisplay hash={params.address} truncate={false} className="text-xs" />
             </div>
           </div>
-          <div className="px-3 py-1 border border-danger/40 bg-danger/10 text-danger rounded text-xs font-mono font-semibold">
-            TOXIC ARBITRAGE PROFILE
-          </div>
+          {searcherReceipts.length > 0 && (
+            <div className="px-3 py-1 border border-danger/40 bg-danger/10 text-danger rounded text-xs font-mono font-semibold">
+              TOXIC ARBITRAGE PROFILE
+            </div>
+          )}
         </div>
 
         {/* Reputation Stats */}
@@ -58,13 +62,13 @@ export default function SearcherPage({ params }: SearcherPageProps) {
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">Total Extractions</div>
             <div className="text-text font-bold mt-1 tabular-nums">
-              <DemoData>{searcherReceipts.length || 1}</DemoData>
+              {searcherReceipts.length}
             </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">Total Extracted</div>
             <div className="text-danger font-bold mt-1 tabular-nums">
-              <DemoData>${totalExtracted}</DemoData>
+              ${totalExtracted}
             </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg">
@@ -91,53 +95,19 @@ export default function SearcherPage({ params }: SearcherPageProps) {
           Observed Sandwich Attacks ({searcherReceipts.length})
         </div>
 
-        <div className="border border-border rounded bg-surface overflow-x-auto">
-          <table className="w-full text-xs font-mono text-left border-collapse">
-            <thead>
-              <tr className="border-b border-border text-muted bg-[#15181E] select-none">
-                <th className="py-2.5 px-3 font-semibold">Receipt Hash</th>
-                <th className="py-2.5 px-3 font-semibold">Target Pool</th>
-                <th className="py-2.5 px-3 font-semibold">Victim</th>
-                <th className="py-2.5 px-3 font-semibold text-right">Extracted USDC</th>
-                <th className="py-2.5 px-3 font-semibold text-right">Injected Slippage</th>
-                <th className="py-2.5 px-3 font-semibold text-center">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {searcherReceipts.map((r) => (
-                <tr
-                  key={r.receiptHash}
-                  className="hover:bg-[#181B20] transition-colors cursor-pointer group"
-                >
-                  <td className="py-2.5 px-3">
-                    <Link href={`/receipt/${r.receiptHash}`}>
-                      <HashDisplay hash={r.receiptHash} className="group-hover:text-accent" />
-                    </Link>
-                  </td>
-                  <td className="py-2.5 px-3 text-text">
-                    <Link href={`/pool/${r.poolId}`} className="hover:underline">
-                      {r.poolName}
-                    </Link>
-                  </td>
-                  <td className="py-2.5 px-3">
-                    <Link href={`/lp/${r.victim}`}>
-                      <HashDisplay hash={r.victim} className="text-muted hover:text-text" />
-                    </Link>
-                  </td>
-                  <td className="py-2.5 px-3 text-right font-bold text-danger tabular-nums">
-                    <DemoData>${r.extractedUSDC}</DemoData>
-                  </td>
-                  <td className="py-2.5 px-3 text-right text-accent tabular-nums">
-                    <DemoData>+{r.injectedSlippageBps} bps</DemoData>
-                  </td>
-                  <td className="py-2.5 px-3 text-center">
-                    <StatusPill status={r.status} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ArkivSource
+          ok={res.ok}
+          queriedAt={res.queriedAt}
+          error={res.ok ? undefined : res.error}
+          query={`select * from receipts where searcher = ${params.address.slice(0, 10)}… ownedBy(writer)`}
+          count={res.ok ? searcherReceipts.length : undefined}
+          writer={writerAddress()}
+        />
+        <ReceiptsTable
+          receipts={searcherReceipts}
+          columns={["pool", "victim"]}
+          emptyText="No extraction receipts attributed to this searcher on Arkiv."
+        />
       </div>
     </div>
   );

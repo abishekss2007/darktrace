@@ -15,11 +15,11 @@ var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
 };
-var __copyProps = (to, from16, except, desc) => {
+var __copyProps = (to, from16, except, desc2) => {
   if (from16 && typeof from16 === "object" || typeof from16 === "function") {
-    for (let key of __getOwnPropNames(from16))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from16[key], enumerable: !(desc = __getOwnPropDesc(from16, key)) || desc.enumerable });
+    for (let key2 of __getOwnPropNames(from16))
+      if (!__hasOwnProp.call(to, key2) && key2 !== except)
+        __defProp(to, key2, { get: () => from16[key2], enumerable: !(desc2 = __getOwnPropDesc(from16, key2)) || desc2.enumerable });
   }
   return to;
 };
@@ -116,7 +116,7 @@ var require_main = __commonJS({
       lines = lines.replace(/\r\n?/mg, "\n");
       let match;
       while ((match = LINE.exec(lines)) != null) {
-        const key = match[1];
+        const key2 = match[1];
         let value = match[2] || "";
         value = value.trim();
         const maybeQuote = value[0];
@@ -125,7 +125,7 @@ var require_main = __commonJS({
           value = value.replace(/\\n/g, "\n");
           value = value.replace(/\\r/g, "\r");
         }
-        obj[key] = value;
+        obj[key2] = value;
       }
       return obj;
     }
@@ -144,8 +144,8 @@ var require_main = __commonJS({
       let decrypted;
       for (let i = 0; i < length; i++) {
         try {
-          const key = keys[i].trim();
-          const attrs = _instructions(result, key);
+          const key2 = keys[i].trim();
+          const attrs = _instructions(result, key2);
           decrypted = DotenvModule.decrypt(attrs.ciphertext, attrs.key);
           break;
         } catch (error) {
@@ -186,8 +186,8 @@ var require_main = __commonJS({
         }
         throw error;
       }
-      const key = uri.password;
-      if (!key) {
+      const key2 = uri.password;
+      if (!key2) {
         const err = new Error("INVALID_DOTENV_KEY: Missing key part");
         err.code = "INVALID_DOTENV_KEY";
         throw err;
@@ -205,7 +205,7 @@ var require_main = __commonJS({
         err.code = "NOT_FOUND_DOTENV_ENVIRONMENT";
         throw err;
       }
-      return { ciphertext, key };
+      return { ciphertext, key: key2 };
     }
     function _vaultPath(options) {
       let possibleVaultPath = null;
@@ -319,13 +319,13 @@ var require_main = __commonJS({
       return DotenvModule._configVault(options);
     }
     function decrypt(encrypted, keyStr) {
-      const key = Buffer.from(keyStr.slice(-64), "hex");
+      const key2 = Buffer.from(keyStr.slice(-64), "hex");
       let ciphertext = Buffer.from(encrypted, "base64");
       const nonce = ciphertext.subarray(0, 12);
       const authTag = ciphertext.subarray(-16);
       ciphertext = ciphertext.subarray(12, -16);
       try {
-        const aesgcm = crypto3.createDecipheriv("aes-256-gcm", key, nonce);
+        const aesgcm = crypto3.createDecipheriv("aes-256-gcm", key2, nonce);
         aesgcm.setAuthTag(authTag);
         return `${aesgcm.update(ciphertext)}${aesgcm.final()}`;
       } catch (error) {
@@ -353,20 +353,20 @@ var require_main = __commonJS({
         err.code = "OBJECT_REQUIRED";
         throw err;
       }
-      for (const key of Object.keys(parsed)) {
-        if (Object.prototype.hasOwnProperty.call(processEnv, key)) {
+      for (const key2 of Object.keys(parsed)) {
+        if (Object.prototype.hasOwnProperty.call(processEnv, key2)) {
           if (override === true) {
-            processEnv[key] = parsed[key];
+            processEnv[key2] = parsed[key2];
           }
           if (debug) {
             if (override === true) {
-              _debug(`"${key}" is already defined and WAS overwritten`);
+              _debug(`"${key2}" is already defined and WAS overwritten`);
             } else {
-              _debug(`"${key}" is already defined and was NOT overwritten`);
+              _debug(`"${key2}" is already defined and was NOT overwritten`);
             }
           }
         } else {
-          processEnv[key] = parsed[key];
+          processEnv[key2] = parsed[key2];
         }
       }
     }
@@ -1527,7 +1527,7 @@ var init_base = __esm({
 });
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/errors/abi.js
-var AbiConstructorNotFoundError, AbiConstructorParamsNotFoundError, AbiDecodingDataSizeTooSmallError, AbiDecodingZeroDataError, AbiEncodingArrayLengthMismatchError, AbiEncodingBytesSizeMismatchError, AbiEncodingLengthMismatchError, AbiErrorInputsNotFoundError, AbiErrorNotFoundError, AbiErrorSignatureNotFoundError, AbiEventSignatureEmptyTopicsError, AbiEventSignatureNotFoundError, AbiEventNotFoundError, AbiFunctionNotFoundError, AbiFunctionOutputsNotFoundError, AbiFunctionSignatureNotFoundError, AbiItemAmbiguityError, BytesSizeMismatchError, DecodeLogDataMismatch, DecodeLogTopicsMismatch, InvalidAbiEncodingTypeError, InvalidAbiDecodingTypeError, InvalidArrayError, InvalidDefinitionTypeError;
+var AbiConstructorNotFoundError, AbiConstructorParamsNotFoundError, AbiDecodingDataSizeTooSmallError, AbiDecodingZeroDataError, AbiEncodingArrayLengthMismatchError, AbiEncodingBytesSizeMismatchError, AbiEncodingLengthMismatchError, AbiErrorInputsNotFoundError, AbiErrorNotFoundError, AbiErrorSignatureNotFoundError, AbiEventSignatureEmptyTopicsError, AbiEventSignatureNotFoundError, AbiEventNotFoundError, AbiFunctionNotFoundError, AbiFunctionOutputsNotFoundError, AbiFunctionSignatureNotFoundError, AbiItemAmbiguityError, BytesSizeMismatchError, DecodeLogDataMismatch, DecodeLogTopicsMismatch, InvalidAbiEncodingTypeError, InvalidAbiDecodingTypeError, InvalidArrayError, InvalidDefinitionTypeError, UnsupportedPackedAbiType;
 var init_abi = __esm({
   "../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/errors/abi.js"() {
     init_formatAbiItem2();
@@ -1834,6 +1834,13 @@ var init_abi = __esm({
         ].join("\n"), { name: "InvalidDefinitionTypeError" });
       }
     };
+    UnsupportedPackedAbiType = class extends BaseError2 {
+      constructor(type) {
+        super(`Type "${type}" is not supported for packed encoding.`, {
+          name: "UnsupportedPackedAbiType"
+        });
+      }
+    };
   }
 });
 
@@ -1893,19 +1900,19 @@ function padHex(hex_, { dir, size: size5 = 32 } = {}) {
     });
   return `0x${hex[dir === "right" ? "padEnd" : "padStart"](size5 * 2, "0")}`;
 }
-function padBytes(bytes, { dir, size: size5 = 32 } = {}) {
+function padBytes(bytes2, { dir, size: size5 = 32 } = {}) {
   if (size5 === null)
-    return bytes;
-  if (bytes.length > size5)
+    return bytes2;
+  if (bytes2.length > size5)
     throw new SizeExceedsPaddingSizeError({
-      size: bytes.length,
+      size: bytes2.length,
       targetSize: size5,
       type: "bytes"
     });
   const paddedBytes = new Uint8Array(size5);
   for (let i = 0; i < size5; i++) {
     const padEnd = dir === "right";
-    paddedBytes[padEnd ? i : size5 - i - 1] = bytes[padEnd ? i : bytes.length - i - 1];
+    paddedBytes[padEnd ? i : size5 - i - 1] = bytes2[padEnd ? i : bytes2.length - i - 1];
   }
   return paddedBytes;
 }
@@ -1926,8 +1933,8 @@ var init_encoding = __esm({
       }
     };
     InvalidBytesBooleanError = class extends BaseError2 {
-      constructor(bytes) {
-        super(`Bytes value "${bytes}" is not a valid boolean. The bytes array must contain a single byte of either a 0 or 1 value.`, {
+      constructor(bytes2) {
+        super(`Bytes value "${bytes2}" is not a valid boolean. The bytes array must contain a single byte of either a 0 or 1 value.`, {
           name: "InvalidBytesBooleanError"
         });
       }
@@ -2036,11 +2043,20 @@ function hexToNumber(hex, opts = {}) {
     });
   return number;
 }
+function hexToString(hex, opts = {}) {
+  let bytes2 = hexToBytes(hex);
+  if (opts.size) {
+    assertSize(bytes2, { size: opts.size });
+    bytes2 = trim(bytes2, { dir: "right" });
+  }
+  return new TextDecoder().decode(bytes2);
+}
 var init_fromHex = __esm({
   "../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/encoding/fromHex.js"() {
     init_encoding();
     init_size();
     init_trim();
+    init_toBytes();
   }
 });
 
@@ -2129,13 +2145,13 @@ function toBytes(value, opts = {}) {
   return stringToBytes(value, opts);
 }
 function boolToBytes(value, opts = {}) {
-  const bytes = new Uint8Array(1);
-  bytes[0] = Number(value);
+  const bytes2 = new Uint8Array(1);
+  bytes2[0] = Number(value);
   if (typeof opts.size === "number") {
-    assertSize(bytes, { size: opts.size });
-    return pad(bytes, { size: opts.size });
+    assertSize(bytes2, { size: opts.size });
+    return pad(bytes2, { size: opts.size });
   }
-  return bytes;
+  return bytes2;
 }
 function charCodeToBase16(char) {
   if (char >= charCodeMap.zero && char <= charCodeMap.nine)
@@ -2156,28 +2172,28 @@ function hexToBytes(hex_, opts = {}) {
   if (hexString.length % 2)
     hexString = `0${hexString}`;
   const length = hexString.length / 2;
-  const bytes = new Uint8Array(length);
+  const bytes2 = new Uint8Array(length);
   for (let index2 = 0, j = 0; index2 < length; index2++) {
     const nibbleLeft = charCodeToBase16(hexString.charCodeAt(j++));
     const nibbleRight = charCodeToBase16(hexString.charCodeAt(j++));
     if (nibbleLeft === void 0 || nibbleRight === void 0) {
       throw new BaseError2(`Invalid byte sequence ("${hexString[j - 2]}${hexString[j - 1]}" in "${hexString}").`);
     }
-    bytes[index2] = nibbleLeft * 16 + nibbleRight;
+    bytes2[index2] = nibbleLeft * 16 + nibbleRight;
   }
-  return bytes;
+  return bytes2;
 }
 function numberToBytes(value, opts) {
   const hex = numberToHex(value, opts);
   return hexToBytes(hex);
 }
 function stringToBytes(value, opts = {}) {
-  const bytes = encoder2.encode(value);
+  const bytes2 = encoder2.encode(value);
   if (typeof opts.size === "number") {
-    assertSize(bytes, { size: opts.size });
-    return pad(bytes, { dir: "right", size: opts.size });
+    assertSize(bytes2, { size: opts.size });
+    return pad(bytes2, { dir: "right", size: opts.size });
   }
-  return bytes;
+  return bytes2;
 }
 var encoder2, charCodeMap;
 var init_toBytes = __esm({
@@ -2292,10 +2308,10 @@ function byteSwap32(arr) {
   }
   return arr;
 }
-function utf8ToBytes(str) {
-  if (typeof str !== "string")
+function utf8ToBytes(str2) {
+  if (typeof str2 !== "string")
     throw new Error("string expected");
-  return new Uint8Array(new TextEncoder().encode(str));
+  return new Uint8Array(new TextEncoder().encode(str2));
 }
 function toBytes2(data) {
   if (typeof data === "string")
@@ -2495,9 +2511,9 @@ var init_sha3 = __esm({
           throw new Error("XOF is not possible for this instance");
         return this.writeInto(out);
       }
-      xof(bytes) {
-        anumber(bytes);
-        return this.xofInto(new Uint8Array(bytes));
+      xof(bytes2) {
+        anumber(bytes2);
+        return this.xofInto(new Uint8Array(bytes2));
       }
       digestInto(out) {
         aoutput(out, this);
@@ -2537,10 +2553,10 @@ var init_sha3 = __esm({
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/hash/keccak256.js
 function keccak256(value, to_) {
   const to = to_ || "hex";
-  const bytes = keccak_256(isHex(value, { strict: false }) ? toBytes(value) : value);
+  const bytes2 = keccak_256(isHex(value, { strict: false }) ? toBytes(value) : value);
   if (to === "bytes")
-    return bytes;
-  return toHex(bytes);
+    return bytes2;
+  return toHex(bytes2);
 }
 var init_keccak256 = __esm({
   "../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/hash/keccak256.js"() {
@@ -2566,18 +2582,18 @@ var init_lru = __esm({
         });
         this.maxSize = size5;
       }
-      get(key) {
-        const value = super.get(key);
-        if (super.has(key)) {
-          super.delete(key);
-          super.set(key, value);
+      get(key2) {
+        const value = super.get(key2);
+        if (super.has(key2)) {
+          super.delete(key2);
+          super.set(key2, value);
         }
         return value;
       }
-      set(key, value) {
-        if (super.has(key))
-          super.delete(key);
-        super.set(key, value);
+      set(key2, value) {
+        if (super.has(key2))
+          super.delete(key2);
+        super.set(key2, value);
         if (this.maxSize && this.size > this.maxSize) {
           const firstKey = super.keys().next().value;
           if (firstKey !== void 0)
@@ -2858,9 +2874,10 @@ var init_slice = __esm({
 });
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/regex.js
-var bytesRegex2, integerRegex2;
+var arrayRegex, bytesRegex2, integerRegex2;
 var init_regex2 = __esm({
   "../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/regex.js"() {
+    arrayRegex = /^(.*)\[([0-9]*)\]$/;
     bytesRegex2 = /^bytes([1-9]|1[0-9]|2[0-9]|3[0-2])?$/;
     integerRegex2 = /^(u?int)(8|16|24|32|40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)?$/;
   }
@@ -3209,12 +3226,12 @@ function isArgOfType(arg, abiParameter) {
       if (/^bytes([1-9]|1[0-9]|2[0-9]|3[0-2])?$/.test(abiParameterType)) {
         if (typeof arg !== "string" && !(arg instanceof Uint8Array))
           return false;
-        const bytes = abiParameterType.slice(5);
-        if (!bytes)
+        const bytes2 = abiParameterType.slice(5);
+        if (!bytes2)
           return true;
         if (typeof arg === "string" && !isHex(arg))
           return false;
-        return size(arg) === Number.parseInt(bytes, 10);
+        return size(arg) === Number.parseInt(bytes2, 10);
       }
       const arrayComponents = getArrayComponents(abiParameterType);
       if (arrayComponents) {
@@ -3350,7 +3367,7 @@ var init_createFilterRequestScope = __esm({
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/actions/public/createContractEventFilter.js
 async function createContractEventFilter(client, parameters) {
-  const { address, abi: abi2, args, eventName, fromBlock, strict, toBlock } = parameters;
+  const { address, abi: abi2, args, eventName, fromBlock, strict, toBlock: toBlock2 } = parameters;
   const getRequest = createFilterRequestScope(client, {
     method: "eth_newFilter"
   });
@@ -3365,7 +3382,7 @@ async function createContractEventFilter(client, parameters) {
       {
         address,
         fromBlock: typeof fromBlock === "bigint" ? numberToHex(fromBlock) : fromBlock,
-        toBlock: typeof toBlock === "bigint" ? numberToHex(toBlock) : toBlock,
+        toBlock: typeof toBlock2 === "bigint" ? numberToHex(toBlock2) : toBlock2,
         topics
       }
     ]
@@ -3516,10 +3533,10 @@ var init_cursor = __esm({
 });
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/cursor.js
-function createCursor(bytes, { recursiveReadLimit = 8192 } = {}) {
+function createCursor(bytes2, { recursiveReadLimit = 8192 } = {}) {
   const cursor = Object.create(staticCursor);
-  cursor.bytes = bytes;
-  cursor.dataView = new DataView(bytes.buffer ?? bytes, bytes.byteOffset, bytes.byteLength);
+  cursor.bytes = bytes2;
+  cursor.dataView = new DataView(bytes2.buffer ?? bytes2, bytes2.byteOffset, bytes2.byteLength);
   cursor.positionReadCount = /* @__PURE__ */ new Map();
   cursor.recursiveReadLimit = recursiveReadLimit;
   return cursor;
@@ -3601,10 +3618,10 @@ var init_cursor2 = __esm({
         this.bytes[this.position] = byte;
         this.position++;
       },
-      pushBytes(bytes) {
-        this.assertPosition(this.position + bytes.length - 1);
-        this.bytes.set(bytes, this.position);
-        this.position += bytes.length;
+      pushBytes(bytes2) {
+        this.assertPosition(this.position + bytes2.length - 1);
+        this.bytes.set(bytes2, this.position);
+        this.position += bytes2.length;
       },
       pushUint8(value) {
         this.assertPosition(this.position);
@@ -3691,35 +3708,35 @@ var init_cursor2 = __esm({
 });
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/encoding/fromBytes.js
-function bytesToBigInt(bytes, opts = {}) {
+function bytesToBigInt(bytes2, opts = {}) {
   if (typeof opts.size !== "undefined")
-    assertSize(bytes, { size: opts.size });
-  const hex = bytesToHex(bytes);
+    assertSize(bytes2, { size: opts.size });
+  const hex = bytesToHex(bytes2);
   return hexToBigInt(hex, opts);
 }
 function bytesToBool(bytes_, opts = {}) {
-  let bytes = bytes_;
+  let bytes2 = bytes_;
   if (typeof opts.size !== "undefined") {
-    assertSize(bytes, { size: opts.size });
-    bytes = trim(bytes);
+    assertSize(bytes2, { size: opts.size });
+    bytes2 = trim(bytes2);
   }
-  if (bytes.length > 1 || bytes[0] > 1)
-    throw new InvalidBytesBooleanError(bytes);
-  return Boolean(bytes[0]);
+  if (bytes2.length > 1 || bytes2[0] > 1)
+    throw new InvalidBytesBooleanError(bytes2);
+  return Boolean(bytes2[0]);
 }
-function bytesToNumber(bytes, opts = {}) {
+function bytesToNumber(bytes2, opts = {}) {
   if (typeof opts.size !== "undefined")
-    assertSize(bytes, { size: opts.size });
-  const hex = bytesToHex(bytes);
+    assertSize(bytes2, { size: opts.size });
+  const hex = bytesToHex(bytes2);
   return hexToNumber(hex, opts);
 }
 function bytesToString(bytes_, opts = {}) {
-  let bytes = bytes_;
+  let bytes2 = bytes_;
   if (typeof opts.size !== "undefined") {
-    assertSize(bytes, { size: opts.size });
-    bytes = trim(bytes, { dir: "right" });
+    assertSize(bytes2, { size: opts.size });
+    bytes2 = trim(bytes2, { dir: "right" });
   }
-  return new TextDecoder().decode(bytes);
+  return new TextDecoder().decode(bytes2);
 }
 var init_fromBytes = __esm({
   "../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/encoding/fromBytes.js"() {
@@ -3732,9 +3749,9 @@ var init_fromBytes = __esm({
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/abi/decodeAbiParameters.js
 function decodeAbiParameters(params, data) {
-  const bytes = typeof data === "string" ? hexToBytes(data) : data;
-  const cursor = createCursor(bytes);
-  if (size(bytes) === 0 && params.length > 0)
+  const bytes2 = typeof data === "string" ? hexToBytes(data) : data;
+  const cursor = createCursor(bytes2);
+  if (size(bytes2) === 0 && params.length > 0)
     throw new AbiDecodingZeroDataError();
   if (size(data) && size(data) < 32)
     throw new AbiDecodingDataSizeTooSmallError({
@@ -3746,7 +3763,7 @@ function decodeAbiParameters(params, data) {
   const values = [];
   for (let i = 0; i < params.length; ++i) {
     const param = params[i];
-    if (consumed < bytes.length)
+    if (consumed < bytes2.length)
       cursor.setPosition(consumed);
     const [data2, consumed_] = decodeParameter(cursor, param, {
       staticPosition: 0
@@ -3974,9 +3991,9 @@ var init_decodeErrorResult = __esm({
 var stringify;
 var init_stringify = __esm({
   "../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/stringify.js"() {
-    stringify = (value, replacer, space) => JSON.stringify(value, (key, value_) => {
+    stringify = (value, replacer, space) => JSON.stringify(value, (key2, value_) => {
       const value2 = typeof value_ === "bigint" ? value_.toString() : value_;
-      return typeof replacer === "function" ? replacer(key, value2) : value2;
+      return typeof replacer === "function" ? replacer(key2, value2) : value2;
     }, space);
   }
 });
@@ -4177,13 +4194,13 @@ var init_stateOverride = __esm({
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/errors/transaction.js
 function prettyPrint(args) {
-  const entries = Object.entries(args).map(([key, value]) => {
+  const entries = Object.entries(args).map(([key2, value]) => {
     if (value === void 0 || value === false)
       return null;
-    return [key, value];
+    return [key2, value];
   }).filter(Boolean);
-  const maxLength = entries.reduce((acc, [key]) => Math.max(acc, key.length), 0);
-  return entries.map(([key, value]) => `  ${`${key}:`.padEnd(maxLength + 1)}  ${value}`).join("\n");
+  const maxLength = entries.reduce((acc, [key2]) => Math.max(acc, key2.length), 0);
+  return entries.map(([key2, value]) => `  ${`${key2}:`.padEnd(maxLength + 1)}  ${value}`).join("\n");
 }
 var FeePayerNonceMismatchError, InvalidLegacyVError, InvalidYParityError, InvalidSerializableTransactionError, InvalidStorageKeySizeError, TransactionExecutionError, TransactionNotFoundError, TransactionReceiptNotFoundError, TransactionReceiptRevertedError, WaitForTransactionReceiptTimeoutError;
 var init_transaction = __esm({
@@ -4203,8 +4220,8 @@ var init_transaction = __esm({
       }
     };
     InvalidLegacyVError = class extends BaseError2 {
-      constructor({ v }) {
-        super(`Invalid \`v\` value "${v}". Expected 27 or 28.`, {
+      constructor({ v: v2 }) {
+        super(`Invalid \`v\` value "${v2}". Expected 27 or 28.`, {
           name: "InvalidLegacyVError"
         });
       }
@@ -5540,7 +5557,7 @@ var init_hmac = __esm({
         this.finished = false;
         this.destroyed = false;
         ahash(hash3);
-        const key = toBytes2(_key);
+        const key2 = toBytes2(_key);
         this.iHash = hash3.create();
         if (typeof this.iHash.update !== "function")
           throw new Error("Expected instance of class which extends utils.Hash");
@@ -5548,7 +5565,7 @@ var init_hmac = __esm({
         this.outputLen = this.iHash.outputLen;
         const blockLen = this.blockLen;
         const pad4 = new Uint8Array(blockLen);
-        pad4.set(key.length > blockLen ? hash3.create().update(key).digest() : key);
+        pad4.set(key2.length > blockLen ? hash3.create().update(key2).digest() : key2);
         for (let i = 0; i < pad4.length; i++)
           pad4[i] ^= 54;
         this.iHash.update(pad4);
@@ -5598,8 +5615,8 @@ var init_hmac = __esm({
         this.iHash.destroy();
       }
     };
-    hmac = (hash3, key, message) => new HMAC(hash3, key).update(message).digest();
-    hmac.create = (hash3, key) => new HMAC(hash3, key);
+    hmac = (hash3, key2, message) => new HMAC(hash3, key2).update(message).digest();
+    hmac.create = (hash3, key2) => new HMAC(hash3, key2);
   }
 });
 
@@ -5615,8 +5632,8 @@ function abool(title, value) {
   if (typeof value !== "boolean")
     throw new Error(title + " boolean expected, got " + value);
 }
-function numberToHexUnpadded(num2) {
-  const hex = num2.toString(16);
+function numberToHexUnpadded(num3) {
+  const hex = num3.toString(16);
   return hex.length & 1 ? "0" + hex : hex;
 }
 function hexToNumber2(hex) {
@@ -5624,13 +5641,13 @@ function hexToNumber2(hex) {
     throw new Error("hex string expected, got " + typeof hex);
   return hex === "" ? _0n2 : BigInt("0x" + hex);
 }
-function bytesToHex2(bytes) {
-  abytes2(bytes);
+function bytesToHex2(bytes2) {
+  abytes2(bytes2);
   if (hasHexBuiltin)
-    return bytes.toHex();
+    return bytes2.toHex();
   let hex = "";
-  for (let i = 0; i < bytes.length; i++) {
-    hex += hexes2[bytes[i]];
+  for (let i = 0; i < bytes2.length; i++) {
+    hex += hexes2[bytes2[i]];
   }
   return hex;
 }
@@ -5664,12 +5681,12 @@ function hexToBytes2(hex) {
   }
   return array;
 }
-function bytesToNumberBE(bytes) {
-  return hexToNumber2(bytesToHex2(bytes));
+function bytesToNumberBE(bytes2) {
+  return hexToNumber2(bytesToHex2(bytes2));
 }
-function bytesToNumberLE(bytes) {
-  abytes2(bytes);
-  return hexToNumber2(bytesToHex2(Uint8Array.from(bytes).reverse()));
+function bytesToNumberLE(bytes2) {
+  abytes2(bytes2);
+  return hexToNumber2(bytesToHex2(Uint8Array.from(bytes2).reverse()));
 }
 function numberToBytesBE(n, len) {
   return hexToBytes2(n.toString(16).padStart(len * 2, "0"));
@@ -5710,10 +5727,10 @@ function concatBytes3(...arrays) {
   }
   return res;
 }
-function utf8ToBytes2(str) {
-  if (typeof str !== "string")
+function utf8ToBytes2(str2) {
+  if (typeof str2 !== "string")
     throw new Error("string expected");
-  return new Uint8Array(new TextEncoder().encode(str));
+  return new Uint8Array(new TextEncoder().encode(str2));
 }
 function inRange(n, min, max) {
   return isPosBig(n) && isPosBig(min) && isPosBig(max) && min <= n && n < max;
@@ -5735,22 +5752,22 @@ function createHmacDrbg(hashLen, qByteLen, hmacFn) {
     throw new Error("qByteLen must be a number");
   if (typeof hmacFn !== "function")
     throw new Error("hmacFn must be a function");
-  let v = u8n(hashLen);
+  let v2 = u8n(hashLen);
   let k = u8n(hashLen);
   let i = 0;
   const reset = () => {
-    v.fill(1);
+    v2.fill(1);
     k.fill(0);
     i = 0;
   };
-  const h = (...b) => hmacFn(k, v, ...b);
+  const h = (...b) => hmacFn(k, v2, ...b);
   const reseed = (seed = u8n(0)) => {
     k = h(u8fr([0]), seed);
-    v = h();
+    v2 = h();
     if (seed.length === 0)
       return;
     k = h(u8fr([1]), seed);
-    v = h();
+    v2 = h();
   };
   const gen2 = () => {
     if (i++ >= 1e3)
@@ -5758,10 +5775,10 @@ function createHmacDrbg(hashLen, qByteLen, hmacFn) {
     let len = 0;
     const out = [];
     while (len < qByteLen) {
-      v = h();
-      const sl = v.slice();
+      v2 = h();
+      const sl = v2.slice();
       out.push(sl);
-      len += v.length;
+      len += v2.length;
     }
     return concatBytes3(...out);
   };
@@ -5852,13 +5869,13 @@ function invert(number, modulo) {
     throw new Error("invert: expected positive modulus, got " + modulo);
   let a = mod(number, modulo);
   let b = modulo;
-  let x = _0n3, y = _1n3, u = _1n3, v = _0n3;
+  let x = _0n3, y = _1n3, u = _1n3, v2 = _0n3;
   while (a !== _0n3) {
     const q = b / a;
     const r = b % a;
     const m = x - u * q;
-    const n = y - v * q;
-    b = a, a = r, x = u, y = v, u = m, v = n;
+    const n = y - v2 * q;
+    b = a, a = r, x = u, y = v2, u = m, v2 = n;
   }
   const gcd = b;
   if (gcd !== _1n3)
@@ -5875,9 +5892,9 @@ function sqrt3mod4(Fp, n) {
 function sqrt5mod8(Fp, n) {
   const p5div8 = (Fp.ORDER - _5n) / _8n;
   const n2 = Fp.mul(n, _2n2);
-  const v = Fp.pow(n2, p5div8);
-  const nv = Fp.mul(n, v);
-  const i = Fp.mul(Fp.mul(nv, _2n2), v);
+  const v2 = Fp.pow(n2, p5div8);
+  const nv = Fp.mul(n, v2);
+  const i = Fp.mul(Fp.mul(nv, _2n2), v2);
   const root = Fp.mul(nv, Fp.sub(i, Fp.ONE));
   if (!Fp.eql(Fp.sqr(root), n))
     throw new Error("Cannot find square root");
@@ -5952,15 +5969,15 @@ function validateField(field) {
   }, initial);
   return validateObject(field, opts);
 }
-function FpPow(Fp, num2, power) {
+function FpPow(Fp, num3, power) {
   if (power < _0n3)
     throw new Error("invalid exponent, negatives unsupported");
   if (power === _0n3)
     return Fp.ONE;
   if (power === _1n3)
-    return num2;
+    return num3;
   let p = Fp.ONE;
-  let d = num2;
+  let d = num3;
   while (power > _0n3) {
     if (power & _1n3)
       p = Fp.mul(p, d);
@@ -5971,18 +5988,18 @@ function FpPow(Fp, num2, power) {
 }
 function FpInvertBatch(Fp, nums, passZero = false) {
   const inverted = new Array(nums.length).fill(passZero ? Fp.ZERO : void 0);
-  const multipliedAcc = nums.reduce((acc, num2, i) => {
-    if (Fp.is0(num2))
+  const multipliedAcc = nums.reduce((acc, num3, i) => {
+    if (Fp.is0(num3))
       return acc;
     inverted[i] = acc;
-    return Fp.mul(acc, num2);
+    return Fp.mul(acc, num3);
   }, Fp.ONE);
   const invertedAcc = Fp.inv(multipliedAcc);
-  nums.reduceRight((acc, num2, i) => {
-    if (Fp.is0(num2))
+  nums.reduceRight((acc, num3, i) => {
+    if (Fp.is0(num3))
       return acc;
     inverted[i] = Fp.mul(acc, inverted[i]);
-    return Fp.mul(acc, num2);
+    return Fp.mul(acc, num3);
   }, invertedAcc);
   return inverted;
 }
@@ -6018,38 +6035,38 @@ function Field(ORDER, bitLen2, isLE2 = false, redef = {}) {
     MASK: bitMask(BITS),
     ZERO: _0n3,
     ONE: _1n3,
-    create: (num2) => mod(num2, ORDER),
-    isValid: (num2) => {
-      if (typeof num2 !== "bigint")
-        throw new Error("invalid field element: expected bigint, got " + typeof num2);
-      return _0n3 <= num2 && num2 < ORDER;
+    create: (num3) => mod(num3, ORDER),
+    isValid: (num3) => {
+      if (typeof num3 !== "bigint")
+        throw new Error("invalid field element: expected bigint, got " + typeof num3);
+      return _0n3 <= num3 && num3 < ORDER;
     },
-    is0: (num2) => num2 === _0n3,
-    isOdd: (num2) => (num2 & _1n3) === _1n3,
-    neg: (num2) => mod(-num2, ORDER),
+    is0: (num3) => num3 === _0n3,
+    isOdd: (num3) => (num3 & _1n3) === _1n3,
+    neg: (num3) => mod(-num3, ORDER),
     eql: (lhs, rhs) => lhs === rhs,
-    sqr: (num2) => mod(num2 * num2, ORDER),
+    sqr: (num3) => mod(num3 * num3, ORDER),
     add: (lhs, rhs) => mod(lhs + rhs, ORDER),
     sub: (lhs, rhs) => mod(lhs - rhs, ORDER),
     mul: (lhs, rhs) => mod(lhs * rhs, ORDER),
-    pow: (num2, power) => FpPow(f, num2, power),
+    pow: (num3, power) => FpPow(f, num3, power),
     div: (lhs, rhs) => mod(lhs * invert(rhs, ORDER), ORDER),
     // Same as above, but doesn't normalize
-    sqrN: (num2) => num2 * num2,
+    sqrN: (num3) => num3 * num3,
     addN: (lhs, rhs) => lhs + rhs,
     subN: (lhs, rhs) => lhs - rhs,
     mulN: (lhs, rhs) => lhs * rhs,
-    inv: (num2) => invert(num2, ORDER),
+    inv: (num3) => invert(num3, ORDER),
     sqrt: redef.sqrt || ((n) => {
       if (!sqrtP)
         sqrtP = FpSqrt(ORDER);
       return sqrtP(f, n);
     }),
-    toBytes: (num2) => isLE2 ? numberToBytesLE(num2, BYTES) : numberToBytesBE(num2, BYTES),
-    fromBytes: (bytes) => {
-      if (bytes.length !== BYTES)
-        throw new Error("Field.fromBytes: expected " + BYTES + " bytes, got " + bytes.length);
-      return isLE2 ? bytesToNumberLE(bytes) : bytesToNumberBE(bytes);
+    toBytes: (num3) => isLE2 ? numberToBytesLE(num3, BYTES) : numberToBytesBE(num3, BYTES),
+    fromBytes: (bytes2) => {
+      if (bytes2.length !== BYTES)
+        throw new Error("Field.fromBytes: expected " + BYTES + " bytes, got " + bytes2.length);
+      return isLE2 ? bytesToNumberLE(bytes2) : bytesToNumberBE(bytes2);
     },
     // TODO: we don't need it here, move out to separate fn
     invertBatch: (lst) => FpInvertBatch(f, lst),
@@ -6069,14 +6086,14 @@ function getMinHashLength(fieldOrder) {
   const length = getFieldBytesLength(fieldOrder);
   return length + Math.ceil(length / 2);
 }
-function mapHashToField(key, fieldOrder, isLE2 = false) {
-  const len = key.length;
+function mapHashToField(key2, fieldOrder, isLE2 = false) {
+  const len = key2.length;
   const fieldLen = getFieldBytesLength(fieldOrder);
   const minLen = getMinHashLength(fieldOrder);
   if (len < 16 || len < minLen || len > 1024)
     throw new Error("expected " + minLen + "-1024 bytes of input, got " + len);
-  const num2 = isLE2 ? bytesToNumberLE(key) : bytesToNumberBE(key);
-  const reduced = mod(num2, fieldOrder - _1n3) + _1n3;
+  const num3 = isLE2 ? bytesToNumberLE(key2) : bytesToNumberBE(key2);
+  const reduced = mod(num3, fieldOrder - _1n3) + _1n3;
   return isLE2 ? numberToBytesLE(reduced, fieldLen) : numberToBytesBE(reduced, fieldLen);
 }
 var _0n3, _1n3, _2n2, _3n, _4n, _5n, _8n, FIELD_FIELDS;
@@ -6386,8 +6403,8 @@ function validatePointOpts(curve) {
   }
   return Object.freeze({ ...opts });
 }
-function numToSizedHex(num2, size5) {
-  return bytesToHex2(numberToBytesBE(num2, size5));
+function numToSizedHex(num3, size5) {
+  return bytesToHex2(numberToBytesBE(num3, size5));
 }
 function weierstrassPoints(opts) {
   const CURVE = validatePointOpts(opts);
@@ -6397,8 +6414,8 @@ function weierstrassPoints(opts) {
     const a = point.toAffine();
     return concatBytes3(Uint8Array.from([4]), Fp.toBytes(a.x), Fp.toBytes(a.y));
   });
-  const fromBytes5 = CURVE.fromBytes || ((bytes) => {
-    const tail = bytes.subarray(1);
+  const fromBytes5 = CURVE.fromBytes || ((bytes2) => {
+    const tail = bytes2.subarray(1);
     const x = Fp.fromBytes(tail.subarray(0, Fp.BYTES));
     const y = Fp.fromBytes(tail.subarray(Fp.BYTES, 2 * Fp.BYTES));
     return { x, y };
@@ -6420,28 +6437,28 @@ function weierstrassPoints(opts) {
   const _27b2 = Fp.mul(Fp.sqr(CURVE.b), BigInt(27));
   if (Fp.is0(Fp.add(_4a3, _27b2)))
     throw new Error("bad curve params: a or b");
-  function isWithinCurveOrder(num2) {
-    return inRange(num2, _1n5, CURVE.n);
+  function isWithinCurveOrder(num3) {
+    return inRange(num3, _1n5, CURVE.n);
   }
-  function normPrivateKeyToScalar(key) {
+  function normPrivateKeyToScalar(key2) {
     const { allowedPrivateKeyLengths: lengths, nByteLength, wrapPrivateKey, n: N } = CURVE;
-    if (lengths && typeof key !== "bigint") {
-      if (isBytes2(key))
-        key = bytesToHex2(key);
-      if (typeof key !== "string" || !lengths.includes(key.length))
+    if (lengths && typeof key2 !== "bigint") {
+      if (isBytes2(key2))
+        key2 = bytesToHex2(key2);
+      if (typeof key2 !== "string" || !lengths.includes(key2.length))
         throw new Error("invalid private key");
-      key = key.padStart(nByteLength * 2, "0");
+      key2 = key2.padStart(nByteLength * 2, "0");
     }
-    let num2;
+    let num3;
     try {
-      num2 = typeof key === "bigint" ? key : bytesToNumberBE(ensureBytes("private key", key, nByteLength));
+      num3 = typeof key2 === "bigint" ? key2 : bytesToNumberBE(ensureBytes("private key", key2, nByteLength));
     } catch (error) {
-      throw new Error("invalid private key, expected hex or " + nByteLength + " bytes, got " + typeof key);
+      throw new Error("invalid private key, expected hex or " + nByteLength + " bytes, got " + typeof key2);
     }
     if (wrapPrivateKey)
-      num2 = mod(num2, N);
-    aInRange("private key", num2, _1n5, N);
-    return num2;
+      num3 = mod(num3, N);
+    aInRange("private key", num3, _1n5, N);
+    return num3;
   }
   function aprjpoint(other) {
     if (!(other instanceof Point2))
@@ -6829,10 +6846,10 @@ function weierstrass(curveDef) {
         return cat(Uint8Array.from([4]), x, Fp.toBytes(a.y));
       }
     },
-    fromBytes(bytes) {
-      const len = bytes.length;
-      const head = bytes[0];
-      const tail = bytes.subarray(1);
+    fromBytes(bytes2) {
+      const len = bytes2.length;
+      const head = bytes2[0];
+      const tail = bytes2.subarray(1);
       if (len === compressedLen && (head === 2 || head === 3)) {
         const x = bytesToNumberBE(tail);
         if (!inRange(x, _1n5, Fp.ORDER))
@@ -7001,20 +7018,20 @@ function weierstrass(curveDef) {
     const b = Point2.fromHex(publicB);
     return b.multiply(normPrivateKeyToScalar(privateA)).toRawBytes(isCompressed);
   }
-  const bits2int = CURVE.bits2int || function(bytes) {
-    if (bytes.length > 8192)
+  const bits2int = CURVE.bits2int || function(bytes2) {
+    if (bytes2.length > 8192)
       throw new Error("input is too large");
-    const num2 = bytesToNumberBE(bytes);
-    const delta = bytes.length * 8 - nBitLength;
-    return delta > 0 ? num2 >> BigInt(delta) : num2;
+    const num3 = bytesToNumberBE(bytes2);
+    const delta = bytes2.length * 8 - nBitLength;
+    return delta > 0 ? num3 >> BigInt(delta) : num3;
   };
-  const bits2int_modN = CURVE.bits2int_modN || function(bytes) {
-    return modN2(bits2int(bytes));
+  const bits2int_modN = CURVE.bits2int_modN || function(bytes2) {
+    return modN2(bits2int(bytes2));
   };
   const ORDER_MASK = bitMask(nBitLength);
-  function int2octets(num2) {
-    aInRange("num < 2^" + nBitLength, num2, _0n5, ORDER_MASK);
-    return numberToBytesBE(num2, nByteLength);
+  function int2octets(num3) {
+    aInRange("num < 2^" + nBitLength, num3, _0n5, ORDER_MASK);
+    return numberToBytesBE(num3, nByteLength);
   }
   function prepSig(msgHash, privateKey, opts = defaultSigOpts) {
     if (["recovered", "canonical"].some((k) => k in opts))
@@ -7115,8 +7132,8 @@ function weierstrass(curveDef) {
     const R = Point2.BASE.multiplyAndAddUnsafe(P, u1, u2)?.toAffine();
     if (!R)
       return false;
-    const v = modN2(R.x);
-    return v === r;
+    const v2 = modN2(R.x);
+    return v2 === r;
   }
   return {
     CURVE,
@@ -7143,15 +7160,15 @@ function SWUFpSqrtRatio(Fp, Z) {
   const c5 = _2n_pow_c1_1;
   const c6 = Fp.pow(Z, c2);
   const c7 = Fp.pow(Z, (c2 + _1n5) / _2n3);
-  let sqrtRatio = (u, v) => {
+  let sqrtRatio = (u, v2) => {
     let tv1 = c6;
-    let tv2 = Fp.pow(v, c4);
+    let tv2 = Fp.pow(v2, c4);
     let tv3 = Fp.sqr(tv2);
-    tv3 = Fp.mul(tv3, v);
+    tv3 = Fp.mul(tv3, v2);
     let tv5 = Fp.mul(u, tv3);
     tv5 = Fp.pow(tv5, c3);
     tv5 = Fp.mul(tv5, tv2);
-    tv2 = Fp.mul(tv5, v);
+    tv2 = Fp.mul(tv5, v2);
     tv3 = Fp.mul(tv5, u);
     let tv4 = Fp.mul(tv3, tv2);
     tv5 = Fp.pow(tv4, c5);
@@ -7176,14 +7193,14 @@ function SWUFpSqrtRatio(Fp, Z) {
   if (Fp.ORDER % _4n2 === _3n2) {
     const c12 = (Fp.ORDER - _3n2) / _4n2;
     const c22 = Fp.sqrt(Fp.neg(Z));
-    sqrtRatio = (u, v) => {
-      let tv1 = Fp.sqr(v);
-      const tv2 = Fp.mul(u, v);
+    sqrtRatio = (u, v2) => {
+      let tv1 = Fp.sqr(v2);
+      const tv2 = Fp.mul(u, v2);
       tv1 = Fp.mul(tv1, tv2);
       let y1 = Fp.pow(tv1, c12);
       y1 = Fp.mul(y1, tv2);
       const y2 = Fp.mul(y1, c22);
-      const tv3 = Fp.mul(Fp.sqr(y1), v);
+      const tv3 = Fp.mul(Fp.sqr(y1), v2);
       const isQR = Fp.eql(tv3, u);
       let y = Fp.cmov(y2, y1, isQR);
       return { isValid: isQR, value: y };
@@ -7289,10 +7306,10 @@ var init_weierstrass = __esm({
             if (length < 128)
               throw new E("tlv.decode(long): not minimal encoding");
           }
-          const v = data.subarray(pos, pos + length);
-          if (v.length !== length)
+          const v2 = data.subarray(pos, pos + length);
+          if (v2.length !== length)
             throw new E("tlv.decode: wrong value length");
-          return { v, l: data.subarray(pos + length) };
+          return { v: v2, l: data.subarray(pos + length) };
         }
       },
       // https://crypto.stackexchange.com/a/57734 Leftmost bit of first byte is 'negative' flag,
@@ -7300,11 +7317,11 @@ var init_weierstrass = __esm({
       // - add zero byte if exists
       // - if next byte doesn't have a flag, leading zero is not allowed (minimal encoding)
       _int: {
-        encode(num2) {
+        encode(num3) {
           const { Err: E } = DER;
-          if (num2 < _0n5)
+          if (num3 < _0n5)
             throw new E("integer: negative integers are not allowed");
-          let hex = numberToHexUnpadded(num2);
+          let hex = numberToHexUnpadded(num3);
           if (Number.parseInt(hex[0], 16) & 8)
             hex = "00" + hex;
           if (hex.length & 1)
@@ -7352,7 +7369,7 @@ var init_weierstrass = __esm({
 function getHash(hash3) {
   return {
     hash: hash3,
-    hmac: (key, ...msgs) => hmac(hash3, key, concatBytes(...msgs)),
+    hmac: (key2, ...msgs) => hmac(hash3, key2, concatBytes(...msgs)),
     randomBytes
   };
 }
@@ -7477,8 +7494,8 @@ function isogenyMap(field, map) {
 function createHasher2(Point2, mapToCurve, defaults) {
   if (typeof mapToCurve !== "function")
     throw new Error("mapToCurve() must be defined");
-  function map(num2) {
-    return Point2.fromAffine(mapToCurve(num2));
+  function map(num3) {
+    return Point2.fromAffine(mapToCurve(num3));
   }
   function clear(initial) {
     const P = initial.clearCofactor();
@@ -7760,8 +7777,8 @@ async function recoverPublicKey({ hash: hash3, signature }) {
   const { secp256k1: secp256k12 } = await Promise.resolve().then(() => (init_secp256k1(), secp256k1_exports));
   const signature_ = (() => {
     if (typeof signature === "object" && "r" in signature && "s" in signature) {
-      const { r, s, v, yParity } = signature;
-      const yParityOrV2 = Number(yParity ?? v);
+      const { r, s, v: v2, yParity } = signature;
+      const yParityOrV2 = Number(yParity ?? v2);
       const recoveryBit2 = toRecoveryBit(yParityOrV2);
       return new secp256k12.Signature(hexToBigInt(r), hexToBigInt(s)).addRecoveryBit(recoveryBit2);
     }
@@ -7805,18 +7822,18 @@ var init_recoverAddress = __esm({
 });
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/encoding/toRlp.js
-function toRlp(bytes, to = "hex") {
-  const encodable = getEncodable(bytes);
+function toRlp(bytes2, to = "hex") {
+  const encodable = getEncodable(bytes2);
   const cursor = createCursor(new Uint8Array(encodable.length));
   encodable.encode(cursor);
   if (to === "hex")
     return bytesToHex(cursor.bytes);
   return cursor.bytes;
 }
-function getEncodable(bytes) {
-  if (Array.isArray(bytes))
-    return getEncodableList(bytes.map((x) => getEncodable(x)));
-  return getEncodableBytes(bytes);
+function getEncodable(bytes2) {
+  if (Array.isArray(bytes2))
+    return getEncodableList(bytes2.map((x) => getEncodable(x)));
+  return getEncodableBytes(bytes2);
 }
 function getEncodableList(list) {
   const bodyLength = list.reduce((acc, x) => acc + x.length, 0);
@@ -7842,41 +7859,41 @@ function getEncodableList(list) {
         else
           cursor.pushUint32(bodyLength);
       }
-      for (const { encode: encode4 } of list) {
-        encode4(cursor);
+      for (const { encode: encode5 } of list) {
+        encode5(cursor);
       }
     }
   };
 }
 function getEncodableBytes(bytesOrHex) {
-  const bytes = typeof bytesOrHex === "string" ? hexToBytes(bytesOrHex) : bytesOrHex;
-  const sizeOfBytesLength = getSizeOfLength(bytes.length);
+  const bytes2 = typeof bytesOrHex === "string" ? hexToBytes(bytesOrHex) : bytesOrHex;
+  const sizeOfBytesLength = getSizeOfLength(bytes2.length);
   const length = (() => {
-    if (bytes.length === 1 && bytes[0] < 128)
+    if (bytes2.length === 1 && bytes2[0] < 128)
       return 1;
-    if (bytes.length <= 55)
-      return 1 + bytes.length;
-    return 1 + sizeOfBytesLength + bytes.length;
+    if (bytes2.length <= 55)
+      return 1 + bytes2.length;
+    return 1 + sizeOfBytesLength + bytes2.length;
   })();
   return {
     length,
     encode(cursor) {
-      if (bytes.length === 1 && bytes[0] < 128) {
-        cursor.pushBytes(bytes);
-      } else if (bytes.length <= 55) {
-        cursor.pushByte(128 + bytes.length);
-        cursor.pushBytes(bytes);
+      if (bytes2.length === 1 && bytes2[0] < 128) {
+        cursor.pushBytes(bytes2);
+      } else if (bytes2.length <= 55) {
+        cursor.pushByte(128 + bytes2.length);
+        cursor.pushBytes(bytes2);
       } else {
         cursor.pushByte(128 + 55 + sizeOfBytesLength);
         if (sizeOfBytesLength === 1)
-          cursor.pushUint8(bytes.length);
+          cursor.pushUint8(bytes2.length);
         else if (sizeOfBytesLength === 2)
-          cursor.pushUint16(bytes.length);
+          cursor.pushUint16(bytes2.length);
         else if (sizeOfBytesLength === 3)
-          cursor.pushUint24(bytes.length);
+          cursor.pushUint24(bytes2.length);
         else
-          cursor.pushUint32(bytes.length);
-        cursor.pushBytes(bytes);
+          cursor.pushUint32(bytes2.length);
+        cursor.pushBytes(bytes2);
       }
     }
   };
@@ -8258,11 +8275,11 @@ function extract(value_, { format: format2 }) {
   const value = {};
   function extract_(formatted2) {
     const keys = Object.keys(formatted2);
-    for (const key of keys) {
-      if (key in value_)
-        value[key] = value_[key];
-      if (formatted2[key] && typeof formatted2[key] === "object" && !Array.isArray(formatted2[key]))
-        extract_(formatted2[key]);
+    for (const key2 of keys) {
+      if (key2 in value_)
+        value[key2] = value_[key2];
+      if (formatted2[key2] && typeof formatted2[key2] === "object" && !Array.isArray(formatted2[key2]))
+        extract_(formatted2[key2]);
     }
   }
   const formatted = format2(value_ || {});
@@ -8282,8 +8299,8 @@ function defineFormatter(type, format2) {
       format: (args, action) => {
         const formatted = format2(args, action);
         if (exclude) {
-          for (const key of exclude) {
-            delete formatted[key];
+          for (const key2 of exclude) {
+            delete formatted[key2];
           }
         }
         return {
@@ -8956,10 +8973,10 @@ var init_sha256 = __esm({
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/hash/sha256.js
 function sha2563(value, to_) {
   const to = to_ || "hex";
-  const bytes = sha2562(isHex(value, { strict: false }) ? toBytes(value) : value);
+  const bytes2 = sha2562(isHex(value, { strict: false }) ? toBytes(value) : value);
   if (to === "bytes")
-    return bytes;
-  return toHex(bytes);
+    return bytes2;
+  return toHex(bytes2);
 }
 var init_sha2562 = __esm({
   "../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/hash/sha256.js"() {
@@ -9087,10 +9104,10 @@ function toBlobs(parameters) {
     const blob = createCursor(new Uint8Array(bytesPerBlob));
     let size5 = 0;
     while (size5 < fieldElementsPerBlob) {
-      const bytes = data.slice(position, position + (bytesPerFieldElement - 1));
+      const bytes2 = data.slice(position, position + (bytesPerFieldElement - 1));
       blob.pushByte(0);
-      blob.pushBytes(bytes);
-      if (bytes.length < 31) {
+      blob.pushBytes(bytes2);
+      if (bytes2.length < 31) {
         blob.pushByte(128);
         active = false;
         break;
@@ -9970,8 +9987,8 @@ function includesArgs(parameters) {
       if (input.type === "address")
         return isAddressEqual(value, arg);
       if (topicInputs.includes(input) && (input.type === "string" || input.type === "bytes")) {
-        const bytes = input.type === "string" ? stringToBytes(value) : toBytes(value);
-        return keccak256(bytes) === arg;
+        const bytes2 = input.type === "string" ? stringToBytes(value) : toBytes(value);
+        return keccak256(bytes2) === arg;
       }
       if (typeof value === "string" && typeof arg === "string" && bytesRegex2.test(input.type))
         return value.toLowerCase() === arg.toLowerCase();
@@ -9992,14 +10009,14 @@ function includesArgs(parameters) {
     });
   }
   if (typeof args === "object" && !Array.isArray(args) && typeof matchArgs === "object" && !Array.isArray(matchArgs))
-    return Object.entries(matchArgs).every(([key, value]) => {
+    return Object.entries(matchArgs).every(([key2, value]) => {
       if (value === null || value === void 0)
         return true;
-      const input = inputs.find((input2) => input2.name === key);
+      const input = inputs.find((input2) => input2.name === key2);
       if (!input)
         return false;
       const value_ = Array.isArray(value) ? value : [value];
-      return value_.some((value2) => isEqual2(input, value2, args[key]));
+      return value_.some((value2) => isEqual2(input, value2, args[key2]));
     });
   return false;
 }
@@ -10016,7 +10033,7 @@ var init_parseEventLogs = __esm({
 });
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/actions/public/getLogs.js
-async function getLogs(client, { address, blockHash, fromBlock, toBlock, event, events: events_, args, strict: strict_ } = {}) {
+async function getLogs(client, { address, blockHash, fromBlock, toBlock: toBlock2, event, events: events_, args, strict: strict_ } = {}) {
   const strict = strict_ ?? false;
   const events = events_ ?? (event ? [event] : void 0);
   let topics = [];
@@ -10044,7 +10061,7 @@ async function getLogs(client, { address, blockHash, fromBlock, toBlock, event, 
           address,
           topics,
           fromBlock: typeof fromBlock === "bigint" ? numberToHex(fromBlock) : fromBlock,
-          toBlock: typeof toBlock === "bigint" ? numberToHex(toBlock) : toBlock
+          toBlock: typeof toBlock2 === "bigint" ? numberToHex(toBlock2) : toBlock2
         }
       ]
     });
@@ -10070,7 +10087,7 @@ var init_getLogs = __esm({
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/actions/public/getContractEvents.js
 async function getContractEvents(client, parameters) {
-  const { abi: abi2, address, args, blockHash, eventName, fromBlock, toBlock, strict } = parameters;
+  const { abi: abi2, address, args, blockHash, eventName, fromBlock, toBlock: toBlock2, strict } = parameters;
   const event = eventName ? getAbiItem({ abi: abi2, name: eventName }) : void 0;
   const events = !event ? abi2.filter((x) => x.type === "event") : void 0;
   return getAction(client, getLogs, "getLogs")({
@@ -10080,7 +10097,7 @@ async function getContractEvents(client, parameters) {
     event,
     events,
     fromBlock,
-    toBlock,
+    toBlock: toBlock2,
     strict
   });
 }
@@ -10277,10 +10294,10 @@ var init_Errors = __esm({
 });
 
 // ../../node_modules/.pnpm/ox@0.14.59_typescript@5.9.3_zod@4.6.7/node_modules/ox/_esm/core/internal/bytes.js
-function assertSize2(bytes, size_) {
-  if (size2(bytes) > size_)
+function assertSize2(bytes2, size_) {
+  if (size2(bytes2) > size_)
     throw new SizeOverflowError2({
-      givenSize: size2(bytes),
+      givenSize: size2(bytes2),
       maxSize: size_
     });
 }
@@ -10310,20 +10327,20 @@ function charCodeToBase162(char) {
     return char - (charCodeMap2.a - 10);
   return void 0;
 }
-function pad2(bytes, options = {}) {
+function pad2(bytes2, options = {}) {
   const { dir, size: size5 = 32 } = options;
   if (size5 === 0)
-    return bytes;
-  if (bytes.length > size5)
+    return bytes2;
+  if (bytes2.length > size5)
     throw new SizeExceedsPaddingSizeError2({
-      size: bytes.length,
+      size: bytes2.length,
       targetSize: size5,
       type: "Bytes"
     });
   const paddedBytes = new Uint8Array(size5);
   for (let i = 0; i < size5; i++) {
     const padEnd = dir === "right";
-    paddedBytes[padEnd ? i : size5 - i - 1] = bytes[padEnd ? i : bytes.length - i - 1];
+    paddedBytes[padEnd ? i : size5 - i - 1] = bytes2[padEnd ? i : bytes2.length - i - 1];
   }
   return paddedBytes;
 }
@@ -10418,9 +10435,9 @@ var init_hex = __esm({
 
 // ../../node_modules/.pnpm/ox@0.14.59_typescript@5.9.3_zod@4.6.7/node_modules/ox/_esm/core/Json.js
 function stringify2(value, replacer, space) {
-  return JSON.stringify(value, (key, value2) => {
+  return JSON.stringify(value, (key2, value2) => {
     if (typeof replacer === "function")
-      return replacer(key, value2);
+      return replacer(key2, value2);
     if (typeof value2 === "bigint")
       return value2.toString() + bigIntSuffix;
     return value2;
@@ -10467,25 +10484,25 @@ function fromHex(value, options = {}) {
   if (hexString.length % 2)
     hexString = `0${hexString}`;
   const length = hexString.length / 2;
-  const bytes = new Uint8Array(length);
+  const bytes2 = new Uint8Array(length);
   for (let index2 = 0, j = 0; index2 < length; index2++) {
     const nibbleLeft = charCodeToBase162(hexString.charCodeAt(j++));
     const nibbleRight = charCodeToBase162(hexString.charCodeAt(j++));
     if (nibbleLeft === void 0 || nibbleRight === void 0) {
       throw new BaseError3(`Invalid byte sequence ("${hexString[j - 2]}${hexString[j - 1]}" in "${hexString}").`);
     }
-    bytes[index2] = nibbleLeft << 4 | nibbleRight;
+    bytes2[index2] = nibbleLeft << 4 | nibbleRight;
   }
-  return bytes;
+  return bytes2;
 }
 function fromString(value, options = {}) {
   const { size: size5 } = options;
-  const bytes = encoder3.encode(value);
+  const bytes2 = encoder3.encode(value);
   if (typeof size5 === "number") {
-    assertSize2(bytes, size5);
-    return padRight2(bytes, size5);
+    assertSize2(bytes2, size5);
+    return padRight2(bytes2, size5);
   }
-  return bytes;
+  return bytes2;
 }
 function padRight2(value, size5) {
   return pad2(value, { dir: "right", size: size5 });
@@ -10501,16 +10518,16 @@ function slice2(value, start, end, options = {}) {
     assertEndOffset2(value_, start, end);
   return value_;
 }
-function toBigInt2(bytes, options = {}) {
+function toBigInt2(bytes2, options = {}) {
   const { size: size5 } = options;
   if (typeof size5 !== "undefined")
-    assertSize2(bytes, size5);
-  const hex = fromBytes(bytes, options);
+    assertSize2(bytes2, size5);
+  const hex = fromBytes(bytes2, options);
   return toBigInt(hex, options);
 }
-function toBoolean(bytes, options = {}) {
+function toBoolean(bytes2, options = {}) {
   const { size: size5 } = options;
-  let bytes_ = bytes;
+  let bytes_ = bytes2;
   if (typeof size5 !== "undefined") {
     assertSize2(bytes_, size5);
     bytes_ = trimLeft(bytes_);
@@ -10519,16 +10536,16 @@ function toBoolean(bytes, options = {}) {
     throw new InvalidBytesBooleanError2(bytes_);
   return Boolean(bytes_[0]);
 }
-function toNumber2(bytes, options = {}) {
+function toNumber2(bytes2, options = {}) {
   const { size: size5 } = options;
   if (typeof size5 !== "undefined")
-    assertSize2(bytes, size5);
-  const hex = fromBytes(bytes, options);
+    assertSize2(bytes2, size5);
+  const hex = fromBytes(bytes2, options);
   return toNumber(hex, options);
 }
-function toString(bytes, options = {}) {
+function toString(bytes2, options = {}) {
   const { size: size5 } = options;
-  let bytes_ = bytes;
+  let bytes_ = bytes2;
   if (typeof size5 !== "undefined") {
     assertSize2(bytes_, size5);
     bytes_ = trimRight(bytes_);
@@ -10560,8 +10577,8 @@ var init_Bytes = __esm({
     decoder = /* @__PURE__ */ new TextDecoder();
     encoder3 = /* @__PURE__ */ new TextEncoder();
     InvalidBytesBooleanError2 = class extends BaseError3 {
-      constructor(bytes) {
-        super(`Bytes value \`${bytes}\` is not a valid boolean.`, {
+      constructor(bytes2) {
+        super(`Bytes value \`${bytes2}\` is not a valid boolean.`, {
           metaMessages: [
             "The bytes array must contain a single byte of either a `0` or `1` value."
           ]
@@ -11830,17 +11847,17 @@ async function localBatchGatewayRequest(parameters) {
   const { args: [queries] } = decodeFunctionData({ abi: batchGatewayAbi, data });
   const failures = [];
   const responses = [];
-  await Promise.all(queries.map(async (query, i) => {
+  await Promise.all(queries.map(async (query2, i) => {
     try {
-      const nested = query.urls.includes(localBatchGatewayUrl);
-      if (nested && depth + 1 >= ccipReadLimit.depth)
+      const nested2 = query2.urls.includes(localBatchGatewayUrl);
+      if (nested2 && depth + 1 >= ccipReadLimit.depth)
         throw new HttpRequestError({
           details: `CCIP Read exceeded the maximum batch depth (${ccipReadLimit.depth}).`,
           url: localBatchGatewayUrl
         });
-      if (nested)
+      if (nested2)
         responses[i] = await localBatchGatewayRequest({
-          data: query.data,
+          data: query2.data,
           ccipRequest: ccipRequest2,
           budget,
           depth: depth + 1
@@ -11849,11 +11866,11 @@ async function localBatchGatewayRequest(parameters) {
         if (budget.queries <= 0)
           throw new HttpRequestError({
             details: `CCIP Read exceeded the maximum number of queries (${ccipReadLimit.queries}).`,
-            url: query.urls[0] ?? ""
+            url: query2.urls[0] ?? ""
           });
-        const urls = query.urls.slice(0, budget.queries);
+        const urls = query2.urls.slice(0, budget.queries);
         budget.queries -= Math.max(1, urls.length);
-        responses[i] = await budget.run(() => ccipRequest2({ ...query, urls }));
+        responses[i] = await budget.run(() => ccipRequest2({ ...query2, urls }));
       }
       failures[i] = false;
     } catch (err) {
@@ -12658,13 +12675,13 @@ function observe(observerId, callbacks, fn) {
   if (listeners && listeners.length > 0)
     return unwatch;
   const emit = {};
-  for (const key in callbacks) {
-    emit[key] = (...args) => {
+  for (const key2 in callbacks) {
+    emit[key2] = (...args) => {
       const listeners2 = getListeners();
       if (listeners2.length === 0)
         return;
       for (const listener of listeners2)
-        listener.fns[key]?.(...args);
+        listener.fns[key2]?.(...args);
     };
   }
   const cleanup = fn(emit);
@@ -13499,6 +13516,80 @@ var init_Base64 = __esm({
   }
 });
 
+// ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/abi/encodePacked.js
+function encodePacked(types, values) {
+  if (types.length !== values.length)
+    throw new AbiEncodingLengthMismatchError({
+      expectedLength: types.length,
+      givenLength: values.length
+    });
+  const data = [];
+  for (let i = 0; i < types.length; i++) {
+    const type = types[i];
+    const value = values[i];
+    data.push(encode(type, value));
+  }
+  return concatHex(data);
+}
+function encode(type, value, isArray = false) {
+  if (type === "address") {
+    const address = value;
+    if (!isAddress(address))
+      throw new InvalidAddressError({ address });
+    return pad(address.toLowerCase(), {
+      size: isArray ? 32 : null
+    });
+  }
+  if (type === "string")
+    return stringToHex(value);
+  if (type === "bytes")
+    return value;
+  if (type === "bool")
+    return pad(boolToHex(value), { size: isArray ? 32 : 1 });
+  const intMatch = type.match(integerRegex2);
+  if (intMatch) {
+    const [_type, baseType, bits = "256"] = intMatch;
+    const size5 = Number.parseInt(bits, 10) / 8;
+    return numberToHex(value, {
+      size: isArray ? 32 : size5,
+      signed: baseType === "int"
+    });
+  }
+  const bytesMatch = type.match(bytesRegex2);
+  if (bytesMatch) {
+    const [_type, size5] = bytesMatch;
+    if (Number.parseInt(size5, 10) !== (value.length - 2) / 2)
+      throw new BytesSizeMismatchError({
+        expectedSize: Number.parseInt(size5, 10),
+        givenSize: (value.length - 2) / 2
+      });
+    return pad(value, { dir: "right", size: isArray ? 32 : null });
+  }
+  const arrayMatch = type.match(arrayRegex);
+  if (arrayMatch && Array.isArray(value)) {
+    const [_type, childType] = arrayMatch;
+    const data = [];
+    for (let i = 0; i < value.length; i++) {
+      data.push(encode(childType, value[i], true));
+    }
+    if (data.length === 0)
+      return "0x";
+    return concatHex(data);
+  }
+  throw new UnsupportedPackedAbiType(type);
+}
+var init_encodePacked = __esm({
+  "../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/abi/encodePacked.js"() {
+    init_abi();
+    init_address();
+    init_isAddress();
+    init_concat();
+    init_pad();
+    init_toHex();
+    init_regex2();
+  }
+});
+
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/transaction/assertTransaction.js
 function assertTransactionEIP7702(transaction) {
   const { authorizationList } = transaction;
@@ -13754,7 +13845,7 @@ function serializeTransactionLegacy(transaction, signature) {
     data ?? "0x"
   ];
   if (signature) {
-    const v = (() => {
+    const v2 = (() => {
       if (signature.v >= 35n) {
         const inferredChainId = (signature.v - 35n) / 2n;
         if (inferredChainId > 0)
@@ -13763,16 +13854,16 @@ function serializeTransactionLegacy(transaction, signature) {
       }
       if (chainId > 0)
         return BigInt(chainId * 2) + BigInt(35n + signature.v - 27n);
-      const v2 = 27n + (signature.v === 27n ? 0n : 1n);
-      if (signature.v !== v2)
+      const v3 = 27n + (signature.v === 27n ? 0n : 1n);
+      if (signature.v !== v3)
         throw new InvalidLegacyVError({ v: signature.v });
-      return v2;
+      return v3;
     })();
     const r = trim(signature.r);
     const s = trim(signature.s);
     serializedTransaction = [
       ...serializedTransaction,
-      numberToHex(v),
+      numberToHex(v2),
       r === "0x00" ? "0x" : r,
       s === "0x00" ? "0x" : s
     ];
@@ -13788,23 +13879,23 @@ function serializeTransactionLegacy(transaction, signature) {
 }
 function toYParitySignatureArray(transaction, signature_) {
   const signature = signature_ ?? transaction;
-  const { v, yParity } = signature;
+  const { v: v2, yParity } = signature;
   if (typeof signature.r === "undefined")
     return [];
   if (typeof signature.s === "undefined")
     return [];
-  if (typeof v === "undefined" && typeof yParity === "undefined")
+  if (typeof v2 === "undefined" && typeof yParity === "undefined")
     return [];
   const r = trim(signature.r);
   const s = trim(signature.s);
   const yParity_ = (() => {
     if (typeof yParity === "number")
       return yParity ? numberToHex(1) : "0x";
-    if (v === 0n)
+    if (v2 === 0n)
       return "0x";
-    if (v === 1n)
+    if (v2 === 1n)
       return numberToHex(1);
-    return v === 27n ? "0x" : numberToHex(1);
+    return v2 === 27n ? "0x" : numberToHex(1);
   })();
   return [yParity_, r === "0x00" ? "0x" : r, s === "0x00" ? "0x" : s];
 }
@@ -14053,11 +14144,11 @@ function getHttpError(error) {
     return void 0;
   return error.walk((err) => err instanceof HttpRequestError || err instanceof RpcRequestError);
 }
-function hashString(str, seed = 0) {
+function hashString(str2, seed = 0) {
   let h1 = 3735928559 ^ seed;
   let h2 = 1103547991 ^ seed;
-  for (let i = 0; i < str.length; i++) {
-    const ch = str.charCodeAt(i);
+  for (let i = 0; i < str2.length; i++) {
+    const ch = str2.charCodeAt(i);
     h1 = Math.imul(h1 ^ ch, 2654435761);
     h2 = Math.imul(h2 ^ ch, 1597334677);
   }
@@ -14105,7 +14196,7 @@ var init_defineChain = __esm({
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/encoding/fromRlp.js
 function fromRlp(value, to = "hex") {
-  const bytes = (() => {
+  const bytes2 = (() => {
     if (typeof value === "string") {
       if (value.length > 3 && value.length % 2 !== 0)
         throw new InvalidHexValueError(value);
@@ -14113,7 +14204,7 @@ function fromRlp(value, to = "hex") {
     }
     return value;
   })();
-  const cursor = createCursor(bytes, {
+  const cursor = createCursor(bytes2, {
     recursiveReadLimit: Number.POSITIVE_INFINITY
   });
   const result = fromRlpCursor(cursor, to);
@@ -14133,8 +14224,8 @@ function fromRlpCursor(cursor, to = "hex", recursiveDepth = 0) {
     cursor.decrementPosition(1);
   if (prefix < 192) {
     const length2 = readLength(cursor, prefix, 128);
-    const bytes = cursor.readBytes(length2);
-    return to === "hex" ? bytesToHex(bytes) : bytes;
+    const bytes2 = cursor.readBytes(length2);
+    return to === "hex" ? bytesToHex(bytes2) : bytes2;
   }
   const length = readLength(cursor, prefix, 192);
   return readList(cursor, length, to, recursiveDepth + 1);
@@ -14662,7 +14753,7 @@ function encodeField({ types, name, type, value }) {
     }));
     return [
       { type: "bytes32" },
-      keccak256(encodeAbiParameters(typeValuePairs.map(([t]) => t), typeValuePairs.map(([, v]) => v)))
+      keccak256(encodeAbiParameters(typeValuePairs.map(([t]) => t), typeValuePairs.map(([, v2]) => v2)))
     ];
   }
   return [{ type }, value];
@@ -14692,16 +14783,16 @@ var init_lru2 = __esm({
         });
         this.maxSize = size5;
       }
-      get(key) {
-        const value = super.get(key);
-        if (super.has(key) && value !== void 0) {
-          this.delete(key);
-          super.set(key, value);
+      get(key2) {
+        const value = super.get(key2);
+        if (super.has(key2) && value !== void 0) {
+          this.delete(key2);
+          super.set(key2, value);
         }
         return value;
       }
-      set(key, value) {
-        super.set(key, value);
+      set(key2, value) {
+        super.set(key2, value);
         if (this.maxSize && this.size > this.maxSize) {
           const firstKey = this.keys().next().value;
           if (firstKey)
@@ -14728,10 +14819,10 @@ var init_Caches = __esm({
 // ../../node_modules/.pnpm/ox@0.14.59_typescript@5.9.3_zod@4.6.7/node_modules/ox/_esm/core/Hash.js
 function keccak2562(value, options = {}) {
   const { as = typeof value === "string" ? "Hex" : "Bytes" } = options;
-  const bytes = keccak_256(from2(value));
+  const bytes2 = keccak_256(from2(value));
   if (as === "Bytes")
-    return bytes;
-  return fromBytes(bytes);
+    return bytes2;
+  return fromBytes(bytes2);
 }
 var init_Hash = __esm({
   "../../node_modules/.pnpm/ox@0.14.59_typescript@5.9.3_zod@4.6.7/node_modules/ox/_esm/core/Hash.js"() {
@@ -15004,10 +15095,10 @@ var init_Address = __esm({
 });
 
 // ../../node_modules/.pnpm/ox@0.14.59_typescript@5.9.3_zod@4.6.7/node_modules/ox/_esm/core/Solidity.js
-var arrayRegex, bytesRegex3, integerRegex3, maxInt82, maxInt162, maxInt242, maxInt322, maxInt402, maxInt482, maxInt562, maxInt642, maxInt722, maxInt802, maxInt882, maxInt962, maxInt1042, maxInt1122, maxInt1202, maxInt1282, maxInt1362, maxInt1442, maxInt1522, maxInt1602, maxInt1682, maxInt1762, maxInt1842, maxInt1922, maxInt2002, maxInt2082, maxInt2162, maxInt2242, maxInt2322, maxInt2402, maxInt2482, maxInt2562, minInt82, minInt162, minInt242, minInt322, minInt402, minInt482, minInt562, minInt642, minInt722, minInt802, minInt882, minInt962, minInt1042, minInt1122, minInt1202, minInt1282, minInt1362, minInt1442, minInt1522, minInt1602, minInt1682, minInt1762, minInt1842, minInt1922, minInt2002, minInt2082, minInt2162, minInt2242, minInt2322, minInt2402, minInt2482, minInt2562, maxUint82, maxUint162, maxUint242, maxUint322, maxUint402, maxUint482, maxUint562, maxUint642, maxUint722, maxUint802, maxUint882, maxUint962, maxUint1042, maxUint1122, maxUint1202, maxUint1282, maxUint1362, maxUint1442, maxUint1522, maxUint1602, maxUint1682, maxUint1762, maxUint1842, maxUint1922, maxUint2002, maxUint2082, maxUint2162, maxUint2242, maxUint2322, maxUint2402, maxUint2482, maxUint2562;
+var arrayRegex2, bytesRegex3, integerRegex3, maxInt82, maxInt162, maxInt242, maxInt322, maxInt402, maxInt482, maxInt562, maxInt642, maxInt722, maxInt802, maxInt882, maxInt962, maxInt1042, maxInt1122, maxInt1202, maxInt1282, maxInt1362, maxInt1442, maxInt1522, maxInt1602, maxInt1682, maxInt1762, maxInt1842, maxInt1922, maxInt2002, maxInt2082, maxInt2162, maxInt2242, maxInt2322, maxInt2402, maxInt2482, maxInt2562, minInt82, minInt162, minInt242, minInt322, minInt402, minInt482, minInt562, minInt642, minInt722, minInt802, minInt882, minInt962, minInt1042, minInt1122, minInt1202, minInt1282, minInt1362, minInt1442, minInt1522, minInt1602, minInt1682, minInt1762, minInt1842, minInt1922, minInt2002, minInt2082, minInt2162, minInt2242, minInt2322, minInt2402, minInt2482, minInt2562, maxUint82, maxUint162, maxUint242, maxUint322, maxUint402, maxUint482, maxUint562, maxUint642, maxUint722, maxUint802, maxUint882, maxUint962, maxUint1042, maxUint1122, maxUint1202, maxUint1282, maxUint1362, maxUint1442, maxUint1522, maxUint1602, maxUint1682, maxUint1762, maxUint1842, maxUint1922, maxUint2002, maxUint2082, maxUint2162, maxUint2242, maxUint2322, maxUint2402, maxUint2482, maxUint2562;
 var init_Solidity = __esm({
   "../../node_modules/.pnpm/ox@0.14.59_typescript@5.9.3_zod@4.6.7/node_modules/ox/_esm/core/Solidity.js"() {
-    arrayRegex = /^(.*)\[([0-9]*)\]$/;
+    arrayRegex2 = /^(.*)\[([0-9]*)\]$/;
     bytesRegex3 = /^bytes([1-9]|1[0-9]|2[0-9]|3[0-2])?$/;
     integerRegex3 = /^(u?int)(8|16|24|32|40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)?$/;
     maxInt82 = 2n ** (8n - 1n) - 1n;
@@ -15328,7 +15419,7 @@ function prepareParameter({ checksumAddress: checksumAddress2 = false, parameter
   }
   throw new InvalidTypeError(parameter.type);
 }
-function encode(preparedParameters) {
+function encode2(preparedParameters) {
   let staticSize = 0;
   for (let i = 0; i < preparedParameters.length; i++) {
     const { dynamic, encoded } = preparedParameters[i];
@@ -15384,7 +15475,7 @@ function encodeArray2(value, options) {
     preparedParameters.push(preparedParam);
   }
   if (dynamic || dynamicChild) {
-    const data = encode(preparedParameters);
+    const data = encode2(preparedParameters);
     if (dynamic) {
       const length2 = fromNumber(preparedParameters.length, { size: 32 });
       return {
@@ -15475,7 +15566,7 @@ function encodeTuple2(value, options) {
   }
   return {
     dynamic,
-    encoded: dynamic ? encode(preparedParameters) : concat2(...preparedParameters.map(({ encoded }) => encoded))
+    encoded: dynamic ? encode2(preparedParameters) : concat2(...preparedParameters.map(({ encoded }) => encoded))
   };
 }
 function getArrayComponents2(type) {
@@ -15518,10 +15609,10 @@ var init_abiParameters = __esm({
 });
 
 // ../../node_modules/.pnpm/ox@0.14.59_typescript@5.9.3_zod@4.6.7/node_modules/ox/_esm/core/internal/cursor.js
-function create(bytes, { recursiveReadLimit = 8192 } = {}) {
+function create(bytes2, { recursiveReadLimit = 8192 } = {}) {
   const cursor = Object.create(staticCursor2);
-  cursor.bytes = bytes;
-  cursor.dataView = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  cursor.bytes = bytes2;
+  cursor.dataView = new DataView(bytes2.buffer, bytes2.byteOffset, bytes2.byteLength);
   cursor.positionReadCount = /* @__PURE__ */ new Map();
   cursor.recursiveReadLimit = recursiveReadLimit;
   return cursor;
@@ -15603,10 +15694,10 @@ var init_cursor3 = __esm({
         this.bytes[this.position] = byte;
         this.position++;
       },
-      pushBytes(bytes) {
-        this.assertPosition(this.position + bytes.length - 1);
-        this.bytes.set(bytes, this.position);
-        this.position += bytes.length;
+      pushBytes(bytes2) {
+        this.assertPosition(this.position + bytes2.length - 1);
+        this.bytes.set(bytes2, this.position);
+        this.position += bytes2.length;
       },
       pushUint8(value) {
         this.assertPosition(this.position);
@@ -15728,21 +15819,21 @@ var init_cursor3 = __esm({
 // ../../node_modules/.pnpm/ox@0.14.59_typescript@5.9.3_zod@4.6.7/node_modules/ox/_esm/core/AbiParameters.js
 function decode(parameters, data, options = {}) {
   const { as = "Array", checksumAddress: checksumAddress2 = false } = options;
-  const bytes = typeof data === "string" ? fromHex(data) : data;
-  const cursor = create(bytes);
-  if (size2(bytes) === 0 && parameters.length > 0)
+  const bytes2 = typeof data === "string" ? fromHex(data) : data;
+  const cursor = create(bytes2);
+  if (size2(bytes2) === 0 && parameters.length > 0)
     throw new ZeroDataError();
-  if (size2(bytes) && size2(bytes) < 32)
+  if (size2(bytes2) && size2(bytes2) < 32)
     throw new DataSizeTooSmallError({
       data: typeof data === "string" ? data : fromBytes(data),
       parameters,
-      size: size2(bytes)
+      size: size2(bytes2)
     });
   let consumed = 0;
   const values = as === "Array" ? [] : {};
   for (let i = 0; i < parameters.length; ++i) {
     const param = parameters[i];
-    if (consumed < bytes.length)
+    if (consumed < bytes2.length)
       cursor.setPosition(consumed);
     const [data2, consumed_] = decodeParameter2(cursor, param, {
       checksumAddress: checksumAddress2,
@@ -15756,7 +15847,7 @@ function decode(parameters, data, options = {}) {
   }
   return values;
 }
-function encode2(parameters, values, options) {
+function encode3(parameters, values, options) {
   const { checksumAddress: checksumAddress2 = false } = options ?? {};
   if (parameters.length !== values.length)
     throw new LengthMismatchError({
@@ -15768,12 +15859,12 @@ function encode2(parameters, values, options) {
     parameters,
     values
   });
-  const data = encode(preparedParameters);
+  const data = encode2(preparedParameters);
   if (data.length === 0)
     return "0x";
   return data;
 }
-function encodePacked(types, values) {
+function encodePacked2(types, values) {
   if (types.length !== values.length)
     throw new LengthMismatchError({
       expectedLength: types.length,
@@ -15783,7 +15874,7 @@ function encodePacked(types, values) {
   for (let i = 0; i < types.length; i++) {
     const type = types[i];
     const value = values[i];
-    data.push(encodePacked.encode(type, value));
+    data.push(encodePacked2.encode(type, value));
   }
   return concat2(...data);
 }
@@ -15805,8 +15896,8 @@ var init_AbiParameters = __esm({
     init_abiParameters();
     init_cursor3();
     init_Solidity();
-    (function(encodePacked2) {
-      function encode4(type, value, isArray = false) {
+    (function(encodePacked3) {
+      function encode5(type, value, isArray = false) {
         if (type === "address") {
           const address = value;
           assert4(address);
@@ -15837,12 +15928,12 @@ var init_AbiParameters = __esm({
             });
           return padRight(value, isArray ? 32 : 0);
         }
-        const arrayMatch = type.match(arrayRegex);
+        const arrayMatch = type.match(arrayRegex2);
         if (arrayMatch && Array.isArray(value)) {
           const [_type, childType] = arrayMatch;
           const data = [];
           for (let i = 0; i < value.length; i++) {
-            data.push(encode4(childType, value[i], true));
+            data.push(encode5(childType, value[i], true));
           }
           if (data.length === 0)
             return "0x";
@@ -15850,8 +15941,8 @@ var init_AbiParameters = __esm({
         }
         throw new InvalidTypeError(type);
       }
-      encodePacked2.encode = encode4;
-    })(encodePacked || (encodePacked = {}));
+      encodePacked3.encode = encode5;
+    })(encodePacked2 || (encodePacked2 = {}));
     DataSizeTooSmallError = class extends BaseError3 {
       constructor({ data, parameters, size: size5 }) {
         super(`Data size of ${size5} bytes is too small for given parameters.`, {
@@ -15955,10 +16046,10 @@ function fromHex3(hex, options = {}) {
   const { as = "Hex" } = options;
   return from7(hex, { as });
 }
-function getEncodable2(bytes) {
-  if (Array.isArray(bytes))
-    return getEncodableList2(bytes.map((x) => getEncodable2(x)));
-  return getEncodableBytes2(bytes);
+function getEncodable2(bytes2) {
+  if (Array.isArray(bytes2))
+    return getEncodableList2(bytes2.map((x) => getEncodable2(x)));
+  return getEncodableBytes2(bytes2);
 }
 function getEncodableList2(list) {
   const bodyLength = list.reduce((acc, x) => acc + x.length, 0);
@@ -15984,41 +16075,41 @@ function getEncodableList2(list) {
         else
           cursor.pushUint32(bodyLength);
       }
-      for (const { encode: encode4 } of list) {
-        encode4(cursor);
+      for (const { encode: encode5 } of list) {
+        encode5(cursor);
       }
     }
   };
 }
 function getEncodableBytes2(bytesOrHex) {
-  const bytes = typeof bytesOrHex === "string" ? fromHex(bytesOrHex) : bytesOrHex;
-  const sizeOfBytesLength = getSizeOfLength2(bytes.length);
+  const bytes2 = typeof bytesOrHex === "string" ? fromHex(bytesOrHex) : bytesOrHex;
+  const sizeOfBytesLength = getSizeOfLength2(bytes2.length);
   const length = (() => {
-    if (bytes.length === 1 && bytes[0] < 128)
+    if (bytes2.length === 1 && bytes2[0] < 128)
       return 1;
-    if (bytes.length <= 55)
-      return 1 + bytes.length;
-    return 1 + sizeOfBytesLength + bytes.length;
+    if (bytes2.length <= 55)
+      return 1 + bytes2.length;
+    return 1 + sizeOfBytesLength + bytes2.length;
   })();
   return {
     length,
     encode(cursor) {
-      if (bytes.length === 1 && bytes[0] < 128) {
-        cursor.pushBytes(bytes);
-      } else if (bytes.length <= 55) {
-        cursor.pushByte(128 + bytes.length);
-        cursor.pushBytes(bytes);
+      if (bytes2.length === 1 && bytes2[0] < 128) {
+        cursor.pushBytes(bytes2);
+      } else if (bytes2.length <= 55) {
+        cursor.pushByte(128 + bytes2.length);
+        cursor.pushBytes(bytes2);
       } else {
         cursor.pushByte(128 + 55 + sizeOfBytesLength);
         if (sizeOfBytesLength === 1)
-          cursor.pushUint8(bytes.length);
+          cursor.pushUint8(bytes2.length);
         else if (sizeOfBytesLength === 2)
-          cursor.pushUint16(bytes.length);
+          cursor.pushUint16(bytes2.length);
         else if (sizeOfBytesLength === 3)
-          cursor.pushUint24(bytes.length);
+          cursor.pushUint24(bytes2.length);
         else
-          cursor.pushUint32(bytes.length);
-        cursor.pushBytes(bytes);
+          cursor.pushUint32(bytes2.length);
+        cursor.pushBytes(bytes2);
       }
     }
   };
@@ -16123,10 +16214,10 @@ function fromLegacy(signature) {
 }
 function fromRpc2(signature) {
   const yParity = (() => {
-    const v = signature.v ? Number(signature.v) : void 0;
+    const v2 = signature.v ? Number(signature.v) : void 0;
     let yParity2 = signature.yParity ? Number(signature.yParity) : void 0;
-    if (typeof v === "number" && typeof yParity2 !== "number")
-      yParity2 = vToYParity(v);
+    if (typeof v2 === "number" && typeof yParity2 !== "number")
+      yParity2 = vToYParity(v2);
     if (typeof yParity2 !== "number")
       throw new InvalidYParityError2({ value: signature.yParity });
     return yParity2;
@@ -16137,14 +16228,14 @@ function fromRpc2(signature) {
     yParity
   };
 }
-function vToYParity(v) {
-  if (v === 0 || v === 27)
+function vToYParity(v2) {
+  if (v2 === 0 || v2 === 27)
     return 0;
-  if (v === 1 || v === 28)
+  if (v2 === 1 || v2 === 28)
     return 1;
-  if (v >= 35)
-    return v % 2 === 0 ? 1 : 0;
-  throw new InvalidVError({ value: v });
+  if (v2 >= 35)
+    return v2 % 2 === 0 ? 1 : 0;
+  throw new InvalidVError({ value: v2 });
 }
 var InvalidSerializedSizeError2, MissingPropertiesError, InvalidRError, InvalidSError, InvalidYParityError2, InvalidVError;
 var init_Signature = __esm({
@@ -16369,7 +16460,7 @@ function wrap(value) {
     payload: getSignPayload(value.authorization),
     signature: from8(value.authorization)
   });
-  const suffix = encode2(suffixParameters, [
+  const suffix = encode3(suffixParameters, [
     {
       ...value.authorization,
       delegation: value.authorization.address,
@@ -16446,6 +16537,7 @@ var init_utils5 = __esm({
   "../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/utils/index.js"() {
     init_encodeFunctionData();
     init_fromHex();
+    init_getAction();
   }
 });
 
@@ -18104,7 +18196,7 @@ function uid(length = 11) {
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/clients/createClient.js
 function createClient(parameters) {
-  const { batch, chain, ccipRead, dataSuffix, key = "base", name = "Base Client", tokens, type = "base" } = parameters;
+  const { batch, chain, ccipRead, dataSuffix, key: key2 = "base", name = "Base Client", tokens, type = "base" } = parameters;
   const experimental_blockTag = parameters.experimental_blockTag ?? (typeof chain?.experimental_preconfirmationTime === "number" ? "pending" : void 0);
   const blockTime = chain?.blockTime ?? 12e3;
   const defaultPollingInterval = Math.min(Math.max(Math.floor(blockTime / 2), 500), 4e3);
@@ -18124,7 +18216,7 @@ function createClient(parameters) {
     ccipRead,
     chain,
     dataSuffix,
-    key,
+    key: key2,
     name,
     pollingInterval,
     request,
@@ -18142,15 +18234,15 @@ function decorate(client) {
   function extend(base, extensions) {
     return (extendFn) => {
       const extended = extendFn(base);
-      for (const key in client)
-        if (key !== "scope")
-          delete extended[key];
+      for (const key2 in client)
+        if (key2 !== "scope")
+          delete extended[key2];
       const combined = { ...base, ...extended };
-      for (const key in extended) {
-        const a = base[key];
-        const b = extended[key];
+      for (const key2 in extended) {
+        const a = base[key2];
+        const b = extended[key2];
         if (isPlainObject(a) && isPlainObject(b))
-          combined[key] = { ...a, ...b };
+          combined[key2] = { ...a, ...b };
       }
       const next = [...extensions, extendFn];
       const { scope: scope_combined } = combined;
@@ -18202,7 +18294,7 @@ function isPlainObject(value) {
 }
 function bindActionDecorators(client, action) {
   const wrapped = (parameters = {}) => action(client, parameters);
-  for (const key of [
+  for (const key2 of [
     "call",
     "calls",
     "callWithPeriod",
@@ -18212,17 +18304,17 @@ function bindActionDecorators(client, action) {
     "predict",
     "simulate"
   ])
-    if (Object.hasOwn(action, key)) {
-      const helper = action[key];
-      wrapped[key] = (args = {}) => {
+    if (Object.hasOwn(action, key2)) {
+      const helper = action[key2];
+      wrapped[key2] = (args = {}) => {
         if (helper.length === 1)
           return helper(args);
         return helper(client, args);
       };
     }
-  for (const key of ["extractEvent", "extractEvents"])
-    if (Object.hasOwn(action, key))
-      wrapped[key] = action[key];
+  for (const key2 of ["extractEvent", "extractEvents"])
+    if (Object.hasOwn(action, key2))
+      wrapped[key2] = action[key2];
   return wrapped;
 }
 
@@ -18322,20 +18414,20 @@ function packetToBytes(packet) {
   const value = packet.replace(/^\.|\.$/gm, "");
   if (value.length === 0)
     return new Uint8Array(1);
-  const bytes = new Uint8Array(stringToBytes(value).byteLength + 2);
+  const bytes2 = new Uint8Array(stringToBytes(value).byteLength + 2);
   let offset = 0;
   const list = value.split(".");
   for (let i = 0; i < list.length; i++) {
     let encoded = stringToBytes(list[i]);
     if (encoded.byteLength > 255)
       encoded = stringToBytes(encodeLabelhash(labelhash(list[i])));
-    bytes[offset] = encoded.length;
-    bytes.set(encoded, offset + 1);
+    bytes2[offset] = encoded.length;
+    bytes2.set(encoded, offset + 1);
     offset += encoded.length + 1;
   }
-  if (bytes.byteLength !== offset + 1)
-    return bytes.slice(0, offset + 1);
-  return bytes;
+  if (bytes2.byteLength !== offset + 1)
+    return bytes2.slice(0, offset + 1);
+  return bytes2;
 }
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/actions/ens/getEnsAddress.js
@@ -18672,7 +18764,7 @@ init_localBatchGatewayRequest();
 init_getAction();
 init_readContract();
 async function getEnsText(client, parameters) {
-  const { blockNumber, blockTag, key, name, gatewayUrls, strict } = parameters;
+  const { blockNumber, blockTag, key: key2, name, gatewayUrls, strict } = parameters;
   const { chain } = client;
   const universalResolverAddress = (() => {
     if (parameters.universalResolverAddress)
@@ -18697,7 +18789,7 @@ async function getEnsText(client, parameters) {
         encodeFunctionData({
           abi: textResolverAbi,
           functionName: "text",
-          args: [namehash(name), key]
+          args: [namehash(name), key2]
         }),
         gatewayUrls ?? [localBatchGatewayUrl]
       ],
@@ -18905,7 +18997,7 @@ init_createContractEventFilter();
 init_encodeEventTopics();
 init_toHex();
 init_createFilterRequestScope();
-async function createEventFilter(client, { address, args, event, events: events_, fromBlock, strict, toBlock } = {}) {
+async function createEventFilter(client, { address, args, event, events: events_, fromBlock, strict, toBlock: toBlock2 } = {}) {
   const events = events_ ?? (event ? [event] : void 0);
   const getRequest = createFilterRequestScope(client, {
     method: "eth_newFilter"
@@ -18927,7 +19019,7 @@ async function createEventFilter(client, { address, args, event, events: events_
       {
         address,
         fromBlock: typeof fromBlock === "bigint" ? numberToHex(fromBlock) : fromBlock,
-        toBlock: typeof toBlock === "bigint" ? numberToHex(toBlock) : toBlock,
+        toBlock: typeof toBlock2 === "bigint" ? numberToHex(toBlock2) : toBlock2,
         ...topics.length ? { topics } : {}
       }
     ]
@@ -18940,7 +19032,7 @@ async function createEventFilter(client, { address, args, event, events: events_
     id,
     request: getRequest(id),
     strict: Boolean(strict),
-    toBlock,
+    toBlock: toBlock2,
     type: "event"
   };
 }
@@ -19436,7 +19528,7 @@ async function simulateBlocks(client, parameters) {
 init_AbiItem();
 init_AbiParameters();
 init_Hex();
-function encode3(...parameters) {
+function encode4(...parameters) {
   const [abiConstructor, options] = (() => {
     if (Array.isArray(parameters[0])) {
       const [abi2, options2] = parameters;
@@ -19445,7 +19537,7 @@ function encode3(...parameters) {
     return parameters;
   })();
   const { bytecode, args } = options;
-  return concat2(bytecode, abiConstructor.inputs?.length && args?.length ? encode2(abiConstructor.inputs, args) : "0x");
+  return concat2(bytecode, abiConstructor.inputs?.length && args?.length ? encode3(abiConstructor.inputs, args) : "0x");
 }
 function from12(abiConstructor) {
   return from11(abiConstructor);
@@ -19496,7 +19588,7 @@ function encodeData2(...parameters) {
     args
   }) : abiFunction;
   const selector = getSelector3(item);
-  const data = args.length > 0 ? encode2(item.inputs, args) : void 0;
+  const data = args.length > 0 ? encode3(item.inputs, args) : void 0;
   return data ? concat2(selector, data) : selector;
 }
 function from14(abiFunction, options = {}) {
@@ -19539,7 +19631,7 @@ async function simulateCalls(client, parameters) {
   const account = parameters.account ? parseAccount(parameters.account) : void 0;
   if (traceAssetChanges && !account)
     throw new BaseError2("`account` is required when `traceAssetChanges` is true");
-  const getBalanceData = account ? encode3(from12("constructor(bytes, bytes)"), {
+  const getBalanceData = account ? encode4(from12("constructor(bytes, bytes)"), {
     bytecode: deploylessCallViaBytecodeBytecode,
     args: [
       getBalanceCode,
@@ -19855,7 +19947,7 @@ function unwrap2(wrapped) {
 }
 function wrap2(value) {
   const { data, signature, to } = value;
-  return concat2(encode2(from6("address, bytes, bytes"), [
+  return concat2(encode3(from6("address, bytes, bytes"), [
     to,
     data,
     signature
@@ -19902,12 +19994,12 @@ init_recoverAddress();
 init_secp256k1();
 init_fromHex();
 init_toBytes();
-function serializeSignature({ r, s, to = "hex", v, yParity }) {
+function serializeSignature({ r, s, to = "hex", v: v2, yParity }) {
   const yParity_ = (() => {
     if (yParity === 0 || yParity === 1)
       return yParity;
-    if (v && (v === 27n || v === 28n || v >= 35n))
-      return v % 2n === 0n ? 1 : 0;
+    if (v2 && (v2 === 27n || v2 === 28n || v2 >= 35n))
+      return v2 % 2n === 0n ? 1 : 0;
     throw new Error("Invalid `v` or `yParity` value");
   })();
   const signature = `0x${new secp256k1.Signature(hexToBigInt(r), hexToBigInt(s)).toCompactHex()}${yParity_ === 0 ? "1b" : "1c"}`;
@@ -21097,10 +21189,10 @@ function bindPublicToken(client) {
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/clients/createPublicClient.js
 function createPublicClient(parameters) {
-  const { key = "public", name = "Public Client" } = parameters;
+  const { key: key2 = "public", name = "Public Client" } = parameters;
   const client = createClient({
     ...parameters,
-    key,
+    key: key2,
     name,
     type: "publicClient"
   });
@@ -21165,10 +21257,10 @@ async function getCapabilities(client, parameters = {}) {
   const capabilities = {};
   for (const [chainId2, capabilities_] of Object.entries(capabilities_raw)) {
     capabilities[Number(chainId2)] = {};
-    for (let [key, value] of Object.entries(capabilities_)) {
-      if (key === "addSubAccount")
-        key = "unstable_addSubAccount";
-      capabilities[Number(chainId2)][key] = value;
+    for (let [key2, value] of Object.entries(capabilities_)) {
+      if (key2 === "addSubAccount")
+        key2 = "unstable_addSubAccount";
+      capabilities[Number(chainId2)][key2] = value;
     }
   }
   return typeof chainId === "number" ? capabilities[chainId] : capabilities;
@@ -21454,10 +21546,10 @@ function walletActions(client) {
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/clients/createWalletClient.js
 function createWalletClient(parameters) {
-  const { key = "wallet", name = "Wallet Client", transport } = parameters;
+  const { key: key2 = "wallet", name = "Wallet Client", transport } = parameters;
   const client = createClient({
     ...parameters,
-    key,
+    key: key2,
     name,
     transport,
     type: "walletClient"
@@ -21467,11 +21559,11 @@ function createWalletClient(parameters) {
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/clients/transports/createTransport.js
 init_buildRequest();
-function createTransport({ key, methods, name, request, retryCount = 3, retryDelay = 150, timeout, type }, value) {
+function createTransport({ key: key2, methods, name, request, retryCount = 3, retryDelay = 150, timeout, type }, value) {
   const uid2 = uid();
   return {
     config: {
-      key,
+      key: key2,
       methods,
       name,
       request,
@@ -21515,7 +21607,7 @@ function getSignalId(signal) {
   return nextId;
 }
 function http(url, config = {}) {
-  const { batch, fetchFn, fetchOptions, key = "http", maxResponseBodySize, methods, name = "HTTP JSON-RPC", onFetchRequest, onFetchResponse, retryDelay, raw } = config;
+  const { batch, fetchFn, fetchOptions, key: key2 = "http", maxResponseBodySize, methods, name = "HTTP JSON-RPC", onFetchRequest, onFetchResponse, retryDelay, raw } = config;
   return ({ chain, retryCount: retryCount_, timeout: timeout_ }) => {
     const { batchSize = 1e3, wait: wait2 = 0 } = typeof batch === "object" ? batch : {};
     const retryCount = config.retryCount ?? retryCount_;
@@ -21532,7 +21624,7 @@ function http(url, config = {}) {
       timeout
     });
     return createTransport({
-      key,
+      key: key2,
       methods,
       name,
       async request({ method, params }, options) {
@@ -21583,9 +21675,20 @@ function http(url, config = {}) {
 }
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/index.js
+init_base();
+init_contract();
+init_transaction();
+init_decodeEventLog();
 init_encodeAbiParameters();
+init_encodePacked();
+init_getAddress();
+init_isAddress();
 init_defineChain();
+init_isHex();
+init_pad();
+init_fromHex();
 init_toBytes();
+init_toHex();
 init_keccak256();
 
 // ../../lib/arkiv/schemas.ts
@@ -21607,333 +21710,2421 @@ function computeReceiptHash(receipt) {
   return keccak256(stringToBytes(canonical));
 }
 
-// ../../lib/arkiv/client.ts
-var ArkivRpcError = class extends Error {
-  cause;
-  constructor(message, cause) {
-    super(message);
-    this.name = "ArkivRpcError";
-    this.cause = cause;
+// ../../node_modules/.pnpm/@arkiv-network+sdk@1.0.1_ty_9e054ffd4c5df0a60ad8de128e460793/node_modules/@arkiv-network/sdk/dist/schema-B-qj25Fz.js
+var InvalidValueError = class extends Error {
+  /** The type tag whose constructor rejected the value. */
+  tag;
+  /** The rejected input, as given. */
+  input;
+  constructor(tag, input, reason, hint) {
+    super(`Invalid ${tag} value ${describe(input)}: ${reason}.${hint ? ` ${hint}` : ""}`);
+    this.name = "InvalidValueError";
+    this.tag = tag;
+    this.input = input;
   }
 };
-var ArkivClient = class {
-  rpcUrl;
-  chainId;
-  accessKey;
-  writerAddress;
-  namespace;
-  isMemoryMode = false;
-  // In-memory store retained ONLY when NODE_ENV === 'development' AND ARKIV_DEV_MODE === 'memory'
-  memoryReceipts = /* @__PURE__ */ new Map();
-  memoryProfiles = /* @__PURE__ */ new Map();
-  memoryClaims = /* @__PURE__ */ new Map();
-  constructor(config = {}) {
-    const isProd = process.env.NODE_ENV === "production";
-    const devMode = config.devMode || process.env.ARKIV_DEV_MODE;
-    const rpcUrl = config.rpcUrl || process.env.ARKIV_RPC_URL;
-    const accessKey = config.accessKey || process.env.ARKIV_ACCESS_KEY;
-    const chainId = String(config.chainId || process.env.ARKIV_CHAIN_ID || "7794095");
-    const writerAddress = config.writerAddress || process.env.ARKIV_WRITER_ADDRESS;
-    if (isProd && (!rpcUrl || !accessKey)) {
-      throw new Error("[arkiv] missing required env: ARKIV_RPC_URL, ARKIV_ACCESS_KEY.");
-    }
-    if (devMode === "memory") {
-      this.isMemoryMode = true;
-      this.rpcUrl = rpcUrl || "https://rpc.rabdi.db-chain.testnet.arkiv.network";
-      console.warn("[arkiv] development memory mode \u2014 no live writes");
-    } else {
-      const targetRpc = rpcUrl || "https://rpc.rabdi.db-chain.testnet.arkiv.network";
-      if (!targetRpc.includes("rabdi.db-chain.testnet.arkiv.network")) {
-        throw new Error(
-          `[arkiv] Invalid RPC URL: "${targetRpc}". ARKIV_RPC_URL must point to rabdi.db-chain.testnet.arkiv.network`
-        );
-      }
-      this.rpcUrl = targetRpc;
-    }
-    this.chainId = chainId;
-    this.accessKey = accessKey;
-    this.writerAddress = writerAddress;
-    this.namespace = config.namespace || "darktrace.v1";
+var UntypedValueError = class extends Error {
+  input;
+  constructor(input) {
+    super(`Cannot infer an Arkiv type for ${describe(input)}. Attribute values must be a tagged value (i32, u64, u256, dec, str, addr, key, bytes, bool) or a bare boolean, number, bigint, string or Uint8Array.`);
+    this.name = "UntypedValueError";
+    this.input = input;
   }
-  async remoteRpcCall(method, params) {
-    if (this.isMemoryMode) {
-      return null;
-    }
-    try {
-      const response = await fetch(this.rpcUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...this.accessKey ? { Authorization: `Bearer ${this.accessKey}` } : {}
-        },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: Date.now(),
-          method,
-          params: [params]
-        })
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      const data = await response.json();
-      if (data.error) {
-        throw new Error(`RPC Error (${data.error.code}): ${data.error.message}`);
-      }
-      return data.result;
-    } catch (err) {
-      const errorDetail = err instanceof Error ? `: ${err.message}` : "";
-      throw new ArkivRpcError(`[arkiv] Remote call to ${method} failed on ${this.rpcUrl}${errorDetail}`, err);
-    }
+};
+var MissingValueError = class extends Error {
+  /** The attribute whose value was missing, when raised from an attribute map. */
+  attributeName;
+  constructor(input, attributeName) {
+    const subject = attributeName ? `attribute "${attributeName}"` : "attribute value";
+    super(`The ${subject} is ${input === null ? "null" : "undefined"}. An attribute is either set with a value and a type or not set at all, so there is nothing to write here. ` + (attributeName ? `Leave "${attributeName}" out of the values (or a patch's "set") instead \u2014 e.g. build the object conditionally, or drop the key when the value is absent. To remove the column from an existing entity, list it in a patch's "unset".` : "Omit the attribute instead of giving it an empty value."));
+    this.name = "MissingValueError";
+    this.attributeName = attributeName;
   }
+};
+var InvalidAttributeNameError = class extends Error {
+  attributeName;
+  constructor(attributeName, reason) {
+    super(`Invalid attribute name "${attributeName}": ${reason}. Names must be 1-32 bytes, start with a letter, and contain only A-Z, a-z, 0-9, ".", "-" or "_". Names are case-sensitive.`);
+    this.name = "InvalidAttributeNameError";
+    this.attributeName = attributeName;
+  }
+};
+var ConflictingMutationError = class extends Error {
+  attributeName;
+  constructor(attributeName) {
+    super(`The patch both sets and unsets "${attributeName}". A patch applies one mutation per attribute, so say which you mean: drop it from "unset" to write the value, or from "set" to remove the attribute.`);
+    this.name = "ConflictingMutationError";
+    this.attributeName = attributeName;
+  }
+};
+var TooManyAttributesError = class extends Error {
   /**
-   * Writes an immutable forensic receipt to the Arkiv ledger.
-   * @param receipt The validated ExtractionReceipt object
-   */
-  async writeExtractionReceipt(receipt) {
-    const hash3 = computeReceiptHash(receipt);
-    const entityId = `${this.namespace}:receipt:${hash3}`;
-    if (this.isMemoryMode) {
-      this.memoryReceipts.set(hash3.toLowerCase(), receipt);
-      await this._recordSearcherExtraction(receipt.searcher, receipt.extractedUSDC, receipt.blockNumber);
-      return { receiptHash: hash3, entityId, entityKey: hash3 };
-    }
-    const payload = {
-      namespace: this.namespace,
-      entityId,
-      payload: receipt,
-      indexes: {
-        poolId: receipt.poolId.toLowerCase(),
-        searcher: receipt.searcher.toLowerCase(),
-        victim: receipt.victim.toLowerCase(),
-        receiptHash: hash3.toLowerCase(),
-        blockNumber: receipt.blockNumber
-      }
-    };
-    const res = await this.remoteRpcCall("arkiv_putEntity", payload);
-    const entityKey = res?.entityKey || hash3;
-    await this._recordSearcherExtraction(receipt.searcher, receipt.extractedUSDC, receipt.blockNumber);
-    return {
-      receiptHash: hash3,
-      entityId,
-      entityKey
-    };
+  * @param tagged - Whether `count` includes a named schema's tag, which the message then calls out:
+  * the tag is not among the declared columns, so the count would otherwise look off by one.
+  */
+  constructor(count, max, tagged = false) {
+    super(`An entity may carry at most ${max} attributes, got ${count}.` + (tagged ? ` A named schema's tag counts as one of them, so it may declare at most ${max - 1} columns.` : ""));
+    this.name = "TooManyAttributesError";
   }
-  /**
-   * Retrieves all forensic receipts recorded for a specific Uniswap v4 pool.
-   */
-  async getByPool(poolId) {
-    const normalized = poolId.toLowerCase();
-    if (this.isMemoryMode) {
-      const results = [];
-      for (const receipt of this.memoryReceipts.values()) {
-        if (receipt.poolId.toLowerCase() === normalized) {
-          results.push(receipt);
-        }
-      }
-      return results.sort((a, b) => b.createdAt - a.createdAt);
-    }
-    const res = await this.remoteRpcCall("arkiv_queryEntities", {
-      namespace: this.namespace,
-      filter: { "indexes.poolId": normalized }
-    });
-    const receipts = (res?.entities || []).map((e) => e.payload);
-    return receipts.sort((a, b) => b.createdAt - a.createdAt);
+};
+var EntityTooLargeError = class extends Error {
+  constructor(total, max) {
+    super(`The bytes columns of one create or patch may hold at most ${max} bytes in total, got ${total}. Split the data across entities, or store it elsewhere and keep a reference`);
+    this.name = "EntityTooLargeError";
   }
-  /**
-   * Retrieves a single receipt by its canonical receiptHash.
-   */
-  async getReceipt(hash3) {
-    const normalized = hash3.toLowerCase();
-    if (this.isMemoryMode) {
-      const found2 = this.memoryReceipts.get(normalized);
-      return found2 ? { ...found2 } : null;
-    }
-    const res = await this.remoteRpcCall("arkiv_queryEntities", {
-      namespace: this.namespace,
-      filter: { "indexes.receiptHash": normalized },
-      limit: 1
-    });
-    const found = res?.entities?.[0]?.payload;
-    return found || null;
+};
+var SchemaDefinitionError = class extends Error {
+  /** The column at fault, when there is one. */
+  columnName;
+  constructor(reason, columnName) {
+    super(`Invalid schema${columnName === void 0 ? "" : ` column "${columnName}"`}: ${reason}.`);
+    this.name = "SchemaDefinitionError";
+    this.columnName = columnName;
   }
-  /**
-   * Queries the reputation and slashing profile for a searcher address.
-   */
-  async searcherProfile(address) {
-    const normalized = address.toLowerCase();
-    if (this.isMemoryMode) {
-      const profile = this.memoryProfiles.get(normalized);
-      return profile ? { ...profile } : null;
-    }
-    const res = await this.remoteRpcCall("arkiv_queryEntities", {
-      namespace: this.namespace,
-      filter: { "indexes.searcher": normalized },
-      limit: 1
-    });
-    const found = res?.entities?.[0]?.payload;
-    return found || null;
+};
+var SchemaMismatchError = class extends Error {
+  /** The column at fault. */
+  columnName;
+  constructor(columnName, reason) {
+    super(`Column "${columnName}": ${reason}.`);
+    this.name = "SchemaMismatchError";
+    this.columnName = columnName;
   }
-  /**
-   * Upserts a searcher profile with bond and slashing data.
-   */
-  async updateSearcherProfile(profile) {
-    const normalized = profile.searcher.toLowerCase();
-    if (this.isMemoryMode) {
-      this.memoryProfiles.set(normalized, { ...profile });
-      return;
-    }
-    await this.remoteRpcCall("arkiv_putEntity", {
-      namespace: this.namespace,
-      entityId: `${this.namespace}:searcher:${normalized}`,
-      payload: profile,
-      indexes: {
-        searcher: normalized,
-        lastSeenBlock: profile.lastSeenBlock
-      }
-    });
+};
+var UnknownAttributeTypeError = class extends Error {
+  /** The type as the node named it — a tag over JSON-RPC, a typeId on the wire. */
+  type;
+  constructor(type) {
+    super(`Unknown attribute type ${describe(type)}. The node is using a type this SDK version does not know about \u2014 upgrade @arkiv-network/sdk.`);
+    this.name = "UnknownAttributeTypeError";
+    this.type = type;
   }
-  /**
-   * Records an LP restitution claim on the ledger.
-   */
-  async writeLPClaim(claim) {
-    const lpNormalized = claim.lp.toLowerCase();
-    if (this.isMemoryMode) {
-      const existing = this.memoryClaims.get(lpNormalized) || [];
-      existing.push({ ...claim });
-      this.memoryClaims.set(lpNormalized, existing);
-      return;
-    }
-    await this.remoteRpcCall("arkiv_putEntity", {
-      namespace: this.namespace,
-      entityId: `${this.namespace}:claim:${claim.receiptHash.toLowerCase()}`,
-      payload: claim,
-      indexes: {
-        lp: lpNormalized,
-        receiptHash: claim.receiptHash.toLowerCase()
-      }
-    });
+};
+function describe(input) {
+  switch (typeof input) {
+    case "string":
+      return JSON.stringify(input.length > 64 ? `${input.slice(0, 61)}...` : input);
+    case "bigint":
+      return `${input}n`;
+    case "object":
+      return input === null ? "null" : safeJson(input);
+    case "undefined":
+      return "undefined";
+    default:
+      return String(input);
   }
-  /**
-   * Retrieves all restitution claims associated with an LP address.
-   */
-  async lpClaims(lpAddress) {
-    const normalized = lpAddress.toLowerCase();
-    if (this.isMemoryMode) {
-      const claims2 = this.memoryClaims.get(normalized) || [];
-      return [...claims2].sort((a, b) => b.createdAt - a.createdAt);
-    }
-    const res = await this.remoteRpcCall("arkiv_queryEntities", {
-      namespace: this.namespace,
-      filter: { "indexes.lp": normalized }
-    });
-    const claims = (res?.entities || []).map((e) => e.payload);
-    return claims.sort((a, b) => b.createdAt - a.createdAt);
+}
+function safeJson(input) {
+  try {
+    return JSON.stringify(input) ?? String(input);
+  } catch {
+    return Object.prototype.toString.call(input);
   }
-  // ─────────────────────────────────────────────────────────────────────────────
-  // Internal Helpers
-  // ─────────────────────────────────────────────────────────────────────────────
-  async _recordSearcherExtraction(searcher, extractedAmount, blockNumber) {
-    const norm = searcher.toLowerCase();
-    const current = await this.searcherProfile(norm) || {
-      v: "1.0.0",
-      searcher: norm,
-      extractions: 0,
-      bondedUSDC: "25.00",
-      // Default baseline bond for demo
-      slashedUSDC: "0.00",
-      lastSeenBlock: blockNumber
-    };
-    current.extractions += 1;
-    current.lastSeenBlock = blockNumber;
-    await this.updateSearcherProfile(current);
+}
+var DECIMAL_SCALE = 18;
+var DECIMAL_UNIT = 10n ** BigInt(DECIMAL_SCALE);
+var INT256_MAX = 2n ** 255n - 1n;
+var INT256_MIN = -(2n ** 255n);
+var DECIMAL_RE = /^([+-]?)(\d+)(?:\.(\d+))?$/;
+function decimalToUnits(input) {
+  const match = DECIMAL_RE.exec(input);
+  if (!match) throw new InvalidValueError("dec", input, "not a decimal literal", 'Write it as sign, digits, and an optional "." with up to 18 fractional digits \u2014 e.g. dec("3.5") or dec("-0.25"). Exponents such as "1e18" are not accepted.');
+  const [, sign2, whole, fraction = ""] = match;
+  if (fraction.length > DECIMAL_SCALE) throw new InvalidValueError("dec", input, `${fraction.length} fractional digits exceeds the ${DECIMAL_SCALE} the protocol stores`, "Round it yourself before storing \u2014 a dec is never rounded for you, so that what you write is exactly what is stored.");
+  const digits = BigInt(whole + fraction.padEnd(DECIMAL_SCALE, "0"));
+  const units = sign2 === "-" ? -digits : digits;
+  if (units > INT256_MAX || units < INT256_MIN) throw new InvalidValueError("dec", input, "exceeds the int256 range a dec is stored in");
+  return units;
+}
+function unitsToDecimal(units) {
+  if (units > INT256_MAX || units < INT256_MIN) throw new InvalidValueError("dec", units, "exceeds the int256 range a dec is stored in");
+  const negative = units < 0n;
+  const magnitude = negative ? -units : units;
+  const whole = magnitude / DECIMAL_UNIT;
+  const trimmed = (magnitude % DECIMAL_UNIT).toString().padStart(DECIMAL_SCALE, "0").replace(/0+$/, "");
+  const sign2 = negative ? "-" : "";
+  return trimmed ? `${sign2}${whole}.${trimmed}` : `${sign2}${whole}`;
+}
+var TYPE_IDS = {
+  bool: 1,
+  i32: 2,
+  u64: 3,
+  u256: 4,
+  dec: 5,
+  bytes: 7,
+  str: 8,
+  addr: 9,
+  key: 10
+};
+var INDEXED_FLAG = 128;
+function isIndexable(tag) {
+  return tag !== "bytes";
+}
+function makeValue(type, value) {
+  return {
+    type,
+    value
+  };
+}
+function isArkivValue(input) {
+  return typeof input === "object" && input !== null && "type" in input && "value" in input && typeof input.type === "string" && Object.hasOwn(TYPE_IDS, input.type);
+}
+var COLUMN_BRAND = Symbol.for("@arkiv-network/sdk/column");
+var ColumnDefinition = class ColumnDefinition2 {
+  type;
+  isIndexed;
+  isOptional;
+  defaultValue;
+  #coerce;
+  constructor(type, isIndexed, isOptional, defaultValue, coerce) {
+    this.type = type;
+    this.isIndexed = isIndexed;
+    this.isOptional = isOptional;
+    this.defaultValue = defaultValue;
+    this.#coerce = coerce;
+    Object.defineProperty(this, COLUMN_BRAND, { value: true });
+    Object.freeze(this);
+  }
+  indexed() {
+    if (this.type === "bytes") throw new SchemaDefinitionError("a bytes column cannot be indexed. Bytes are stored, never indexed, so they can be selected but not filtered on \u2014 index a hash of them, as a hex str, instead");
+    return this.#with({ isIndexed: true });
+  }
+  optional() {
+    return this.#with({ isOptional: true });
+  }
+  default(...args) {
+    if (args.length === 0) throw new SchemaDefinitionError(`.default() needs a value \u2014 e.g. ${this.type}().default(...). Leave .default() off for a column the create must always provide`);
+    return this.#with({ defaultValue: this.#coerce(this.type, args[0]) });
+  }
+  #with(changes) {
+    return new ColumnDefinition2(this.type, changes.isIndexed ?? this.isIndexed, changes.isOptional ?? this.isOptional, changes.defaultValue ?? this.defaultValue, this.#coerce);
+  }
+};
+function createColumn(tag, coerce) {
+  return new ColumnDefinition(tag, false, false, void 0, coerce);
+}
+function isColumn(input) {
+  return typeof input === "object" && input !== null && COLUMN_BRAND in input;
+}
+var I32_MAX = 2147483647;
+var I32_MIN = -2147483648;
+var U64_MAX = 2n ** 64n - 1n;
+var U256_MAX = 2n ** 256n - 1n;
+var MAX_STRING_BYTES = 128;
+var MAX_BYTES_LENGTH = 128 * 1024;
+function findLoneSurrogate(value) {
+  for (let index2 = 0; index2 < value.length; index2++) {
+    const code = value.charCodeAt(index2);
+    if (code < 55296 || code > 57343) continue;
+    const next = value.charCodeAt(index2 + 1);
+    if (code <= 56319 && next >= 56320 && next <= 57343) {
+      index2++;
+      continue;
+    }
+    return index2;
+  }
+}
+function bool(...args) {
+  if (args.length === 0) return createColumn("bool", toTypedValue);
+  const [value] = args;
+  if (typeof value !== "boolean") throw new InvalidValueError("bool", value, "not a boolean");
+  return makeValue("bool", value);
+}
+function i32(...args) {
+  if (args.length === 0) return createColumn("i32", toTypedValue);
+  const [value] = args;
+  if (typeof value === "bigint") {
+    if (value > BigInt(I32_MAX) || value < BigInt(I32_MIN)) throw new InvalidValueError("i32", value, outOfI32Range(value >= 0n));
+    return makeValue("i32", Number(value));
+  }
+  if (typeof value !== "number" || !Number.isFinite(value)) throw new InvalidValueError("i32", value, "not a number");
+  if (!Number.isInteger(value)) throw new InvalidValueError("i32", value, "not an integer", `Use dec(${JSON.stringify(String(value))}) for a fixed-point decimal.`);
+  if (value > I32_MAX || value < I32_MIN) throw new InvalidValueError("i32", value, outOfI32Range(value >= 0));
+  return makeValue("i32", value);
+}
+function outOfI32Range(nonNegative) {
+  const range = `outside the i32 range [${I32_MIN}, ${I32_MAX}]`;
+  return nonNegative ? `${range} \u2014 use u64(...) for large counters, timestamps and block heights (Date.now() does not fit an i32), or u256(...) beyond 2**64 - 1` : `${range} \u2014 use dec(...) for values that need more range than an i32`;
+}
+function u256(...args) {
+  if (args.length === 0) return createColumn("u256", toTypedValue);
+  return makeValue("u256", toUnsigned("u256", args[0], U256_MAX));
+}
+function u64(...args) {
+  if (args.length === 0) return createColumn("u64", toTypedValue);
+  return makeValue("u64", toUnsigned("u64", args[0], U64_MAX));
+}
+function toUnsigned(tag, value, max) {
+  const parsed = toUnsignedBigint(tag, value);
+  if (parsed < 0n) throw new InvalidValueError(tag, value, `negative \u2014 ${tag} is unsigned`, "Use i32(...) for small signed integers, or dec(...) for a signed fixed-point value.");
+  if (parsed > max) throw new InvalidValueError(tag, value, `wider than ${tag === "u64" ? 64 : 256} bits`, tag === "u64" ? "Use u256(...) for values beyond 2**64 - 1." : void 0);
+  return parsed;
+}
+function toUnsignedBigint(tag, value) {
+  if (typeof value === "bigint") return value;
+  if (typeof value === "number") {
+    if (!Number.isInteger(value)) throw new InvalidValueError(tag, value, "not an integer", `Use dec(${JSON.stringify(String(value))}) for a fixed-point decimal.`);
+    if (!Number.isSafeInteger(value)) throw new InvalidValueError(tag, value, "beyond the safe integer range, so it may already have lost precision", "Pass it as a bigint literal (e.g. 12345678901234567890n) or a string instead.");
+    return BigInt(value);
+  }
+  if (typeof value === "string") {
+    if (!/^(0x[0-9a-fA-F]+|\d+)$/.test(value)) throw new InvalidValueError(tag, value, "not a decimal or 0x-hex integer");
+    return BigInt(value);
+  }
+  throw new InvalidValueError(tag, value, "not a bigint, number or string");
+}
+function dec(...args) {
+  if (args.length === 0) return createColumn("dec", toTypedValue);
+  const [value] = args;
+  if (typeof value === "string") return makeValue("dec", unitsToDecimal(decimalToUnits(value)));
+  if (typeof value === "bigint") return decFromUnits(value * DECIMAL_UNIT);
+  if (typeof value !== "number" || !Number.isFinite(value)) throw new InvalidValueError("dec", value, "not a number");
+  if (!Number.isInteger(value)) throw new InvalidValueError("dec", value, "a fractional number cannot be represented exactly in binary floating point", `Pass it as a string instead: dec(${JSON.stringify(String(value))}).`);
+  return decFromUnits(BigInt(value) * DECIMAL_UNIT);
+}
+function decUnits(value) {
+  return decimalToUnits(value.value);
+}
+function decFromUnits(units) {
+  return makeValue("dec", unitsToDecimal(units));
+}
+function str(...args) {
+  if (args.length === 0) return createColumn("str", toTypedValue);
+  const [value] = args;
+  if (typeof value !== "string") throw new InvalidValueError("str", value, "not a string");
+  const surrogate = findLoneSurrogate(value);
+  if (surrogate !== void 0) throw new InvalidValueError("str", value, `contains a lone surrogate at index ${surrogate}, so it is not valid UTF-8`);
+  const bytes$1 = stringToBytes(value).length;
+  if (bytes$1 > MAX_STRING_BYTES) throw new InvalidValueError("str", value, `${bytes$1} UTF-8 bytes exceeds the ${MAX_STRING_BYTES}-byte limit on a str`, "Store the long form in a bytes column and keep a short, queryable key here.");
+  return makeValue("str", value);
+}
+function addr(...args) {
+  if (args.length === 0) return createColumn("addr", toTypedValue);
+  const [value] = args;
+  if (typeof value !== "string" || !/^0x[0-9a-fA-F]{40}$/.test(value)) throw new InvalidValueError("addr", value, "not a 20-byte 0x-prefixed hex address");
+  const body = value.slice(2);
+  if (body !== body.toLowerCase() && body !== body.toUpperCase() && !isAddress(value, { strict: true })) throw new InvalidValueError("addr", value, "fails its EIP-55 checksum, so a digit is probably mistyped", `If those hex digits are right, the correctly checksummed form is ${checksumAddress(value)}.`);
+  return makeValue("addr", checksumAddress(value));
+}
+function key(...args) {
+  if (args.length === 0) return createColumn("key", toTypedValue);
+  return makeValue("key", asFixedHex("key", args[0], 32));
+}
+function bytes(...args) {
+  if (args.length === 0) return createColumn("bytes", toTypedValue);
+  const [value] = args;
+  const hex = asHex("bytes", value);
+  const length = (hex.length - 2) / 2;
+  if (length > MAX_BYTES_LENGTH) throw new InvalidValueError("bytes", `<${length} bytes>`, `${length} bytes exceeds the ${MAX_BYTES_LENGTH}-byte limit on a bytes value`, "Split it across several entities, or store the bulk elsewhere and keep a reference.");
+  return makeValue("bytes", hex);
+}
+function asFixedHex(tag, value, size$1) {
+  if (value instanceof Uint8Array) {
+    if (value.length !== size$1) throw new InvalidValueError(tag, `<${value.length} bytes>`, `not exactly ${size$1} bytes`);
+    return toHex(value);
+  }
+  const hex = asHex(tag, value);
+  if (hex.length !== 2 + size$1 * 2) throw new InvalidValueError(tag, value, `${(hex.length - 2) / 2} bytes, not exactly ${size$1} bytes`);
+  return hex;
+}
+function asHex(tag, value) {
+  if (value instanceof Uint8Array) return toHex(value);
+  if (typeof value !== "string" || !isHex(value, { strict: true })) throw new InvalidValueError(tag, value, "not 0x-prefixed hex");
+  if (value.length % 2 !== 0) throw new InvalidValueError(tag, value, "an odd number of hex digits, so not whole bytes");
+  return value.toLowerCase();
+}
+function toValue(input, attributeName) {
+  if (input === void 0 || input === null) throw new MissingValueError(input, attributeName);
+  switch (typeof input) {
+    case "boolean":
+      return bool(input);
+    case "number":
+      return i32(input);
+    case "bigint":
+      return u256(input);
+    case "string":
+      return str(input);
+    default: {
+      if (input instanceof Uint8Array) return bytes(input);
+      if (isArkivValue(input)) return revalidate(input);
+      const candidate = input;
+      if (isColumn(candidate)) throw columnGivenAsValue(candidate);
+      throw new UntypedValueError(input);
+    }
+  }
+}
+function toTypedValue(tag, input) {
+  if (isArkivValue(input)) {
+    const value = revalidate(input);
+    if (value.type !== tag) throw new InvalidValueError(tag, input, `a ${value.type} value, not a ${tag}`);
+    return value;
+  }
+  if (isColumn(input)) throw columnGivenAsValue(input);
+  const construct = CONSTRUCTORS[tag];
+  return construct(input);
+}
+function columnGivenAsValue(column) {
+  return new InvalidValueError(column.type, `<${column.type} column>`, "a column, not a value", `Pass the value itself, e.g. ${column.type}(...) with an argument \u2014 ${column.type}() with none declares a schema column.`);
+}
+var CONSTRUCTORS = {
+  bool,
+  i32,
+  u64,
+  u256,
+  dec,
+  bytes,
+  str,
+  addr,
+  key
+};
+function revalidate(value) {
+  switch (value.type) {
+    case "bool":
+      return bool(value.value);
+    case "i32":
+      return i32(value.value);
+    case "u64":
+      return u64(value.value);
+    case "u256":
+      return u256(value.value);
+    case "dec":
+      return dec(value.value);
+    case "bytes":
+      return bytes(value.value);
+    case "str":
+      return str(value.value);
+    case "addr":
+      return addr(value.value);
+    case "key":
+      return key(value.value);
+  }
+}
+function strFromChain(value) {
+  return makeValue("str", value);
+}
+var TOMBSTONE_TYPE_ID = 0;
+var BYTES32_TYPE_ID = 6;
+var BYTES32_TAG = "bytes32";
+function encodeValueBytes(value) {
+  switch (value.type) {
+    case "bool":
+      return pad(value.value ? "0x01" : "0x00", { size: 32 });
+    case "i32":
+      return toHex(BigInt.asUintN(256, BigInt(value.value)), { size: 32 });
+    case "u64":
+    case "u256":
+      return toHex(value.value, { size: 32 });
+    case "dec":
+      return toHex(BigInt.asUintN(256, decUnits(value)), { size: 32 });
+    case "key":
+      return value.value;
+    case "addr":
+      return pad(value.value.toLowerCase(), { size: 32 });
+    case "str":
+      return toHex(stringToBytes(value.value));
+    case "bytes":
+      return value.value;
+  }
+}
+function encodeAbiAttribute(name, value, indexed) {
+  if (indexed && value.type === "bytes") throw new InvalidValueError("bytes", `<${name}>`, "bytes are stored, never indexed");
+  return {
+    name: toHex(name, { size: 32 }),
+    typeId: TYPE_IDS[value.type] | (indexed ? INDEXED_FLAG : 0),
+    value: encodeValueBytes(value)
+  };
+}
+function decodeTypeId(typeId) {
+  const base = typeId & ~INDEXED_FLAG;
+  const tag = base === BYTES32_TYPE_ID ? "key" : Object.keys(TYPE_IDS).find((candidate) => TYPE_IDS[candidate] === base);
+  if (tag === void 0) throw new UnknownAttributeTypeError(typeId);
+  return {
+    tag,
+    indexed: (typeId & INDEXED_FLAG) !== 0
+  };
+}
+function encodeTombstone(name) {
+  return {
+    name: toHex(name, { size: 32 }),
+    typeId: TOMBSTONE_TYPE_ID,
+    value: "0x"
+  };
+}
+function decodeRpcValue(type, value) {
+  switch (asTypeTag(type)) {
+    case "bool":
+      return bool(asBoolean(value));
+    case "i32":
+      return i32(Number(asIntegerish("i32", value)));
+    case "u64":
+      return u64(asIntegerish("u64", value));
+    case "u256":
+      return u256(asIntegerish("u256", value));
+    case "dec":
+      return dec(asString("dec", value));
+    case "key":
+      return key(asString("key", value));
+    case "addr":
+      return addr(asString("addr", value));
+    case "str":
+      return strFromChain(asString("str", value));
+    case "bytes":
+      return makeValue("bytes", asString("bytes", value).toLowerCase());
+  }
+}
+function asTypeTag(type) {
+  if (typeof type !== "string" || !Object.hasOwn(TYPE_IDS, type)) {
+    if (type === BYTES32_TAG) return "key";
+    throw new UnknownAttributeTypeError(type);
+  }
+  return type;
+}
+function asBoolean(value) {
+  if (typeof value === "boolean") return value;
+  if (value === "true" || value === "false") return value === "true";
+  throw new InvalidValueError("bool", value, "not a boolean");
+}
+function asString(tag, value) {
+  if (typeof value !== "string") throw new InvalidValueError(tag, value, `expected a string, got ${typeof value}`);
+  return value;
+}
+function asIntegerish(tag, value) {
+  if (typeof value === "number") {
+    if (!Number.isInteger(value)) throw new InvalidValueError(tag, value, "not an integer");
+    return BigInt(value);
+  }
+  if (typeof value === "bigint") return value;
+  if (typeof value === "string") {
+    if (/^0x[0-9a-fA-F]+$/.test(value)) return BigInt(value);
+    if (/^-?\d+$/.test(value)) return BigInt(value);
+  }
+  throw new InvalidValueError(tag, value, "not an integer");
+}
+var MAX_NAME_BYTES = 32;
+var NAME_RE = /^[A-Za-z][A-Za-z0-9._-]*$/;
+var RESERVED = /* @__PURE__ */ new Set([
+  "and",
+  "or",
+  "not",
+  "true",
+  "false",
+  "between",
+  "startswith",
+  "exists",
+  "typeof",
+  "order",
+  "by",
+  "asc",
+  "desc",
+  "bool",
+  "i32",
+  "u64",
+  "u256",
+  "dec",
+  "bytes",
+  "str",
+  "addr",
+  "key"
+]);
+function validateAttributeName(name) {
+  if (typeof name !== "string" || name.length === 0) throw new InvalidAttributeNameError(String(name), "the name is empty");
+  if (name.startsWith("$")) throw new InvalidAttributeNameError(name, '"$" is reserved for system attributes, which the engine sets and you cannot write');
+  if (!NAME_RE.test(name)) {
+    const chars = [...name];
+    const at = chars.findIndex((char, index2) => !(index2 === 0 ? /[A-Za-z]/ : /[A-Za-z0-9._-]/).test(char));
+    throw new InvalidAttributeNameError(name, at === 0 ? `it starts with "${chars[0]}" rather than a letter` : `it contains "${chars[at]}" at position ${at}`);
+  }
+  if (name.length > MAX_NAME_BYTES) throw new InvalidAttributeNameError(name, `the name is ${name.length} bytes long`);
+  if (name.includes("--")) throw new InvalidAttributeNameError(name, '"--" opens a comment in the query language, so everything after it in a query would be discarded \u2014 an attribute with this name could be written but never safely queried');
+  if (RESERVED.has(name.toLowerCase())) throw new InvalidAttributeNameError(name, `"${name}" is reserved by the query language, so an attribute with this name could never be queried`);
+}
+var MAX_ATTRIBUTES = 32;
+var SCHEMA_ATTRIBUTE = "arkiv.schema";
+var SCHEMA_BRAND = Symbol.for("@arkiv-network/sdk/schema");
+var Schema = class {
+  /** The name entities are tagged with, or `undefined` for an untagged schema. */
+  name;
+  /** The columns, keyed by attribute name, in the order they were declared. */
+  columns;
+  /** The tag every create writes and every query filters on, if the schema is named. */
+  tag;
+  /** Use {@link defineSchema}. */
+  constructor(name, columns) {
+    this.tag = name === void 0 ? void 0 : validateName(name);
+    validateColumns(columns, name !== void 0);
+    this.name = name;
+    this.columns = Object.freeze({ ...columns });
+    Object.defineProperty(this, SCHEMA_BRAND, { value: true });
+    Object.freeze(this);
+  }
+};
+function defineSchema(...args) {
+  return args.length === 2 ? new Schema(args[0], args[1]) : new Schema(void 0, args[0]);
+}
+function validateName(name) {
+  if (typeof name !== "string" || name.length === 0) throw new SchemaDefinitionError("a schema name must be a non-empty string \u2014 leave it out for an untagged schema");
+  try {
+    return str(name);
+  } catch (error) {
+    if (!(error instanceof InvalidValueError)) throw error;
+    throw new SchemaDefinitionError(`the name is not a valid str tag. ${error.message}`);
+  }
+}
+function validateColumns(columns, tagged) {
+  if (typeof columns !== "object" || columns === null || Array.isArray(columns)) throw new SchemaDefinitionError("defineSchema takes an object of columns keyed by name");
+  const entries = Object.entries(columns);
+  const attributes = entries.length + (tagged ? 1 : 0);
+  if (attributes > MAX_ATTRIBUTES) throw new TooManyAttributesError(attributes, MAX_ATTRIBUTES, tagged);
+  for (const [name, column] of entries) {
+    validateAttributeName(name);
+    if (name === SCHEMA_ATTRIBUTE) throw new SchemaDefinitionError(`"${name}" is the attribute a named schema tags its entities with, so a column cannot use it. Pick another name`, name);
+    if (!isColumn(column)) throw notAColumn(name, column);
+  }
+}
+function isSchema(input) {
+  return typeof input === "object" && input !== null && SCHEMA_BRAND in input;
+}
+function lookupColumn(schema, name) {
+  return Object.hasOwn(schema.columns, name) ? schema.columns[name] : void 0;
+}
+function describeColumns(schema) {
+  return Object.keys(schema.columns).join(", ") || "(none)";
+}
+function notAColumn(name, input) {
+  if (isArkivValue(input)) return new SchemaDefinitionError(`got a ${input.type} value where a column belongs. Did you mean ${input.type}().default(${defaultArgument(input)})? Called with a value, ${input.type}(...) makes a value; called with none, ${input.type}() declares a column`, name);
+  return new SchemaDefinitionError("not a column. Declare it with a type constructor called with no arguments, e.g. str() or dec().indexed()", name);
+}
+function defaultArgument(value) {
+  switch (value.type) {
+    case "bool":
+    case "i32":
+      return String(value.value);
+    case "u64":
+    case "u256":
+      return `${value.value}n`;
+    default:
+      return JSON.stringify(value.value);
+  }
+}
+var MAX_ENTITY_BYTES = 128 * 1024;
+function encodeCreate(schema, values) {
+  assertSchema(schema);
+  for (const name of keysOf(values, "create")) columnFor(schema, name, "create");
+  const attributes = [];
+  if (schema.tag !== void 0) attributes.push(encodeAbiAttribute(SCHEMA_ATTRIBUTE, schema.tag, true));
+  for (const [name, column] of Object.entries(schema.columns)) {
+    const input = Object.hasOwn(values, name) ? values[name] : void 0;
+    if (input === void 0) {
+      if (column.defaultValue !== void 0) attributes.push(encodeAbiAttribute(name, column.defaultValue, column.isIndexed));
+      else if (!column.isOptional) throw new SchemaMismatchError(name, `the create leaves out a required ${column.type} column. Give it a value, or declare it ${column.type}().optional() or with a .default(...)`);
+      continue;
+    }
+    attributes.push(encodeColumn(name, column, input));
+  }
+  assertBytesFit(attributes);
+  return attributes.sort(byName);
+}
+function encodePatch(schema, { set = {}, unset = [] }) {
+  assertSchema(schema);
+  const mutations = [];
+  for (const name of keysOf(set, "patch")) {
+    const column = columnFor(schema, name, "patch");
+    const input = set[name];
+    if (input !== void 0) mutations.push(encodeColumn(name, column, input));
+  }
+  if (!Array.isArray(unset)) throw new TypeError(`"unset" must be an array of column names`);
+  for (const name of new Set(unset)) {
+    const column = columnFor(schema, name, "patch");
+    if (!column.isOptional) throw new SchemaMismatchError(name, `a required column, so unsetting it would leave the entity without a value its schema requires. Declare it ${column.type}().optional() to allow that`);
+    if (Object.hasOwn(set, name) && set[name] !== void 0) throw new ConflictingMutationError(name);
+    mutations.push(encodeTombstone(name));
+  }
+  assertBytesFit(mutations);
+  return mutations.sort(byName);
+}
+function assertSchema(schema) {
+  if (!isSchema(schema)) throw new SchemaDefinitionError("expected a schema built with defineSchema(...) \u2014 writes are typed by the schema they name");
+}
+function keysOf(values, operation) {
+  if (typeof values !== "object" || values === null) throw new TypeError(`The ${operation} values must be an object keyed by column name`);
+  return Object.keys(values);
+}
+function columnFor(schema, name, operation) {
+  const column = lookupColumn(schema, name);
+  if (column === void 0) throw new SchemaMismatchError(name, `the ${operation} names a column this schema does not have. Its columns are ` + describeColumns(schema));
+  return column;
+}
+function encodeColumn(name, column, input) {
+  const value = toValue(input, name);
+  if (value.type !== column.type) throw new SchemaMismatchError(name, `a ${column.type} column, but the value is a ${value.type}. Write ${column.type}(...) around the value`);
+  return encodeAbiAttribute(name, value, column.isIndexed);
+}
+function assertBytesFit(attributes) {
+  let total = 0;
+  for (const { typeId, value } of attributes) if ((typeId & ~INDEXED_FLAG) === TYPE_IDS.bytes) total += (value.length - 2) / 2;
+  if (total > MAX_ENTITY_BYTES) throw new EntityTooLargeError(total, MAX_ENTITY_BYTES);
+}
+function byName(a, b) {
+  return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+}
+
+// ../../node_modules/.pnpm/@arkiv-network+sdk@1.0.1_ty_9e054ffd4c5df0a60ad8de128e460793/node_modules/@arkiv-network/sdk/dist/errors-BLeoFbFG.js
+var InvalidExpiryError = class extends Error {
+  constructor(reason) {
+    super(`Invalid expiry: ${reason}`);
+    this.name = "InvalidExpiryError";
+  }
+};
+var InvalidCreationFlagsError = class extends Error {
+  constructor(reason) {
+    super(`Invalid creation flags: ${reason}`);
+    this.name = "InvalidCreationFlagsError";
+  }
+};
+var InvalidSaltError = class extends Error {
+  constructor(salt) {
+    super(`Invalid salt ${String(salt)}. A salt is a uint128, so it must be between 0 and ${2n ** 128n - 1n}. Omit it to get 128 random bits, or pass NO_SALT for a key derived from the owner and nonce alone.`);
+    this.name = "InvalidSaltError";
+  }
+};
+var NoRandomSourceError = class extends Error {
+  constructor() {
+    super("No cryptographic random source is available (globalThis.crypto.getRandomValues is missing), so a key salt cannot be generated. Upgrade to Node 18+ or a modern browser, or pass an explicit salt.");
+    this.name = "NoRandomSourceError";
   }
 };
 
-// ../../lib/simulator/counterfactual.ts
-function runCounterfactualSimulation(input) {
-  const r0 = input.preAttackReserve0 ?? 5000000000000n;
-  const r1 = input.preAttackReserve1 ?? 1500000000000000000000n;
-  const k = r0 * r1;
-  const spotPrice = Number(r0) / Number(r1);
-  const victimIn = input.victimSwap.amountSpecified < 0n ? -input.victimSwap.amountSpecified : input.victimSwap.amountSpecified;
-  let r0Clean = r0;
-  let r1Clean = r1;
-  let cleanOut = 0n;
-  if (input.victimSwap.zeroForOne) {
-    r0Clean = r0 + victimIn;
-    r1Clean = k / r0Clean;
-    cleanOut = r1 - r1Clean;
-  } else {
-    r1Clean = r1 + victimIn;
-    r0Clean = k / r1Clean;
-    cleanOut = r0 - r0Clean;
+// ../../node_modules/.pnpm/@arkiv-network+sdk@1.0.1_ty_9e054ffd4c5df0a60ad8de128e460793/node_modules/@arkiv-network/sdk/dist/entity-B5oCq0oX.js
+var Entity = class {
+  key;
+  owner;
+  creator;
+  createdAt;
+  updatedAt;
+  expiresAt;
+  creationFlags;
+  attributeSchema;
+  attributes;
+  constructor(fields = {}) {
+    this.key = fields.key;
+    this.owner = fields.owner;
+    this.creator = fields.creator;
+    this.createdAt = fields.createdAt;
+    this.updatedAt = fields.updatedAt;
+    this.expiresAt = fields.expiresAt;
+    this.creationFlags = fields.creationFlags;
+    this.attributeSchema = fields.attributeSchema;
+    this.attributes = fields.attributes;
   }
-  const cleanPrice = Number(victimIn) / Number(cleanOut);
-  const legitSlippageBps = Math.max(
-    0,
-    Math.floor(Math.abs(cleanPrice - spotPrice) / spotPrice * 1e4)
-  );
-  const frontrunIn = input.searcherTxs.frontrun.amountSpecified < 0n ? -input.searcherTxs.frontrun.amountSpecified : input.searcherTxs.frontrun.amountSpecified;
-  let r0Attacked = r0;
-  let r1Attacked = r1;
-  if (input.searcherTxs.frontrun.zeroForOne) {
-    r0Attacked = r0 + frontrunIn;
-    r1Attacked = k / r0Attacked;
-  } else {
-    r1Attacked = r1 + frontrunIn;
-    r0Attacked = k / r1Attacked;
+};
+
+// ../../node_modules/.pnpm/@arkiv-network+sdk@1.0.1_ty_9e054ffd4c5df0a60ad8de128e460793/node_modules/@arkiv-network/sdk/dist/query-LMk-y9L8.js
+var ROOT_NAMESPACE = "arkiv";
+function getDebugEnv() {
+  if (typeof process !== "undefined") {
+    const debugEnv = process?.env?.DEBUG;
+    if (debugEnv) return debugEnv;
   }
-  let actualOut = 0n;
-  if (input.victimSwap.zeroForOne) {
-    const r0Final = r0Attacked + victimIn;
-    const r1Final = k / r0Final;
-    actualOut = r1Attacked - r1Final;
-  } else {
-    const r1Final = r1Attacked + victimIn;
-    const r0Final = k / r1Final;
-    actualOut = r0Attacked - r0Final;
+  if (typeof globalThis !== "undefined" && "localStorage" in globalThis) try {
+    return globalThis.localStorage?.getItem("DEBUG") || "";
+  } catch {
   }
-  const actualPrice = Number(victimIn) / Number(actualOut);
-  const injectedSlippageBps = Math.max(
-    0,
-    Math.floor(Math.abs(actualPrice - cleanPrice) / cleanPrice * 1e4)
-  );
-  const lossUnits = cleanOut > actualOut ? cleanOut - actualOut : 0n;
-  let extractedUSDCRaw;
-  if (input.victimSwap.zeroForOne) {
-    extractedUSDCRaw = lossUnits * r0 / r1;
-    if (extractedUSDCRaw > 100000000000n) {
-      extractedUSDCRaw = extractedUSDCRaw / 10n ** 12n;
-    }
-  } else {
-    extractedUSDCRaw = lossUnits;
+  return "";
+}
+function matchesPattern(namespace, pattern) {
+  if (pattern === namespace) return true;
+  if (pattern.endsWith("*")) {
+    const prefix = pattern.slice(0, -1);
+    return namespace.startsWith(prefix);
   }
-  if (extractedUSDCRaw === 0n && injectedSlippageBps > 0) {
-    extractedUSDCRaw = 1250000n;
+  return false;
+}
+function isEnabled(namespace) {
+  const debugEnv = getDebugEnv();
+  if (!debugEnv) return false;
+  const patterns = debugEnv.split(/[\s,]+/).filter((p) => p.length > 0);
+  if (patterns.length === 0) return false;
+  let enabled = false;
+  for (const pattern of patterns) if (pattern.startsWith("-")) {
+    if (matchesPattern(namespace, pattern.slice(1))) return false;
+  } else if (matchesPattern(namespace, pattern)) enabled = true;
+  return enabled;
+}
+var COLOR_PALETTE = [
+  "#0000FF",
+  "#008000",
+  "#FF0000",
+  "#FF00FF",
+  "#FFA500",
+  "#800080",
+  "#00CED1",
+  "#FF1493",
+  "#32CD32",
+  "#1E90FF",
+  "#FF4500",
+  "#9370DB",
+  "#00FA9A",
+  "#FFD700",
+  "#DC143C",
+  "#00BFFF",
+  "#FF69B4",
+  "#20B2AA",
+  "#DA70D6",
+  "#4682B4"
+];
+var isNode = typeof process !== "undefined" && process.versions?.node != null;
+var ANSI_COLORS = [
+  "\x1B[94m",
+  "\x1B[92m",
+  "\x1B[91m",
+  "\x1B[95m",
+  "\x1B[93m",
+  "\x1B[96m",
+  "\x1B[35m",
+  "\x1B[36m",
+  "\x1B[32m",
+  "\x1B[34m",
+  "\x1B[33m",
+  "\x1B[31m",
+  "\x1B[90m",
+  "\x1B[37m",
+  "\x1B[1m"
+];
+var ANSI_RESET = "\x1B[0m";
+var ANSI_BOLD = "\x1B[1m";
+var namespaceColors = /* @__PURE__ */ new Map();
+function getColorForNamespace(namespace) {
+  const cachedColor = namespaceColors.get(namespace);
+  if (cachedColor) return cachedColor;
+  let hash3 = 0;
+  for (let i = 0; i < namespace.length; i++) {
+    const char = namespace.charCodeAt(i);
+    hash3 = (hash3 << 5) - hash3 + char;
+    hash3 = hash3 & hash3;
   }
-  const formattedUSDC = (Number(extractedUSDCRaw) / 1e6).toFixed(2);
-  const simulationHash = keccak256(
-    encodeAbiParameters(
-      parseAbiParameters("bytes32, uint256, uint256, uint256, uint256"),
-      [
-        input.poolId,
-        BigInt(input.blockNumber),
-        BigInt(injectedSlippageBps),
-        BigInt(legitSlippageBps),
-        extractedUSDCRaw
-      ]
-    )
-  );
-  return {
-    extractedUSDC: formattedUSDC,
-    extractedUSDCRaw,
-    injectedSlippageBps,
-    legitSlippageBps,
-    simulationHash,
-    cleanExecutionPrice: cleanPrice,
-    actualExecutionPrice: actualPrice
+  const colorIndex = Math.abs(hash3) % COLOR_PALETTE.length;
+  const color = {
+    css: COLOR_PALETTE[colorIndex] ?? "inherit",
+    ansi: ANSI_COLORS[colorIndex % ANSI_COLORS.length] ?? ""
   };
+  namespaceColors.set(namespace, color);
+  return color;
+}
+function createDebugLogger(namespace) {
+  const colors = getColorForNamespace(namespace);
+  return (...args) => {
+    if (isEnabled(namespace)) if (isNode) {
+      const coloredNamespace = `${ANSI_BOLD}${colors.ansi}${namespace}${ANSI_RESET}`;
+      console.log(coloredNamespace, ...args);
+    } else {
+      const style1 = `color: ${colors.css}; font-weight: bold`;
+      console.log(`%c${namespace}%c`, style1, "color: inherit; font-weight: normal", ...args);
+    }
+  };
+}
+var getLogger = (scope) => {
+  return createDebugLogger(`${ROOT_NAMESPACE}:${scope}`);
+};
+var SYSTEM_FIELDS = [
+  "$key",
+  "$owner",
+  "$creator",
+  "$createdAt",
+  "$updatedAt",
+  "$expiresAt",
+  "$creationFlags"
+];
+var SELECTION_KEYS = [
+  ...SYSTEM_FIELDS,
+  "$attributeSchema",
+  "$attributes"
+];
+function snapshotSelection(selection) {
+  if (typeof selection !== "object" || selection === null) return selection;
+  return Object.freeze({ ...selection });
+}
+function projectSelection(selection, schema) {
+  const fields = [];
+  const columns = [];
+  let attributes = false;
+  let attributeSchema = false;
+  if (selection === void 0 || selection === "*") {
+    fields.push(...SYSTEM_FIELDS);
+    if (schema === void 0) attributes = true;
+    else columns.push(...Object.entries(schema.columns));
+  } else {
+    if (typeof selection !== "object" || selection === null || Array.isArray(selection)) throw new TypeError('select() takes "*" or an object of fields set to true');
+    for (const [name, wanted] of Object.entries(selection)) {
+      if (typeof wanted !== "boolean" && wanted !== void 0) throw new Error(name === "$attributes" ? 'select() takes true or false for "$attributes", which reads every attribute. To read some of them, select each by name: select({ title: true, body: true }).' : `select() takes true or false for "${name}", got ${typeof wanted}.`);
+      const fixed = SELECTION_KEYS.includes(name);
+      if (!fixed && name.startsWith("$")) throw new Error(`select() names "${name}", which is not an entity field. The entity fields are ${SYSTEM_FIELDS.join(", ")}, and $attributes and $attributeSchema read the attributes as a whole.`);
+      const column = fixed || schema === void 0 ? void 0 : lookupColumn(schema, name);
+      if (!fixed) {
+        if (schema !== void 0 && column === void 0) throw new Error(`select() names "${name}", which is not a column of the schema. Its columns are ${describeColumns(schema)}.`);
+        validateAttributeName(name);
+      }
+      if (!wanted) continue;
+      if (name === "$attributes") attributes = true;
+      else if (name === "$attributeSchema") attributeSchema = true;
+      else if (fixed) fields.push(name);
+      else columns.push([name, column]);
+    }
+    if (fields.length === 0 && columns.length === 0 && !attributes && !attributeSchema) throw nothingSelected();
+  }
+  const select = {};
+  for (const field of SYSTEM_FIELDS) select[entityField(field)] = fields.includes(field);
+  select.attributeSchema = attributeSchema;
+  if (attributes) select.attributes = true;
+  else {
+    const names = new Set(columns.map(([name]) => name));
+    if (schema?.tag !== void 0) names.add(SCHEMA_ATTRIBUTE);
+    select.attributes = names.size > 0 ? Object.fromEntries([...names].map((n) => [n, true])) : false;
+  }
+  return {
+    select,
+    fields,
+    columns,
+    attributes,
+    attributeSchema,
+    tag: schema?.tag
+  };
+}
+function toRow(entity, projection) {
+  const subject = entity.key === void 0 ? "the entity" : `entity ${entity.key}`;
+  const { tag } = projection;
+  if (tag !== void 0) {
+    const found = attributeOf(entity, SCHEMA_ATTRIBUTE);
+    if (found?.type !== "str" || found.value !== tag.value) throw new SchemaMismatchError(SCHEMA_ATTRIBUTE, `${subject} is ${describeTag(found)}, not ${JSON.stringify(tag.value)}, so it was not written through this schema`);
+  }
+  const row = {};
+  for (const field of projection.fields) row[field] = entity[entityField(field)];
+  for (const [name, column] of projection.columns) {
+    const value = attributeOf(entity, name);
+    if (column !== void 0) {
+      if (value === void 0) {
+        if (!column.isOptional) throw new SchemaMismatchError(name, `${subject} has no value for this required ${column.type} column, so it does not match the schema. Declare the column .optional() if entities may leave it unset`);
+      } else if (value.type !== column.type) throw new SchemaMismatchError(name, `${subject} holds a ${value.type}, not the ${column.type} the schema declares`);
+    }
+    row[name] = value;
+  }
+  if (projection.attributes) row.$attributes = withoutTag(entity.attributes ?? {}, tag);
+  if (projection.attributeSchema) row.$attributeSchema = withoutTag(entity.attributeSchema ?? {}, tag);
+  return row;
+}
+function entityField(field) {
+  return field.slice(1);
+}
+function withoutTag(record, tag) {
+  if (tag === void 0 || !Object.hasOwn(record, SCHEMA_ATTRIBUTE)) return record;
+  const { [SCHEMA_ATTRIBUTE]: _tag, ...rest } = record;
+  return rest;
+}
+function attributeOf(entity, name) {
+  const { attributes } = entity;
+  return attributes !== void 0 && Object.hasOwn(attributes, name) ? attributes[name] : void 0;
+}
+function describeTag(found) {
+  if (found === void 0) return "not tagged with a schema";
+  if (found.type === "str") return `tagged ${JSON.stringify(found.value)}`;
+  return `tagged with a value of type ${found.type}`;
+}
+function nothingSelected() {
+  return /* @__PURE__ */ new Error('select() requires at least one field to be selected. Pass select() or select("*") to select everything.');
+}
+var READONLY_BIT = 1;
+var PERMISSIONLESS_EXTENSION_BIT = 2;
+function encodeCreationFlags(flags = {}) {
+  for (const [name, value] of Object.entries(flags)) if (value !== void 0 && typeof value !== "boolean") throw new InvalidCreationFlagsError(`"${name}" must be a boolean, got ${typeof value}`);
+  return (flags.readonly ? READONLY_BIT : 0) | (flags.permissionlessExtension ? PERMISSIONLESS_EXTENSION_BIT : 0);
+}
+function decodeCreationFlags(raw) {
+  if (!Number.isInteger(raw) || raw < 0 || raw > 255) throw new InvalidCreationFlagsError(`${raw} is not a byte`);
+  return {
+    readonly: (raw & READONLY_BIT) !== 0,
+    permissionlessExtension: (raw & PERMISSIONLESS_EXTENSION_BIT) !== 0,
+    raw
+  };
+}
+var logger$1 = getLogger("utils:entities");
+function decodeAttributes(rpcAttributes) {
+  const attributes = {};
+  for (const { name, type, value } of rpcAttributes) attributes[name] = decodeRpcValue(type, value);
+  return attributes;
+}
+function decodeSchema(entries) {
+  const schema = {};
+  for (const { name, type, indexed } of entries) schema[name] = {
+    type: asTypeTag(type),
+    indexed: typeof indexed === "boolean" ? indexed : void 0
+  };
+  return schema;
+}
+function entityFromRpcResult(rpcEntity) {
+  logger$1("entityFromRpcResult %o", rpcEntity);
+  return new Entity({
+    key: rpcEntity.key,
+    owner: toAddress(rpcEntity.owner),
+    creator: toAddress(rpcEntity.creator),
+    createdAt: toBlock(rpcEntity.createdAt),
+    updatedAt: toBlock(rpcEntity.updatedAt),
+    expiresAt: toBlock(rpcEntity.expiresAt),
+    creationFlags: decodeFlags(rpcEntity.creationFlags),
+    attributeSchema: rpcEntity.attributeSchema !== void 0 ? decodeSchema(rpcEntity.attributeSchema) : void 0,
+    attributes: rpcEntity.attributes !== void 0 ? decodeAttributes(rpcEntity.attributes) : void 0
+  });
+}
+function toBlock(value) {
+  return value === void 0 ? void 0 : BigInt(value);
+}
+function toAddress(value) {
+  if (value === void 0) return void 0;
+  if (!/^0x[0-9a-fA-F]{40}$/.test(value)) {
+    logger$1("unreadable address %o", value);
+    return value;
+  }
+  return checksumAddress(value);
+}
+function decodeFlags(value) {
+  if (value === void 0) return void 0;
+  const raw = toFlagsByte(typeof value === "number" ? value : value.raw);
+  if (raw !== void 0) return decodeCreationFlags(raw);
+  if (typeof value === "object" && (value.readonly ?? value.permissionlessExtension) !== void 0) return decodeCreationFlags(encodeCreationFlags({
+    readonly: value.readonly ?? false,
+    permissionlessExtension: value.permissionlessExtension ?? false
+  }));
+  logger$1("unreadable creationFlags %o", value);
+}
+function toFlagsByte(value) {
+  const parsed = typeof value === "number" ? value : typeof value === "string" && /^(0x[0-9a-fA-F]+|\d+)$/.test(value) ? Number(value) : NaN;
+  return Number.isInteger(parsed) && parsed >= 0 && parsed <= 255 ? parsed : void 0;
+}
+var InvalidPredicateError = class extends Error {
+  /** The attribute the predicate names, where there is one. */
+  attributeName;
+  constructor(message, attributeName) {
+    super(message);
+    this.name = "InvalidPredicateError";
+    this.attributeName = attributeName;
+  }
+};
+var QUERY_ERROR_KINDS = {
+  [-32001]: "parse",
+  [-32002]: "type",
+  [-32003]: "literal",
+  [-32004]: "limits"
+};
+var QueryError = class extends Error {
+  /** Which failure this is. */
+  kind;
+  /** The JSON-RPC error code. */
+  code;
+  /** The machine-readable detail the node sent, if any — e.g. `{ position, expected, got }`. */
+  data;
+  /** The query string that was rejected. */
+  query;
+  constructor(kind, code, query2, data, detail) {
+    super(`Query rejected (${kind}, ${code})${detail ? `: ${detail}` : ""}. Query: ${query2}`, { cause: data });
+    this.name = "QueryError";
+    this.kind = kind;
+    this.code = code;
+    this.data = data;
+    this.query = query2;
+  }
+};
+function asQueryError(error, query2) {
+  let code;
+  let data;
+  let detail;
+  let current = error;
+  for (let depth = 0; current != null && depth < 8; depth++) {
+    const link = current;
+    if (code === void 0 && typeof link.code === "number") code = link.code;
+    if (data === void 0 && link.data !== void 0) data = link.data;
+    if (detail === void 0 && typeof link.details === "string" && link.details !== "") detail = link.details;
+    current = link.cause;
+  }
+  if (detail === void 0) {
+    const message = data?.message;
+    if (typeof message === "string" && message !== "") detail = message;
+  }
+  const kind = code === void 0 ? void 0 : QUERY_ERROR_KINDS[code];
+  if (kind === void 0 || code === void 0) return void 0;
+  return new QueryError(kind, code, query2, data, detail);
+}
+var logger = getLogger("query:engine");
+var MAX_LIMIT = 100;
+async function runQuery(client, request) {
+  const { query: query2, select, limit, offset, count } = request;
+  if (limit !== void 0) {
+    if (!Number.isInteger(limit) || limit < 1) throw new Error(`limit must be a positive integer, got ${limit}.`);
+    if (limit > MAX_LIMIT) throw new Error(`limit ${limit} exceeds the node maximum of ${MAX_LIMIT}. Page through the results with an offset instead.`);
+  }
+  if (offset !== void 0 && (!Number.isSafeInteger(offset) || offset < 0)) throw new Error(`offset must be a non-negative integer, got ${offset}.`);
+  const queryOptions = {
+    select: count ? {
+      ...select,
+      count: true
+    } : select,
+    ...limit !== void 0 && { limit: numberToHex(limit) },
+    ...offset !== void 0 && { offset: numberToHex(offset) }
+  };
+  logger("arkiv_query %s %o", query2, queryOptions);
+  const result = await client.request({
+    method: "arkiv_query",
+    params: [query2, queryOptions]
+  }).catch((error) => {
+    throw asQueryError(error, query2) ?? error;
+  });
+  logger("Raw result from query %o", result);
+  return {
+    entities: result.data.map((rpcEntity) => entityFromRpcResult(rpcEntity)),
+    blockNumber: BigInt(result.blockNumber),
+    count: result.count === void 0 ? void 0 : BigInt(result.count)
+  };
+}
+var QUERYABLE_SYSTEM_ATTRIBUTES = {
+  $key: "key",
+  $owner: "addr",
+  $creator: "addr",
+  $expiresAt: "u64"
+};
+var RESULT_ONLY_SYSTEM_ATTRIBUTES = [
+  "$createdAt",
+  "$updatedAt",
+  "$creationFlags"
+];
+function resolveReference(name, use = "filter") {
+  if (typeof name !== "string" || !name.startsWith("$")) {
+    validateAttributeName(name);
+    return;
+  }
+  const system = QUERYABLE_SYSTEM_ATTRIBUTES[name];
+  if (system !== void 0) return system;
+  if (RESULT_ONLY_SYSTEM_ATTRIBUTES.includes(name)) {
+    const field = name.slice(1);
+    throw new InvalidPredicateError(`"${name}" is returned in query results but ${use === "filter" ? "carries no index, so it cannot be filtered on" : "cannot be sorted on"}. Select it as \`${field}\` and ${use} the results in JavaScript instead.`, name);
+  }
+  throw new InvalidPredicateError(`"${name}" is not a system attribute. The queryable ones are ${Object.keys(QUERYABLE_SYSTEM_ATTRIBUTES).join(", ")}. "$" is reserved for these, so a user attribute cannot be named this.`, name);
+}
+function isIndexableTag(tag) {
+  return Object.hasOwn(TYPE_IDS, tag) && isIndexable(tag);
+}
+var INDEXABLE_TAGS = Object.keys(TYPE_IDS).filter(isIndexable).join(", ");
+function node(value) {
+  Object.defineProperty(value, "toString", {
+    value: () => render(value),
+    enumerable: false
+  });
+  return Object.freeze(value);
+}
+function predicateValue(name, system, input) {
+  const value = toValue(input, name);
+  if (value.type === "bytes") throw new InvalidPredicateError(`"${name}" is compared against a bytes value, and bytes are stored but never indexed, so they cannot be filtered on. Index a hash of them, as a hex str, instead.`, name);
+  if (system !== void 0 && value.type !== system) throw new InvalidPredicateError(`"${name}" is a ${system}, but the value is a ${value.type}. System attributes have a fixed type \u2014 write ${system}(...) around the value.`, name);
+  return value;
+}
+function comparison(name, operator, input) {
+  return node({
+    kind: "comparison",
+    name,
+    operator,
+    value: predicateValue(name, resolveReference(name), input)
+  });
+}
+function eq(name, value) {
+  return comparison(name, "=", value);
+}
+function and(...expressions) {
+  return combine("and", expressions.flat());
+}
+function combine(kind, expressions) {
+  if (expressions.length === 0) throw new InvalidPredicateError(`${kind}() needs at least one expression. An empty ${kind === "and" ? "conjunction" : "disjunction"} has no query-language spelling \u2014 leave the ${kind}() out. A query still needs at least one filter, so to match broadly narrow by owner or creator, or read through a named schema, whose tag counts as one.`);
+  const only = expressions[0];
+  if (expressions.length === 1 && only !== void 0) return only;
+  return node(kind === "and" ? {
+    kind: "and",
+    expressions: Object.freeze(expressions)
+  } : {
+    kind: "or",
+    expressions: Object.freeze(expressions)
+  });
+}
+function checkAgainstSchema(expression, schema) {
+  switch (expression.kind) {
+    case "and":
+    case "or":
+      for (const sub of expression.expressions) checkAgainstSchema(sub, schema);
+      return;
+  }
+  const { name } = expression;
+  if (name.startsWith("$")) return;
+  const column = sortableColumn(schema, name, "filter");
+  if (!column.isIndexed) throw new InvalidPredicateError(`"${name}" is not indexed, and only indexed attributes can be filtered on. Declare it ${column.type}().indexed() \u2014 entities written before that are indexed by their next patch of it \u2014 or select it and filter the results in JavaScript.`, name);
+  const columnType = column.type;
+  const asserted = expression.kind === "comparison" || expression.kind === "startsWith" ? expression.value.type : expression.kind === "between" ? expression.low.type : expression.kind === "typeOf" ? expression.tag : void 0;
+  if (asserted !== void 0 && asserted !== columnType) throw new InvalidPredicateError(`"${name}" is a ${columnType} column, but the predicate asserts a ${asserted}, so it could never match. Write ${columnType}(...) around the value.`, name);
+}
+function sortableColumn(schema, name, use) {
+  const column = lookupColumn(schema, name);
+  if (column === void 0) throw new InvalidPredicateError(`"${name}" is not a column of the schema, so ${use === "filter" ? "a predicate on it can only match entities written some other way" : "it cannot be sorted on"}. Its columns are ${describeColumns(schema)}.`, name);
+  if (column.type === "bytes") throw new InvalidPredicateError(use === "filter" ? `"${name}" is a bytes column, and bytes are stored but never indexed, so it cannot be filtered on. Index a hash of it, as a hex str, instead, or select it and filter the results in JavaScript.` : `"${name}" is a bytes column, and bytes cannot be sorted on. Select it and sort the results in JavaScript.`, name);
+  return {
+    type: column.type,
+    isIndexed: column.isIndexed
+  };
+}
+var PRECEDENCE = {
+  or: 1,
+  and: 2,
+  leaf: 3
+};
+function precedenceOf(expression) {
+  switch (expression.kind) {
+    case "or":
+      return PRECEDENCE.or;
+    case "and":
+      return PRECEDENCE.and;
+    default:
+      return PRECEDENCE.leaf;
+  }
+}
+function nested(expression, minimum) {
+  const rendered = render(expression);
+  return precedenceOf(expression) < minimum ? `(${rendered})` : rendered;
+}
+function render(expression) {
+  switch (expression.kind) {
+    case "comparison":
+      return `${expression.name} ${expression.operator} ${renderLiteral(expression.value)}`;
+    case "between":
+      return `${expression.name} BETWEEN ${renderLiteral(expression.low)} AND ${renderLiteral(expression.high)}`;
+    case "startsWith":
+      return `${expression.name} STARTSWITH ${renderLiteral(expression.value)}`;
+    case "exists":
+      return `EXISTS(${expression.name})`;
+    case "typeOf":
+      return `TYPEOF(${expression.name}) = ${expression.tag}`;
+    case "and":
+      return expression.expressions.map((sub) => nested(sub, PRECEDENCE.and)).join(" AND ");
+    case "or":
+      return expression.expressions.map((sub) => nested(sub, PRECEDENCE.or)).join(" OR ");
+  }
+}
+function renderLiteral(value) {
+  switch (value.type) {
+    case "bool":
+      return value.value ? "true" : "false";
+    case "i32":
+      return `i32(${value.value})`;
+    case "u64":
+      return `u64(${value.value})`;
+    case "u256":
+      return `u256(${value.value})`;
+    case "dec":
+      return `dec(${value.value})`;
+    case "key":
+      return `key(${value.value})`;
+    case "addr":
+      return `addr(${value.value})`;
+    case "str":
+      return `str('${value.value.replaceAll("'", "''")}')`;
+  }
+}
+function isOrderTerm(value) {
+  return typeof value === "object" && value !== null && value.kind === "order";
+}
+function checkedOrderTerm(value) {
+  if (!isOrderTerm(value)) throw new InvalidPredicateError("A sort key is an asc(...) or a desc(...).");
+  const { name, type, direction } = value;
+  return orderTerm(name, type, direction);
+}
+function orderTerm(name, type, direction) {
+  const system = resolveReference(name, "sort");
+  if (direction !== "asc" && direction !== "desc") throw new InvalidPredicateError(`A sort runs "asc" or "desc", not ${JSON.stringify(direction)}.`, name);
+  if (type !== void 0 && (typeof type !== "string" || !isIndexableTag(type))) throw new InvalidPredicateError(`"${name}" cannot be sorted as "${type}": a sort reads one of ${INDEXABLE_TAGS}.`, name);
+  if (system !== void 0 && type !== void 0 && type !== system) throw new InvalidPredicateError(`"${name}" is always a ${system}, so it cannot be sorted as a ${type}. Leave the type out \u2014 a system attribute's is fixed.`, name);
+  return Object.freeze({
+    kind: "order",
+    name,
+    type: type ?? system,
+    direction
+  });
+}
+function desc(name, type) {
+  return orderTerm(name, type, "desc");
+}
+function renderOrderBy(term, schema) {
+  return `ORDER BY ${term.name}:${resolveOrderType(term, schema)} ${term.direction.toUpperCase()}`;
+}
+function resolveOrderType(term, schema) {
+  const { name, type } = term;
+  if (name.startsWith("$")) {
+    if (type !== void 0) return type;
+    throw new InvalidPredicateError(`The key on "${name}" has no type, though a system attribute's is fixed. Build it with asc() or desc(), which give it one.`, name);
+  }
+  if (schema === void 0) {
+    if (type !== void 0) return type;
+    throw new InvalidPredicateError(`"${name}" needs its type to be sorted on: the node sorts it as one type, and without a schema there is no column to take it from. Write it, as in desc("${name}", "u256").`, name);
+  }
+  const columnType = sortableColumn(schema, name, "sort").type;
+  if (type !== void 0 && type !== columnType) throw new InvalidPredicateError(`"${name}" is a ${columnType} column, but the sort asserts a ${type}. Leave the type out to sort it as the column's.`, name);
+  return columnType;
+}
+var QueryBuilderBase = class {
+  _client;
+  _schema;
+  _filters = [];
+  _ownedBy;
+  _createdBy;
+  constructor(client) {
+    this._client = client;
+  }
+  /**
+  * This builder's state in a new builder of the same class, re-typed by the caller. Every field is
+  * carried over, so one a subclass adds is not dropped by `from()`; the filter list, which is
+  * mutated in place, is copied rather than shared.
+  *
+  * A copy, not `this` re-typed: a builder typed for one schema must never be the same object as
+  * one typed for another, or `base.from(Posts)` and `base.from(Users)` would share their state.
+  */
+  copy() {
+    const copy = Object.create(Object.getPrototypeOf(this));
+    return Object.assign(copy, this, { _filters: [...this._filters] });
+  }
+  /**
+  * Adds filters. Everything passed here, and across repeated calls, must hold.
+  *
+  * After `from()`, every attribute a filter names must be an indexed column of the schema,
+  * compared against a value of its type — anything else is a compile error.
+  *
+  * @param expressions - The expressions, as separate arguments or one array.
+  *
+  * @example
+  * builder.where(eq("category", "docs"))
+  * builder.where(gte("level", i32(10)), lt("level", i32(20)))
+  * builder.where(or(eq("status", "open"), exists("reviewedBy")))
+  */
+  where(...expressions) {
+    this._filters.push(...expressions.flat());
+    return this;
+  }
+  /**
+  * Restricts the query to entities this account owns — shorthand for
+  * `where(eq("$owner", addr(owner)))`. Calling it again replaces the filter.
+  *
+  * @example
+  * builder.ownedBy("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")
+  */
+  ownedBy(owner) {
+    this._ownedBy = eq("$owner", addr(owner));
+    return this;
+  }
+  /**
+  * Restricts the query to entities this account created — shorthand for
+  * `where(eq("$creator", addr(creator)))`. Calling it again replaces the filter.
+  *
+  * The creator never changes; the owner does, so these differ after a transfer.
+  */
+  createdBy(creator) {
+    this._createdBy = eq("$creator", addr(creator));
+    return this;
+  }
+  /**
+  * The query string this builder will send — the same text the node parses: its filters,
+  * `ownedBy` and `createdBy`, and a named schema's tag, ANDed.
+  *
+  * @throws {InvalidPredicateError} If no filter has been added, or — after `from()` — a filter
+  * does not fit the schema. A named schema's own tag filter counts as a filter.
+  */
+  toString() {
+    const filters = [...this._filters];
+    if (this._ownedBy) filters.push(this._ownedBy);
+    if (this._createdBy) filters.push(this._createdBy);
+    const schema = this._schema;
+    if (schema !== void 0) {
+      for (const filter of filters) checkAgainstSchema(filter, schema);
+      if (schema.tag !== void 0) filters.unshift(eq(SCHEMA_ATTRIBUTE, schema.tag));
+    }
+    if (filters.length === 0) throw new InvalidPredicateError("A query needs at least one filter \u2014 the language has no spelling for 'match every entity'. Add a where(...) predicate, or narrow by ownedBy(...) / createdBy(...).");
+    return and(filters).toString();
+  }
+};
+var CountQueryBuilder = class extends QueryBuilderBase {
+  /**
+  * Counts through a schema: `where` is checked against its indexed columns, and a named schema
+  * counts only entities tagged with its name — so it needs no other filter.
+  *
+  * Returns a new builder, carrying whatever this one already holds; this one is left as it was.
+  *
+  * @throws {SchemaDefinitionError} If `schema` was not built with `defineSchema`.
+  *
+  * @example
+  * client.count().from(Posts)   // every post
+  */
+  from(schema) {
+    if (!isSchema(schema)) throw new SchemaDefinitionError("from() takes a schema built with defineSchema(...)");
+    const typed = this.copy();
+    typed._schema = schema;
+    return typed;
+  }
+  /**
+  * Runs the count.
+  *
+  * Counts every entity the filters match at the block, whether or not it fits the schema — what
+  * `select().from(schema)` leaves out of its pages is still counted.
+  *
+  * @throws {InvalidPredicateError} If no filter has been added, or a filter does not fit the
+  * schema.
+  * @throws {QueryError} If the node rejects the query.
+  * @throws If the node returns no count — it predates the count projection.
+  */
+  async fetch() {
+    const response = await runQuery(this._client, {
+      query: this.toString(),
+      select: {},
+      count: true
+    });
+    if (response.count === void 0) throw new Error("The node returned no count. It may predate the count projection.");
+    return response.count;
+  }
+};
+var QueryResult = class {
+  /** The rows on this page — flat, as the selection lays them out. */
+  entities;
+  /**
+  * The block this page was read at. Every request reads the latest block, so two pages of one
+  * query can come from different blocks.
+  */
+  blockNumber;
+  /**
+  * How many matching entities this page left out because they did not fit the schema — always
+  * `0` without a schema, or with `.from(schema, { onMismatch: "throw" })`.
+  *
+  * The node counts them toward the limit and the offset, so `entities.length + skipped` is how
+  * many matches this page covered: add it to the offset to reach the next page. With an explicit
+  * `limit()`, a page that covered fewer than the limit was the last. An empty page is not the
+  * end on its own: every match on it may have been skipped.
+  */
+  skipped;
+  /**
+  * How many entities the query matches in all, regardless of the limit and offset — a `bigint`
+  * when the query was built with `withCount()`, and `undefined` otherwise. It includes entities
+  * left out for not fitting the schema, which {@link skipped} reports per page.
+  */
+  count;
+  constructor(entities, blockNumber, skipped, count) {
+    this.entities = entities;
+    this.blockNumber = blockNumber;
+    this.skipped = skipped;
+    this.count = count;
+  }
+};
+var SelectQueryBuilder = class extends QueryBuilderBase {
+  _selection;
+  _projection;
+  _onMismatch = "skip";
+  _limit;
+  _offset;
+  _withCount = false;
+  _orderBy;
+  /**
+  * @throws If the selection is not `"*"` or an object, asks for nothing, or names an attribute
+  * outside the name grammar.
+  */
+  constructor(client, selection) {
+    super(client);
+    this._selection = snapshotSelection(selection);
+    this._projection = projectSelection(this._selection);
+  }
+  /**
+  * Runs the query through a schema. The selection keeps its meaning and the rows their shape;
+  * each selected attribute becomes a column — typed as the schema declares, and checked against
+  * it — and `where` is checked against the schema's indexed columns.
+  *
+  * A named schema also filters: only entities tagged with its name match, so a query through it
+  * sees only entities written through it, and needs no other filter. The tag is how the query finds
+  * them rather than one of their attributes, so rows leave it out of `$attributes` and
+  * `$attributeSchema`. An unnamed schema types the query without filtering it — `where` alone
+  * decides which entities match.
+  *
+  * A matching entity that does not fit — a selected required column missing or of another type,
+  * or, for a named schema, a tag that does not match — is left out of the page, or fails the fetch
+  * with a {@link SchemaMismatchError} with `{ onMismatch: "throw" }`. Columns the selection leaves
+  * out are not checked.
+  *
+  * Returns a new builder, carrying whatever this one already holds; this one is left as it was.
+  *
+  * @param schema - The schema, built with `defineSchema`.
+  * @param options - How to treat entities that do not fit. {@link FromOptions}
+  * @throws {SchemaDefinitionError} If `schema` was not built with `defineSchema`.
+  * @throws If the selection names something that is neither an entity field nor a column.
+  *
+  * @example
+  * client.select({ $key: true, title: true }).from(Posts)   // rows typed { $key; title }
+  * client.select().from(Posts)                               // every field and every column
+  * client.select().from(Posts, { onMismatch: "throw" })      // fail on entities that do not fit
+  */
+  from(schema, options = {}) {
+    if (!isSchema(schema)) throw new SchemaDefinitionError("from() takes a schema built with defineSchema(...)");
+    const { onMismatch = "skip" } = options;
+    if (onMismatch !== "throw" && onMismatch !== "skip") throw new TypeError(`onMismatch must be "throw" or "skip", got ${String(onMismatch)}`);
+    const projection = projectSelection(this._selection, schema);
+    const typed = this.copy();
+    typed._schema = schema;
+    typed._projection = projection;
+    typed._onMismatch = onMismatch;
+    return typed;
+  }
+  orderBy(...keys) {
+    if (keys.length !== 1) throw new InvalidPredicateError("orderBy() takes one key, an asc(...) or desc(...).");
+    this._orderBy = checkedOrderTerm(keys[0]);
+    return this;
+  }
+  /**
+  * The query string this builder will send: the filters, as {@link QueryBuilderBase.toString}
+  * renders them, followed by the {@link orderBy} clause, if any.
+  *
+  * @throws {InvalidPredicateError} If no filter has been added, a filter or sort key does not fit
+  * the schema, or — without a schema — a sort key on a user attribute has no type.
+  */
+  toString() {
+    const filters = super.toString();
+    if (this._orderBy === void 0) return filters;
+    return `${filters} ${renderOrderBy(this._orderBy, this._schema)}`;
+  }
+  /**
+  * Sets the page size, up to the node maximum of 100. Without it the node picks the page size.
+  *
+  * @example
+  * builder.limit(100)
+  */
+  limit(limit) {
+    this._limit = limit;
+    return this;
+  }
+  /**
+  * Skips the first `offset` matches. With {@link limit}, this takes one page: page `n` of size
+  * `size` is `.limit(size).offset(n * size)`.
+  *
+  * Every request reads the latest block, so an entity created or deleted between two requests
+  * shifts the matches after it, and a row can repeat or be missed. Sort by a key that does not
+  * change, such as `asc("$key")`, so that pages line up at least while nothing is written; without
+  * {@link orderBy}, the order is the node's own. Through a schema, the offset counts the entities a
+  * page skips as well as its rows.
+  *
+  * To read every match exactly once while others write, page by key instead: sort by
+  * `asc("$key")` and filter on `gt("$key", key(lastKey))`, with `lastKey` the last `$key` of the
+  * previous page. Through a schema, use `{ onMismatch: "throw" }` for that: a page of skipped
+  * entities returns no rows, so no key to continue from.
+  *
+  * @example
+  * builder.orderBy(asc("$key")).limit(20).offset(40) // the third page of 20
+  */
+  offset(offset) {
+    this._offset = offset;
+    return this;
+  }
+  /**
+  * Also counts every entity the query matches, regardless of the limit and offset. The page then
+  * carries the total as {@link QueryResult.count}, typed `bigint`, so a paginated list can show it
+  * without a second query. To count without fetching rows, use `client.count()` instead.
+  *
+  * The node counts what the filters match, at the block the page was read at. Through a schema,
+  * that includes entities the page leaves out for not fitting it. Later pages read later blocks,
+  * so the count can be out of date by the time they arrive.
+  *
+  * @throws If, when fetched, the node returns no count — it predates the count projection.
+  *
+  * Returns a new builder, carrying whatever this one already holds; this one is left as it was.
+  *
+  * @example
+  * const page = await builder.withCount().limit(20).fetch()
+  * page.count // every match, not just these 20
+  */
+  withCount() {
+    const counted = this.copy();
+    counted._withCount = true;
+    return counted;
+  }
+  /**
+  * Runs the query and returns one page: up to {@link limit} matches, past the first
+  * {@link offset}.
+  *
+  * @throws {InvalidPredicateError} If no filter has been added, or a filter or sort key does not
+  * fit the schema.
+  * @throws If the {@link limit} is not an integer from 1 to 100, or the {@link offset} is not a
+  * non-negative integer.
+  * @throws {SchemaMismatchError} If, through a schema, a matching entity does not fit the selected
+  * columns or a named schema's tag, and `from()` was given `{ onMismatch: "throw" }`.
+  * @throws {QueryError} If the node rejects the query.
+  *
+  * @example
+  * const page = await client.select({ $key: true }).where(eq("category", "docs")).fetch()
+  * page.entities
+  */
+  async fetch() {
+    const projection = this._projection;
+    const response = await runQuery(this._client, {
+      query: this.toString(),
+      select: projection.select,
+      limit: this._limit,
+      offset: this._offset,
+      count: this._withCount
+    });
+    if (this._withCount && response.count === void 0) throw new Error("The node returned no count. It may predate the count projection.");
+    const rows = [];
+    let skipped = 0;
+    for (const entity of response.entities) try {
+      rows.push(toRow(entity, projection));
+    } catch (error) {
+      if (this._onMismatch === "skip" && error instanceof SchemaMismatchError) skipped++;
+      else throw error;
+    }
+    return new QueryResult(rows, response.blockNumber, skipped, response.count);
+  }
+};
+
+// ../../node_modules/.pnpm/@arkiv-network+sdk@1.0.1_ty_9e054ffd4c5df0a60ad8de128e460793/node_modules/@arkiv-network/sdk/dist/consts-Lp55G1Qc.js
+var ARKIV_ADDRESS = "0x4400000000000000000000000000000000000044";
+var BLOCK_TIME = 2;
+var MAX_LIFETIME = 7884000n;
+var ACCESS_KEYS_URL = "https://hub.arkiv.network/access-keys";
+var GAS_HEADROOM_PERCENT = 25n;
+var MAX_TRANSACTION_GAS = 2n ** 24n;
+
+// ../../node_modules/.pnpm/@arkiv-network+sdk@1.0.1_ty_9e054ffd4c5df0a60ad8de128e460793/node_modules/@arkiv-network/sdk/dist/errors-CmOg0Na9.js
+var EntityMutationError = class extends Error {
+  txHash;
+  constructor(message, options) {
+    super(message, { cause: options?.cause });
+    this.name = "EntityMutationError";
+    this.txHash = options?.txHash;
+  }
+};
+var NoEntityFoundError = class extends Error {
+  /** The key that matched nothing, when the lookup was by key. */
+  entityKey;
+  constructor(entityKey) {
+    super(entityKey === void 0 ? "No entity found" : `No live entity with key ${entityKey}. It was never created, or it has been deleted or has expired.`);
+    this.name = "NoEntityFoundError";
+    this.entityKey = entityKey;
+  }
+};
+var EmptyPatchError = class extends Error {
+  entityKey;
+  constructor(entityKey) {
+    super(`The patch for entity ${entityKey} has nothing to apply. Pass "set" to write columns, or "unset" to remove optional ones.`);
+    this.name = "EmptyPatchError";
+    this.entityKey = entityKey;
+  }
+};
+var MissingAccessKeyError = class extends Error {
+  /** The chain that was asked for without a key. */
+  chain;
+  constructor(chain) {
+    super(`${chain} needs an Arkiv access key: pass it as ${chain.toLowerCase()}({ accessKey }). Get a free one at ${ACCESS_KEYS_URL}, or pass accessKey: "" to use the heavily rate-limited public endpoint.`);
+    this.name = "MissingAccessKeyError";
+    this.chain = chain;
+  }
+};
+
+// ../../node_modules/.pnpm/@arkiv-network+sdk@1.0.1_ty_9e054ffd4c5df0a60ad8de128e460793/node_modules/@arkiv-network/sdk/dist/entity-DY0XB8so.js
+var MAX_EXPIRES_AT = 2n ** 64n - 1n;
+var OperationType = {
+  Create: 1,
+  Patch: 2,
+  ExtendExpiry: 3,
+  TransferOwnership: 4,
+  Delete: 5
+};
+var MAX_SALT = 2n ** 128n - 1n;
+var NO_SALT = Symbol("NO_SALT");
+function randomSalt() {
+  const source = globalThis.crypto;
+  if (typeof source?.getRandomValues !== "function") throw new NoRandomSourceError();
+  const bytes2 = source.getRandomValues(new Uint8Array(16));
+  let salt = 0n;
+  for (const byte of bytes2) salt = salt << 8n | BigInt(byte);
+  return salt;
+}
+function resolveSalt(salt) {
+  return salt === NO_SALT ? 0n : validateSalt(salt);
+}
+function validateSalt(salt) {
+  if (typeof salt !== "bigint" || salt < 0n || salt > MAX_SALT) throw new InvalidSaltError(salt);
+  return salt;
+}
+function predictEntityKey({ owner, nonce, salt, chainId }) {
+  return keccak256(encodePacked([
+    "uint256",
+    "address",
+    "address",
+    "uint64",
+    "uint128"
+  ], [
+    BigInt(chainId),
+    ARKIV_ADDRESS,
+    owner,
+    nonce,
+    resolveSalt(salt)
+  ]));
+}
+var ENTITY_EVENTS_ABI = parseAbi([
+  "event EntityCreated(bytes32 indexed entityKey, address indexed owner, uint64 expiresAt, uint8 creationFlags)",
+  "event EntityPatched(bytes32 indexed entityKey, address indexed owner)",
+  "event ExpiryExtended(bytes32 indexed entityKey, address indexed owner, uint64 expiresAt)",
+  "event OwnershipTransferred(bytes32 indexed entityKey, address indexed previousOwner, address indexed newOwner)",
+  "event EntityDeleted(bytes32 indexed entityKey, address indexed owner)"
+]);
+
+// ../../node_modules/.pnpm/@arkiv-network+sdk@1.0.1_ty_9e054ffd4c5df0a60ad8de128e460793/node_modules/@arkiv-network/sdk/dist/expirationTime-C1gcuh7y.js
+function makeExpiry(minLifetime, expiresAt) {
+  return {
+    minLifetime,
+    expiresAt
+  };
+}
+function resolveExpiry(expiry, context) {
+  const { currentBlock } = context;
+  if (typeof expiry?.minLifetime !== "bigint" || expiry.expiresAt === void 0) throw new InvalidExpiryError("expiration must be built with ExpirationTime, e.g. ExpirationTime.fromDays(30) or ExpirationTime.atBlock(1_200_000n)");
+  const { minLifetime } = expiry;
+  const absolute = typeof expiry.expiresAt === "bigint" ? expiry.expiresAt : blockAtDate(expiry.expiresAt, currentBlock);
+  if (minLifetime === 0n && absolute === 0n) throw new InvalidExpiryError("no expiry given. Pass ExpirationTime.fromDays(30) for a lifetime, ExpirationTime.atBlock(n) for an absolute deadline, or a deadline with { atLeast } to take whichever is later.");
+  if (minLifetime > MAX_LIFETIME) throw new InvalidExpiryError(`a lifetime of ${minLifetime} blocks is longer than the chain's maximum lifetime of ${MAX_LIFETIME} blocks (about 182 days). Use ExpirationTime.max() for the longest lifetime allowed.`);
+  const latestDeadline = currentBlock + 1n + MAX_LIFETIME;
+  if (absolute > latestDeadline) throw new InvalidExpiryError(`expiresAt resolves to block ${absolute}, past block ${latestDeadline}: the chain's maximum lifetime is ${MAX_LIFETIME} blocks (about 182 days) after the block the transaction lands in, and the current block is ${currentBlock}. Use ExpirationTime.max() for the longest lifetime allowed.`);
+  const relative = minLifetime === 0n ? 0n : currentBlock + minLifetime;
+  const target = absolute > relative ? absolute : relative;
+  if (target <= currentBlock) throw new InvalidExpiryError(`the entity would expire at block ${target}, which is not after the current block ${currentBlock}, so it would be dead on arrival`);
+  return {
+    expiresAt: absolute,
+    minLifetime,
+    target
+  };
+}
+function toBlocks(seconds) {
+  if (!Number.isInteger(seconds) || seconds <= 0) throw new InvalidExpiryError(`a lifetime must be a positive whole number of seconds, got ${seconds}. Use the ExpirationTime helpers, e.g. ExpirationTime.fromDays(30).`);
+  if (seconds % BLOCK_TIME !== 0) throw new InvalidExpiryError(`a lifetime must be a multiple of the ${BLOCK_TIME}s block time, got ${seconds}, which is ${seconds / BLOCK_TIME} blocks. Try ${seconds - seconds % BLOCK_TIME} or ${seconds + BLOCK_TIME - seconds % BLOCK_TIME}, or ExpirationTime.fromBlocks(n).`);
+  return BigInt(seconds / BLOCK_TIME);
+}
+function blockAtDate(date, currentBlock) {
+  const secondsAway = (date.getTime() - Date.now()) / 1e3;
+  if (secondsAway <= 0) throw new InvalidExpiryError(`the deadline ${date.toISOString()} is in the past, so the entity would be dead on arrival`);
+  return currentBlock + BigInt(Math.ceil(secondsAway / BLOCK_TIME));
+}
+function lifetimeOf(seconds) {
+  return makeExpiry(toBlocks(seconds), 0n);
+}
+function deadlineOf(expiresAt, options) {
+  return makeExpiry(options?.atLeast?.minLifetime ?? 0n, expiresAt);
+}
+var ExpirationTime = {
+  fromSeconds: (seconds) => lifetimeOf(seconds),
+  fromMinutes: (minutes) => lifetimeOf(minutes * 60),
+  fromHours: (hours) => lifetimeOf(hours * 60 * 60),
+  fromDays: (days) => lifetimeOf(days * 24 * 60 * 60),
+  fromWeeks: (weeks) => lifetimeOf(weeks * 7 * 24 * 60 * 60),
+  fromMonths: (months) => lifetimeOf(months * 30 * 24 * 60 * 60),
+  fromYears: (years) => lifetimeOf(years * 365 * 24 * 60 * 60),
+  fromBlocks: (blocks) => {
+    if (!Number.isInteger(blocks) || blocks <= 0) throw new InvalidExpiryError(`a lifetime must be a positive whole number of blocks, got ${blocks}`);
+    return makeExpiry(BigInt(blocks), 0n);
+  },
+  max: () => makeExpiry(MAX_LIFETIME, 0n),
+  atBlock: (block, options) => {
+    if (typeof block !== "bigint" || block < 0n) throw new InvalidExpiryError(`a deadline must be a non-negative block height, got ${block}`);
+    return deadlineOf(block, options);
+  },
+  atDate: (date, options) => {
+    if (!(date instanceof Date) || Number.isNaN(date.getTime())) throw new InvalidExpiryError(`a deadline must be a valid Date, got ${String(date)}`);
+    return deadlineOf(date, options);
+  }
+};
+
+// ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/actions/index.js
+init_estimateContractGas();
+init_getChainId();
+init_getTransaction();
+init_readContract();
+
+// ../../node_modules/.pnpm/@arkiv-network+sdk@1.0.1_ty_9e054ffd4c5df0a60ad8de128e460793/node_modules/@arkiv-network/sdk/dist/index.js
+init_utils5();
+var logger$9 = getLogger("actions:public:get-block-timing");
+async function getBlockTiming(client) {
+  const blockTiming = await client.request({
+    method: "arkiv_getBlockTiming",
+    params: []
+  });
+  logger$9("Block timing %o", blockTiming);
+  return {
+    currentBlock: BigInt(blockTiming.current_block),
+    currentBlockTime: blockTiming.current_block_time,
+    blockDuration: blockTiming.duration
+  };
+}
+async function getEntity(client, entityKey, schema) {
+  if (schema !== void 0 && !isSchema(schema)) throw new SchemaDefinitionError("getEntity() takes a schema built with defineSchema(...)");
+  const projection = projectSelection("*", schema);
+  const rpcEntity = await client.request({
+    method: "arkiv_getEntity",
+    params: [key(entityKey).value]
+  });
+  if (rpcEntity === null) throw new NoEntityFoundError(entityKey);
+  return toRow(entityFromRpcResult(rpcEntity), projection);
+}
+var EXECUTE_ABI = parseAbi(["function execute((uint8 operation, bytes operationData)[] ops) external returns (bytes32[] keys)"]);
+var ENTITY_NONCE_ABI = parseAbi(["function entityNonce(address owner) external view returns (uint64)"]);
+var ATTRIBUTE_TUPLE = "(bytes32 name, uint8 typeId, bytes value)[]";
+var PAYLOAD_PARAMS = {
+  [OperationType.Create]: parseAbiParameters(`(uint128 salt, uint64 expiresAt, uint64 minLifetime, uint8 creationFlags, ${ATTRIBUTE_TUPLE} attributes)`),
+  [OperationType.Patch]: parseAbiParameters(`(bytes32 entityKey, ${ATTRIBUTE_TUPLE} mutations)`),
+  [OperationType.ExtendExpiry]: parseAbiParameters("(bytes32 entityKey, uint64 expiresAt, uint64 minLifetime)"),
+  [OperationType.TransferOwnership]: parseAbiParameters("(bytes32 entityKey, address newOwner)"),
+  [OperationType.Delete]: parseAbiParameters("(bytes32 entityKey)")
+};
+function createOperation({ salt, expiry, creationFlags, attributes }) {
+  return {
+    operation: OperationType.Create,
+    operationData: encodeAbiParameters(PAYLOAD_PARAMS[OperationType.Create], [{
+      salt,
+      expiresAt: expiry.expiresAt,
+      minLifetime: expiry.minLifetime,
+      creationFlags,
+      attributes
+    }])
+  };
+}
+function patchOperation({ entityKey, mutations }) {
+  return {
+    operation: OperationType.Patch,
+    operationData: encodeAbiParameters(PAYLOAD_PARAMS[OperationType.Patch], [{
+      entityKey,
+      mutations
+    }])
+  };
+}
+function extendExpiryOperation({ entityKey, expiry }) {
+  return {
+    operation: OperationType.ExtendExpiry,
+    operationData: encodeAbiParameters(PAYLOAD_PARAMS[OperationType.ExtendExpiry], [{
+      entityKey,
+      expiresAt: expiry.expiresAt,
+      minLifetime: expiry.minLifetime
+    }])
+  };
+}
+function transferOwnershipOperation({ entityKey, newOwner }) {
+  return {
+    operation: OperationType.TransferOwnership,
+    operationData: encodeAbiParameters(PAYLOAD_PARAMS[OperationType.TransferOwnership], [{
+      entityKey,
+      newOwner
+    }])
+  };
+}
+function deleteOperation({ entityKey }) {
+  return {
+    operation: OperationType.Delete,
+    operationData: encodeAbiParameters(PAYLOAD_PARAMS[OperationType.Delete], [{ entityKey }])
+  };
+}
+var logger$8 = getLogger("actions:public:get-entity-nonce");
+async function getEntityNonce(client, owner) {
+  const nonce = await readContract(client, {
+    address: ARKIV_ADDRESS,
+    abi: ENTITY_NONCE_ABI,
+    functionName: "entityNonce",
+    args: [owner]
+  });
+  logger$8("entity nonce of %s is %s", owner, nonce);
+  return nonce;
+}
+async function predictEntityKeys(client, { owner, count, salts }) {
+  const resolvedSalts = resolveSalts(count, salts);
+  const chainId = client.chain?.id ?? await getChainId(client);
+  const nonce = await getEntityNonce(client, owner);
+  return resolvedSalts.map((salt, index2) => ({
+    key: predictEntityKey({
+      owner,
+      nonce: nonce + BigInt(index2),
+      salt,
+      chainId
+    }),
+    salt
+  }));
+}
+function resolveSalts(count, salts) {
+  if (salts !== void 0) {
+    if (salts.length === 0) throw new Error("predictEntityKeys: `salts` is empty \u2014 there is nothing to predict");
+    return salts.map(resolveSalt);
+  }
+  if (count === void 0) throw new Error("predictEntityKeys: pass either `count` or `salts`");
+  if (!Number.isInteger(count) || count <= 0) throw new Error(`predictEntityKeys: \`count\` must be a positive whole number, got ${count}`);
+  return Array.from({ length: count }, () => randomSalt());
+}
+async function query(client, query$1, options = {}) {
+  const projection = projectSelection(options.select);
+  const filters = query$1.toString();
+  const order = options.orderBy === void 0 ? void 0 : renderOrderBy(checkedOrderTerm(options.orderBy), void 0);
+  const page = await runQuery(client, {
+    query: order === void 0 ? filters : `${filters} ${order}`,
+    select: projection.select,
+    limit: options.limit,
+    offset: options.offset,
+    count: options.count
+  });
+  return {
+    ...page,
+    entities: page.entities.map((entity) => toRow(entity, projection))
+  };
+}
+var logger$7 = getLogger("actions:public:watch-entity-events");
+var DEFAULT_POLLING_INTERVAL = BLOCK_TIME * 1e3 / 2;
+function watchEntityEvents(client, parameters) {
+  const { onEntityCreated, onEntityPatched, onExpiryExtended, onOwnershipTransferred, onEntityDeleted, onEvent, onError, pollingInterval = DEFAULT_POLLING_INTERVAL } = parameters;
+  const publicClient = client;
+  const reportError = onError ?? logToConsole;
+  function emit(event) {
+    deliver(onEvent, event);
+    switch (event.type) {
+      case "EntityCreated":
+        deliver(onEntityCreated, event);
+        break;
+      case "EntityPatched":
+        deliver(onEntityPatched, event);
+        break;
+      case "ExpiryExtended":
+        deliver(onExpiryExtended, event);
+        break;
+      case "OwnershipTransferred":
+        deliver(onOwnershipTransferred, event);
+        break;
+      case "EntityDeleted":
+        deliver(onEntityDeleted, event);
+        break;
+    }
+  }
+  function deliver(handler, event) {
+    if (handler === void 0) return;
+    try {
+      handler(event);
+    } catch (error) {
+      reportError(asError(error));
+    }
+  }
+  return publicClient.watchEvent({
+    address: ARKIV_ADDRESS,
+    events: ENTITY_EVENTS_ABI,
+    pollingInterval,
+    onLogs: (logs) => {
+      logger$7("logs %o", logs);
+      for (const log of logs) {
+        if (log.blockNumber === null || log.transactionHash === null || log.logIndex === null) continue;
+        const context = {
+          blockNumber: log.blockNumber,
+          transactionHash: log.transactionHash,
+          logIndex: log.logIndex
+        };
+        let event;
+        try {
+          event = toEntityEvent(log.topics, log.data, context);
+        } catch (error) {
+          reportError(asError(error));
+          continue;
+        }
+        emit(event);
+      }
+    },
+    onError: (error) => reportError(error)
+  });
+}
+function logToConsole(error) {
+  console.error("watchEntityEvents error", error);
+}
+function asError(error) {
+  return error instanceof Error ? error : new Error(String(error));
+}
+function toEntityEvent(topics, data, context) {
+  const decoded = decodeEventLog({
+    abi: ENTITY_EVENTS_ABI,
+    topics,
+    data
+  });
+  switch (decoded.eventName) {
+    case "EntityCreated":
+      return {
+        type: "EntityCreated",
+        ...context,
+        ...decoded.args,
+        creationFlags: decodeCreationFlags(decoded.args.creationFlags)
+      };
+    case "EntityPatched":
+      return {
+        type: "EntityPatched",
+        ...context,
+        ...decoded.args
+      };
+    case "ExpiryExtended":
+      return {
+        type: "ExpiryExtended",
+        ...context,
+        ...decoded.args
+      };
+    case "OwnershipTransferred":
+      return {
+        type: "OwnershipTransferred",
+        ...context,
+        ...decoded.args
+      };
+    case "EntityDeleted":
+      return {
+        type: "EntityDeleted",
+        ...context,
+        ...decoded.args
+      };
+  }
+}
+function publicArkivActions(client) {
+  return {
+    getEntity: (key$1, schema) => getEntity(client, key$1, schema),
+    query: (rawQuery, queryOptions) => query(client, rawQuery, queryOptions),
+    select: (selection) => new SelectQueryBuilder(client, selection),
+    count: () => new CountQueryBuilder(client),
+    getBlockTiming: () => getBlockTiming(client),
+    getEntityNonce: (owner) => getEntityNonce(client, owner),
+    predictEntityKeys: (parameters) => predictEntityKeys(client, parameters),
+    watchEntityEvents: (parameters) => watchEntityEvents(client, parameters)
+  };
+}
+function createPublicClient2(parameters) {
+  const { key: key$1 = "public", name = "Public Client" } = parameters;
+  return createClient({
+    ...parameters,
+    key: key$1,
+    name
+  }).extend(publicActions).extend(publicArkivActions);
+}
+function describeEntityRevert(error) {
+  if (!(error instanceof BaseError2)) return void 0;
+  const reverted = error.walk((e) => e instanceof ContractFunctionRevertedError);
+  if (!(reverted instanceof ContractFunctionRevertedError)) return void 0;
+  const name = reverted.data?.errorName;
+  if (name === void 0) return void 0;
+  return explain(name, reverted.data?.args ?? []) ?? `the engine rejected the batch with ${name}`;
+}
+var CHARSET = '"A"-"Z", "a"-"z", "0"-"9", ".", "-" and "_", with a letter first';
+function explain(name, args) {
+  switch (name) {
+    case "Ident32InvalidByte": {
+      const position = Number(args[0] ?? 0);
+      return `an attribute name holds ${printable(String(args[1] ?? "0x00"))} at byte ${position}, which is outside the name charset (${CHARSET})`;
+    }
+    case "Ident32Empty":
+      return "an attribute name is empty";
+    case "SystemAttributeNotWritable":
+      return `"${identName(args[0])}" is owned by the engine and cannot be written. Names starting with "$" are reserved for system attributes`;
+    case "TombstoneInCreate":
+      return `a create cannot unset "${identName(args[0])}" \u2014 nothing exists yet, so leave the name out instead`;
+    case "TombstoneValueNotEmpty":
+      return `the tombstone for "${identName(args[0])}" carries a value; unsetting takes no value`;
+    case "InvalidValueType":
+      return describeInvalidType(identName(args[0]), Number(args[1]));
+    case "AttributesNotSorted":
+      return "attributes must be strictly ascending by name, which also makes each name unique";
+    case "TooManyAttributes":
+      return `${String(args[0])} attributes exceeds the limit of ${String(args[1])}`;
+    case "EmptyMutations":
+      return `the patch of ${short(args[0])} has no mutations, so it would do nothing`;
+    case "EntityNotFound":
+      return `no entity ${short(args[0])} \u2014 it may have been deleted, or have expired`;
+    case "EntityExpired":
+      return `entity ${short(args[0])} expired at block ${String(args[1])}`;
+    case "NotOwner":
+      return `entity ${short(args[0])} is owned by ${String(args[2])}, not ${String(args[1])}`;
+    case "ReadOnlyEntity":
+      return `entity ${short(args[0])} was created readonly, so its contents can never change. Its expiry can still be extended, and it can be transferred or deleted`;
+    case "ReservedCreationFlags":
+      return `creation flags 0b${Number(args[0] ?? 0).toString(2).padStart(8, "0")} set a reserved bit; only readonly and permissionlessExtension are defined`;
+    case "ExpiryDeadOnArrival":
+      return `the expiry resolves to block ${String(args[0])}, which is not after the current block ${String(args[1])}`;
+    case "ExpiryBeyondMaxLifetime":
+      return `the expiry resolves to block ${String(args[0])}, more than the chain's maximum lifetime of ${String(args[2])} blocks after the current block ${String(args[1])}`;
+    case "ExpiryNotExtended":
+      return `entity ${short(args[0])} already expires at block ${String(args[2])}, so extending it to ${String(args[1])} would shorten its life`;
+    case "TransferToZeroAddress":
+      return `entity ${short(args[0])} cannot be transferred to the zero address`;
+    case "TransferToSelf":
+      return `entity ${short(args[0])} is already owned by that account`;
+    case "EmptyBatch":
+      return "the batch has no operations";
+    case "InvalidOpType":
+      return `operation tag ${String(args[0])} is not one the engine knows`;
+    case "NonCanonicalOperationData":
+      return `the payload for operation tag ${String(args[0])} is not its canonical encoding, so the engine refused it rather than accept a second spelling of the same operation`;
+    default:
+      return;
+  }
+}
+function describeInvalidType(name, typeId) {
+  try {
+    const { tag, indexed } = decodeTypeId(typeId);
+    if (tag === "bytes" && indexed) return `"${name}" is a bytes attribute flagged as indexed, and bytes are stored but never indexed`;
+    if (indexed) return `"${name}" has type ${tag} and is flagged as indexed (type id ${typeId}), which the node does not accept. The node may not support the indexed flag yet`;
+    return `"${name}" has type ${tag} (type id ${typeId}), which the node does not accept`;
+  } catch {
+  }
+  return `"${name}" names type id ${typeId}, which is not a known type`;
+}
+function identName(raw) {
+  if (typeof raw !== "string") return String(raw);
+  try {
+    return hexToString(raw).split("\0")[0] ?? "";
+  } catch {
+    return raw;
+  }
+}
+function short(raw) {
+  const text = String(raw);
+  return text.length > 18 ? `${text.slice(0, 10)}\u2026${text.slice(-6)}` : text;
+}
+function printable(byte) {
+  const code = Number.parseInt(byte.replace(/^0x/, ""), 16);
+  if (!Number.isFinite(code)) return `byte ${byte}`;
+  return code >= 33 && code <= 126 ? `"${String.fromCharCode(code)}" (${byte})` : `byte ${byte}`;
+}
+var logger$6 = getLogger("utils:arkiv-transactions");
+var ENTITY_ERRORS_ABI = parseAbi([
+  "error EmptyBatch()",
+  "error InvalidOpType(uint8 operation)",
+  "error NonCanonicalOperationData(uint8 operation)",
+  "error AttributesNotSorted()",
+  "error TooManyAttributes(uint256 count, uint256 maxCount)",
+  "error EmptyMutations(bytes32 entityKey)",
+  "error TombstoneInCreate(bytes32 name)",
+  "error TombstoneValueNotEmpty(bytes32 name)",
+  "error SystemAttributeNotWritable(bytes32 name)",
+  "error InvalidValueType(bytes32 name, uint8 typeId)",
+  "error Ident32Empty()",
+  "error Ident32InvalidByte(uint256 position, bytes1 value)",
+  "error EntityNotFound(bytes32 entityKey)",
+  "error EntityExpired(bytes32 entityKey, uint64 expiresAt)",
+  "error NotOwner(bytes32 entityKey, address caller, address owner)",
+  "error ReadOnlyEntity(bytes32 entityKey)",
+  "error ReservedCreationFlags(uint8 creationFlags)",
+  "error ExpiryDeadOnArrival(uint64 target, uint64 currentBlock)",
+  "error ExpiryBeyondMaxLifetime(uint64 target, uint64 currentBlock, uint64 maxLifetime)",
+  "error ExpiryNotExtended(bytes32 entityKey, uint64 newExpiresAt, uint64 currentExpiresAt)",
+  "error TransferToZeroAddress(bytes32 entityKey)",
+  "error TransferToSelf(bytes32 entityKey)"
+]);
+var EXECUTE_ABI$1 = [...EXECUTE_ABI, ...ENTITY_ERRORS_ABI];
+async function sendArkivTransaction(client, ops, txParams) {
+  if (!client.account) throw new Error("Account required");
+  if (!client.chain) throw new Error("Chain required");
+  const walletClient = client;
+  const { creates, patches, deletes, extensions, ownershipChanges } = ops;
+  const encodedCreates = (creates ?? []).map((item) => ({
+    item,
+    attributes: encodeCreate(item.schema, item.values)
+  }));
+  const patchOps = (patches ?? []).map((item) => {
+    const mutations = encodePatch(item.schema, item);
+    if (mutations.length === 0) throw new EmptyPatchError(item.entityKey);
+    return patchOperation({
+      entityKey: item.entityKey,
+      mutations
+    });
+  });
+  const expiryContext = { currentBlock: creates?.length || extensions?.length ? await walletClient.getBlockNumber() : 0n };
+  const createOps = encodedCreates.map(({ item, attributes }) => {
+    return createOperation({
+      salt: item.salt === void 0 ? randomSalt() : resolveSalt(item.salt),
+      expiry: resolveExpiry(item.expiration, expiryContext),
+      creationFlags: encodeCreationFlags(item.flags),
+      attributes
+    });
+  });
+  const extendOps = (extensions ?? []).map((item) => {
+    const expiry = resolveExpiry(item.expiration, expiryContext);
+    return extendExpiryOperation({
+      entityKey: item.entityKey,
+      expiry
+    });
+  });
+  const operations = [
+    ...createOps,
+    ...patchOps,
+    ...(deletes ?? []).map((item) => deleteOperation({ entityKey: item.entityKey })),
+    ...extendOps,
+    ...(ownershipChanges ?? []).map((item) => transferOwnershipOperation({
+      entityKey: item.entityKey,
+      newOwner: item.newOwner
+    }))
+  ];
+  if (operations.length === 0) throw new Error("No operations to perform");
+  logger$6("Sending execute with %d operations %o", operations.length, operations);
+  let txHash;
+  try {
+    const gas = txParams?.gas ?? withHeadroom(await estimateContractGas(walletClient, {
+      address: ARKIV_ADDRESS,
+      abi: EXECUTE_ABI$1,
+      functionName: "execute",
+      args: [operations],
+      account: {
+        address: client.account.address,
+        type: "json-rpc"
+      },
+      ...txParams
+    }));
+    txHash = await walletClient.writeContract({
+      address: ARKIV_ADDRESS,
+      abi: EXECUTE_ABI$1,
+      functionName: "execute",
+      args: [operations],
+      account: client.account,
+      chain: client.chain,
+      ...txParams,
+      gas
+    });
+    const receipt = await walletClient.waitForTransactionReceipt({ hash: txHash });
+    logger$6("Tx receipt %o", receipt);
+    if (receipt.status === "reverted") {
+      const actualLimitUsed = await getGasLimitOfTx(walletClient, txHash) ?? gas;
+      if (receipt.gasUsed >= actualLimitUsed) {
+        const estimated = txParams?.gas === void 0 && actualLimitUsed === gas;
+        throw new EntityMutationError(`Transaction ${receipt.transactionHash} ran out of gas: it used all ${actualLimitUsed} gas it was given, so nothing was applied and the fee was spent. ` + (estimated ? "The batch cost more when it ran than when it was estimated, because the state changed in between. Send it again." : "The limit was set rather than estimated (passed as `gas`, or changed in the wallet) and was too low for the batch. Send it again with a higher `gas`, or without one to let the SDK estimate it."), { txHash: receipt.transactionHash });
+      }
+      try {
+        await walletClient.simulateContract({
+          address: ARKIV_ADDRESS,
+          abi: EXECUTE_ABI$1,
+          functionName: "execute",
+          args: [operations],
+          account: client.account,
+          chain: client.chain
+        });
+      } catch (err) {
+        const error = err;
+        const reason = describeEntityRevert(err) ?? error.shortMessage ?? error.cause?.details ?? "No reason provided by backend.";
+        throw new EntityMutationError(`Transaction ${receipt.transactionHash} reverted. Reason: ${reason}`, {
+          cause: err,
+          txHash: receipt.transactionHash
+        });
+      }
+      throw new EntityMutationError(`Transaction ${receipt.transactionHash} reverted. No reason provided by backend.`, { txHash: receipt.transactionHash });
+    }
+    return {
+      receipt,
+      ...readAppliedOperations(receipt, {
+        creates: createOps.length,
+        extensions: extendOps.length
+      })
+    };
+  } catch (error) {
+    const described = error instanceof EntityMutationError ? void 0 : describeEntityRevert(error);
+    if (described !== void 0) throw new EntityMutationError(`Transaction failed: ${described}`, {
+      cause: error,
+      txHash
+    });
+    let message = "Transaction failed";
+    if (error instanceof TransactionExecutionError) message += `: ${error.details}`;
+    else if (error instanceof ContractFunctionExecutionError) {
+      logger$6("Contract function execution error data:", error.shortMessage);
+      if (error.cause instanceof ContractFunctionRevertedError) message += `: ${error.cause.message}`;
+      else message += ": Execution error without revert data";
+    } else if (error instanceof EntityMutationError) throw error;
+    else if (error instanceof Error) message += `: ${error.message}`;
+    throw new EntityMutationError(message, {
+      cause: error,
+      txHash
+    });
+  }
+}
+async function getGasLimitOfTx(client, hash3) {
+  try {
+    return (await getAction(client, getTransaction, "getTransaction")({ hash: hash3 })).gas;
+  } catch {
+    return;
+  }
+}
+function withHeadroom(estimate) {
+  if (estimate > MAX_TRANSACTION_GAS) return estimate;
+  const padded = estimate * (100n + GAS_HEADROOM_PERCENT) / 100n;
+  if (padded > MAX_TRANSACTION_GAS) return MAX_TRANSACTION_GAS;
+  return padded;
+}
+function readAppliedOperations(receipt, expected) {
+  const createdEntityKeys = [];
+  const createdExpiries = [];
+  const extendedExpiries = [];
+  for (const log of receipt.logs ?? []) {
+    if (log.address.toLowerCase() !== ARKIV_ADDRESS.toLowerCase()) continue;
+    const decoded = decodeEntityLog(log);
+    if (decoded === void 0) continue;
+    if (decoded.eventName === "EntityCreated") {
+      createdEntityKeys.push(decoded.args.entityKey);
+      createdExpiries.push(decoded.args.expiresAt);
+    } else if (decoded.eventName === "ExpiryExtended") extendedExpiries.push(decoded.args.expiresAt);
+  }
+  assertCount(receipt, "create", createdEntityKeys.length, expected.creates);
+  assertCount(receipt, "extension", extendedExpiries.length, expected.extensions);
+  return {
+    createdEntityKeys,
+    createdExpiries,
+    extendedExpiries
+  };
+}
+function decodeEntityLog(log) {
+  try {
+    return decodeEventLog({
+      abi: ENTITY_EVENTS_ABI,
+      topics: log.topics,
+      data: log.data
+    });
+  } catch {
+    return;
+  }
+}
+function assertCount(receipt, what, got, want) {
+  if (got === want) return;
+  throw new EntityMutationError(`Transaction ${receipt.transactionHash} succeeded \u2014 do not retry it \u2014 but emitted ${got} ${what} event(s) for ${want} ${what} operation(s). The batch was applied; the SDK cannot say which entity each operation produced, so read them back to find them.`, { txHash: receipt.transactionHash });
+}
+var logger$5 = getLogger("actions:wallet:change-ownership");
+async function changeOwnership(client, data, txParams) {
+  logger$5("changeOwnership %o", data);
+  const { receipt } = await sendArkivTransaction(client, { ownershipChanges: [data] }, txParams);
+  logger$5("Receipt from changeOwnership %o", receipt);
+  return {
+    txHash: receipt.transactionHash,
+    entityKey: data.entityKey
+  };
+}
+var logger$4 = getLogger("actions:wallet:create-entity");
+async function createEntity(client, schema, values, options, txParams) {
+  logger$4("createEntity %o", values);
+  const { receipt, createdEntityKeys, createdExpiries } = await sendArkivTransaction(client, { creates: [{
+    ...options,
+    schema,
+    values
+  }] }, txParams);
+  logger$4("Receipt from createEntity %o", receipt);
+  const [entityKey] = createdEntityKeys;
+  const [expiresAt] = createdExpiries;
+  if (entityKey === void 0 || expiresAt === void 0) throw new EntityMutationError(`Transaction ${receipt.transactionHash} succeeded, but the receipt did not carry the expected entity key or expiry.`, { txHash: receipt.transactionHash });
+  return {
+    txHash: receipt.transactionHash,
+    entityKey,
+    expiresAt
+  };
+}
+var logger$3 = getLogger("actions:wallet:delete-entity");
+async function deleteEntity(client, data, txParams) {
+  logger$3("deleteEntity %o", data);
+  const { receipt } = await sendArkivTransaction(client, { deletes: [data] }, txParams);
+  logger$3("Receipt from deleteEntity %o", receipt);
+  return {
+    txHash: receipt.transactionHash,
+    entityKey: data.entityKey
+  };
+}
+var logger$2 = getLogger("actions:wallet:execute-batch");
+async function executeBatch(client, data, txParams) {
+  const { receipt, createdEntityKeys } = await sendArkivTransaction(client, data, txParams);
+  logger$2("Receipt from executeBatch %o", receipt);
+  return {
+    txHash: receipt.transactionHash,
+    createdEntities: createdEntityKeys,
+    patchedEntities: (data.patches ?? []).map((p) => p.entityKey),
+    deletedEntities: (data.deletes ?? []).map((d) => d.entityKey),
+    extendedEntities: (data.extensions ?? []).map((e) => e.entityKey),
+    ownershipChanges: (data.ownershipChanges ?? []).map((o) => o.entityKey)
+  };
+}
+var logger$12 = getLogger("actions:wallet:extend-entity");
+async function extendEntity(client, data, txParams) {
+  logger$12("extendEntity %o", data);
+  const { receipt, extendedExpiries } = await sendArkivTransaction(client, { extensions: [data] }, txParams);
+  logger$12("Receipt from extendEntity %o", receipt);
+  const [expiresAt] = extendedExpiries;
+  if (expiresAt === void 0) throw new EntityMutationError(`Transaction ${receipt.transactionHash} succeeded, but the receipt did not carry the expected entity expiry.`, { txHash: receipt.transactionHash });
+  return {
+    txHash: receipt.transactionHash,
+    entityKey: data.entityKey,
+    expiresAt
+  };
+}
+var logger2 = getLogger("actions:wallet:patch-entity");
+async function patchEntity(client, schema, entityKey, changes, txParams) {
+  logger2("patchEntity %s %o", entityKey, changes);
+  const { receipt } = await sendArkivTransaction(client, { patches: [{
+    ...changes,
+    schema,
+    entityKey
+  }] }, txParams);
+  logger2("Receipt from patchEntity %o", receipt);
+  return {
+    txHash: receipt.transactionHash,
+    entityKey
+  };
+}
+function walletArkivActions(client) {
+  return {
+    createEntity: (schema, values, options, txParams) => createEntity(client, schema, values, options, txParams),
+    patchEntity: (schema, entityKey, changes, txParams) => patchEntity(client, schema, entityKey, changes, txParams),
+    deleteEntity: (data, txParams) => deleteEntity(client, data, txParams),
+    extendEntity: (data, txParams) => extendEntity(client, data, txParams),
+    changeOwnership: (data, txParams) => changeOwnership(client, data, txParams),
+    executeBatch: (data, txParams) => executeBatch(client, data, txParams)
+  };
+}
+function createWalletClient2(parameters) {
+  const { key: key$1 = "wallet", name = "Wallet Client" } = parameters;
+  return createClient({
+    ...parameters,
+    key: key$1,
+    name
+  }).extend(publicActions).extend(walletActions).extend(walletArkivActions);
+}
+
+// ../../node_modules/.pnpm/@arkiv-network+sdk@1.0.1_ty_9e054ffd4c5df0a60ad8de128e460793/node_modules/@arkiv-network/sdk/dist/chains/index.js
+var localhost = defineChain({
+  id: 1337,
+  name: "Localhost",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Ether",
+    symbol: "ETH"
+  },
+  rpcUrls: { default: { http: ["http://127.0.0.1:8545"] } }
+});
+var RPC_HOST = "rpc.rabdi.db-chain.testnet.arkiv.network";
+var warnedPublicEndpoint = false;
+function rabdi(options) {
+  if (typeof options?.accessKey !== "string") throw new MissingAccessKeyError("Rabdi");
+  if (options.accessKey === "" && !warnedPublicEndpoint) {
+    warnedPublicEndpoint = true;
+    console.warn(`Rabdi: no access key, so requests go to the public endpoint, which is heavily rate limited. Get a free key at ${ACCESS_KEYS_URL} and pass it as rabdi({ accessKey }).`);
+  }
+  const path = options.accessKey === "" ? "" : `/${encodeURIComponent(options.accessKey)}`;
+  return defineChain({
+    id: 7794095,
+    name: "Rabdi",
+    network: "rabdi",
+    nativeCurrency: {
+      name: "Golem",
+      symbol: "tGLM",
+      decimals: 18
+    },
+    rpcUrls: { default: {
+      http: [`https://${RPC_HOST}${path}`],
+      webSocket: [`wss://${RPC_HOST}${path}`]
+    } },
+    blockExplorers: { default: {
+      name: "Rabdi Explorer",
+      url: "https://rabdi.explorer.arkiv.network"
+    } },
+    testnet: true
+  });
 }
 
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/accounts/privateKeyToAccount.js
@@ -22082,6 +24273,480 @@ function privateKeyToAccount(privateKey, options = {}) {
   };
 }
 
+// ../../lib/arkiv/sdk.ts
+var DEFAULT_WRITER_ADDRESS = "0xb491fe5846DE735B6Cb03a677A3C6296FAB0aDA5";
+var ARKIV_EXPLORER = "https://rabdi.explorer.arkiv.network";
+var RECEIPT_TTL_DAYS = 30;
+var ReceiptsSchema = defineSchema("receipts", {
+  poolId: str().indexed(),
+  searcher: addr().indexed(),
+  victim: addr().indexed(),
+  lp: addr().indexed(),
+  blockNumber: u64().indexed(),
+  receiptHash: str().indexed(),
+  extractedUSDC: dec(),
+  simulationHash: str(),
+  txHashes: bytes(),
+  injectedSlippageBps: u64().optional(),
+  legitSlippageBps: u64().optional(),
+  createdAtMs: u64().optional()
+});
+var SearcherProfilesSchema = defineSchema("darktrace.searcher_profiles", {
+  searcher: addr().indexed(),
+  extractions: u64(),
+  bondedUSDC: dec(),
+  slashedUSDC: dec(),
+  lastSeenBlock: u64().indexed()
+});
+var LPClaimsSchema = defineSchema("darktrace.lp_claims", {
+  lp: addr().indexed(),
+  receiptHash: str().indexed(),
+  claimTx: str(),
+  createdAtMs: u64()
+});
+var lower = (a) => a.toLowerCase();
+var explorerUrl = (key2) => `${ARKIV_EXPLORER}/entity/${key2}`;
+var v = (x) => x?.value;
+var num2 = (x) => x?.value === void 0 ? null : Number(x.value);
+function decodeTxHashes(raw) {
+  if (!raw) return [];
+  try {
+    const text = typeof raw === "string" ? hexToString(raw) : new TextDecoder().decode(raw);
+    const parsed = JSON.parse(text);
+    return Array.isArray(parsed) ? parsed.map(String) : [];
+  } catch {
+    return [];
+  }
+}
+function meta(row) {
+  return {
+    arkivEntityKey: row.$key,
+    owner: row.$owner,
+    createdAtBlock: row.$createdAt,
+    expiresAtBlock: row.$expiresAt,
+    explorerUrl: explorerUrl(row.$key)
+  };
+}
+function toReceipt(row) {
+  return {
+    ...meta(row),
+    receiptHash: v(row.receiptHash) ?? "",
+    poolId: v(row.poolId) ?? "",
+    searcher: v(row.searcher) ?? "",
+    victim: v(row.victim) ?? "",
+    lp: v(row.lp) ?? "",
+    blockNumber: num2(row.blockNumber) ?? 0,
+    extractedUSDC: v(row.extractedUSDC) ?? "0",
+    simulationHash: v(row.simulationHash) ?? "",
+    txHashes: decodeTxHashes(v(row.txHashes)),
+    injectedSlippageBps: num2(row.injectedSlippageBps),
+    legitSlippageBps: num2(row.legitSlippageBps),
+    createdAtMs: num2(row.createdAtMs)
+  };
+}
+var ArkivSdk = class {
+  writerAddress;
+  accessKey;
+  privateKey;
+  constructor(config = {}) {
+    this.accessKey = config.accessKey ?? process.env.ARKIV_ACCESS_KEY ?? "";
+    const writer = config.writerAddress ?? process.env.ARKIV_WRITER_ADDRESS ?? DEFAULT_WRITER_ADDRESS;
+    if (!isHex(writer) || writer.length !== 42) {
+      throw new Error(`[arkiv] ARKIV_WRITER_ADDRESS must be a 0x address, got "${writer}"`);
+    }
+    this.writerAddress = writer;
+    let pk = (config.privateKey ?? process.env.ARKIV_PRIVATE_KEY ?? "").trim();
+    if (pk && !pk.startsWith("0x")) pk = `0x${pk}`;
+    if (pk) {
+      if (!isHex(pk) || pk.length !== 66) throw new Error("[arkiv] ARKIV_PRIVATE_KEY must be 32 bytes hex");
+      this.privateKey = pk;
+    }
+  }
+  get canWrite() {
+    return Boolean(this.privateKey);
+  }
+  chain() {
+    return rabdi({ accessKey: this.accessKey });
+  }
+  reader() {
+    return createPublicClient2({ chain: this.chain(), transport: http() });
+  }
+  writer() {
+    if (!this.privateKey) throw new Error("[arkiv] ARKIV_PRIVATE_KEY is required to write to Arkiv");
+    return createWalletClient2({
+      chain: this.chain(),
+      transport: http(),
+      account: privateKeyToAccount(this.privateKey)
+    });
+  }
+  // ── Receipts ──
+  async writeReceipt(receipt) {
+    const receiptHash = computeReceiptHash(receipt).toLowerCase();
+    const { entityKey, txHash } = await this.writer().createEntity(
+      ReceiptsSchema,
+      {
+        poolId: receipt.poolId.toLowerCase(),
+        searcher: addr(lower(receipt.searcher)),
+        victim: addr(lower(receipt.victim)),
+        lp: addr(lower(receipt.lp)),
+        blockNumber: u64(BigInt(receipt.blockNumber)),
+        receiptHash,
+        extractedUSDC: dec(receipt.extractedUSDC),
+        simulationHash: receipt.simulationHash.toLowerCase(),
+        txHashes: stringToBytes(JSON.stringify(receipt.txHashes.map((h) => h.toLowerCase()))),
+        injectedSlippageBps: u64(BigInt(receipt.injectedSlippageBps)),
+        legitSlippageBps: u64(BigInt(receipt.legitSlippageBps)),
+        createdAtMs: u64(BigInt(receipt.createdAt))
+      },
+      { expiration: ExpirationTime.fromDays(RECEIPT_TTL_DAYS) }
+    );
+    return { receiptHash, entityKey, txHash, explorerUrl: explorerUrl(entityKey) };
+  }
+  async getReceiptByHash(receiptHash) {
+    const res = await this.reader().select().from(ReceiptsSchema).where(eq("receiptHash", receiptHash.toLowerCase())).ownedBy(this.writerAddress).limit(1).fetch();
+    return res.entities[0] ? toReceipt(res.entities[0]) : null;
+  }
+  async getReceiptByEntityKey(entityKey) {
+    try {
+      const row = await this.reader().getEntity(entityKey, ReceiptsSchema);
+      if (row.$owner.toLowerCase() !== this.writerAddress.toLowerCase()) return null;
+      return toReceipt(row);
+    } catch {
+      return null;
+    }
+  }
+  async listRecentReceipts(limit = 25) {
+    const res = await this.reader().select().from(ReceiptsSchema).ownedBy(this.writerAddress).orderBy(desc("blockNumber")).limit(limit).fetch();
+    return res.entities.map(toReceipt);
+  }
+  async listReceiptsByPool(poolId, limit = 50) {
+    const res = await this.reader().select().from(ReceiptsSchema).where(eq("poolId", poolId.toLowerCase())).ownedBy(this.writerAddress).orderBy(desc("blockNumber")).limit(limit).fetch();
+    return res.entities.map(toReceipt);
+  }
+  async listReceiptsBySearcher(searcher, limit = 50) {
+    const res = await this.reader().select().from(ReceiptsSchema).where(eq("searcher", addr(lower(searcher)))).ownedBy(this.writerAddress).orderBy(desc("blockNumber")).limit(limit).fetch();
+    return res.entities.map(toReceipt);
+  }
+  async listReceiptsByParty(address, limit = 50) {
+    const a = addr(lower(address));
+    const [asVictim, asLp] = await Promise.all([
+      this.reader().select().from(ReceiptsSchema).where(eq("victim", a)).ownedBy(this.writerAddress).limit(limit).fetch(),
+      this.reader().select().from(ReceiptsSchema).where(eq("lp", a)).ownedBy(this.writerAddress).limit(limit).fetch()
+    ]);
+    const seen = /* @__PURE__ */ new Map();
+    for (const row of [...asVictim.entities, ...asLp.entities]) seen.set(row.$key, toReceipt(row));
+    return Array.from(seen.values()).sort((x, y) => y.blockNumber - x.blockNumber);
+  }
+  // ── Searcher profiles ──
+  async getSearcherProfile(searcher) {
+    const res = await this.reader().select().from(SearcherProfilesSchema).where(eq("searcher", addr(lower(searcher)))).ownedBy(this.writerAddress).limit(1).fetch();
+    const row = res.entities[0];
+    if (!row) return null;
+    return {
+      ...meta(row),
+      searcher: row.searcher.value,
+      extractions: Number(row.extractions.value),
+      bondedUSDC: row.bondedUSDC.value,
+      slashedUSDC: row.slashedUSDC.value,
+      lastSeenBlock: Number(row.lastSeenBlock.value)
+    };
+  }
+  async upsertSearcherProfile(p) {
+    const values = {
+      searcher: addr(lower(p.searcher)),
+      extractions: u64(BigInt(p.extractions)),
+      bondedUSDC: dec(p.bondedUSDC),
+      slashedUSDC: dec(p.slashedUSDC),
+      lastSeenBlock: u64(BigInt(p.lastSeenBlock))
+    };
+    const existing = await this.getSearcherProfile(p.searcher);
+    if (existing) {
+      const { txHash } = await this.writer().patchEntity(SearcherProfilesSchema, existing.arkivEntityKey, { set: values });
+      return { entityKey: existing.arkivEntityKey, txHash };
+    }
+    return this.writer().createEntity(SearcherProfilesSchema, values, {
+      expiration: ExpirationTime.fromDays(RECEIPT_TTL_DAYS)
+    });
+  }
+  // ── LP claims ──
+  async writeLPClaim(c) {
+    return this.writer().createEntity(
+      LPClaimsSchema,
+      {
+        lp: addr(lower(c.lp)),
+        receiptHash: c.receiptHash.toLowerCase(),
+        claimTx: c.claimTx.toLowerCase(),
+        createdAtMs: u64(BigInt(c.createdAt))
+      },
+      { expiration: ExpirationTime.fromDays(RECEIPT_TTL_DAYS) }
+    );
+  }
+  async listLPClaims(lp, limit = 50) {
+    const res = await this.reader().select().from(LPClaimsSchema).where(eq("lp", addr(lower(lp)))).ownedBy(this.writerAddress).limit(limit).fetch();
+    return res.entities.map((row) => ({
+      ...meta(row),
+      lp: row.lp.value,
+      receiptHash: row.receiptHash.value,
+      claimTx: row.claimTx.value,
+      createdAt: Number(row.createdAtMs.value)
+    }));
+  }
+  async claimForReceipt(receiptHash) {
+    const res = await this.reader().select().from(LPClaimsSchema).where(and(eq("receiptHash", receiptHash.toLowerCase()))).ownedBy(this.writerAddress).limit(1).fetch();
+    const row = res.entities[0];
+    if (!row) return null;
+    return {
+      ...meta(row),
+      lp: row.lp.value,
+      receiptHash: row.receiptHash.value,
+      claimTx: row.claimTx.value,
+      createdAt: Number(row.createdAtMs.value)
+    };
+  }
+};
+
+// ../../lib/arkiv/client.ts
+var ArkivRpcError = class extends Error {
+  cause;
+  constructor(message, cause) {
+    super(message);
+    this.name = "ArkivRpcError";
+    this.cause = cause;
+  }
+};
+function toExtractionReceipt(r) {
+  return {
+    v: "1.0.0",
+    poolId: r.poolId,
+    searcher: r.searcher,
+    victim: r.victim,
+    lp: r.lp,
+    blockNumber: r.blockNumber,
+    extractedUSDC: r.extractedUSDC,
+    injectedSlippageBps: r.injectedSlippageBps ?? 0,
+    legitSlippageBps: r.legitSlippageBps ?? 0,
+    simulationHash: r.simulationHash,
+    txHashes: r.txHashes,
+    createdAt: r.createdAtMs ?? 0
+  };
+}
+var ArkivClient = class {
+  namespace;
+  isMemoryMode;
+  sdk;
+  memoryReceipts = /* @__PURE__ */ new Map();
+  memoryProfiles = /* @__PURE__ */ new Map();
+  memoryClaims = /* @__PURE__ */ new Map();
+  constructor(config = {}) {
+    const devMode = config.devMode || process.env.ARKIV_DEV_MODE;
+    this.namespace = config.namespace || "darktrace.v1";
+    this.isMemoryMode = devMode === "memory";
+    if (this.isMemoryMode) {
+      if (process.env.NODE_ENV === "production") {
+        throw new Error("[arkiv] ARKIV_DEV_MODE=memory is not allowed in production");
+      }
+      console.warn("[arkiv] development memory mode \u2014 no live writes");
+      return;
+    }
+    this.sdk = new ArkivSdk({
+      accessKey: config.accessKey,
+      privateKey: config.privateKey,
+      writerAddress: config.writerAddress
+    });
+  }
+  get live() {
+    return !this.isMemoryMode;
+  }
+  async call(what, fn) {
+    try {
+      return await fn(this.sdk);
+    } catch (err) {
+      const detail = err instanceof Error ? `: ${err.message}` : "";
+      throw new ArkivRpcError(`[arkiv] ${what} failed on Rabdi${detail}`, err);
+    }
+  }
+  /** Writes an immutable forensic receipt to Arkiv. */
+  async writeExtractionReceipt(receipt) {
+    const hash3 = computeReceiptHash(receipt);
+    const entityId = `${this.namespace}:receipt:${hash3}`;
+    if (this.isMemoryMode) {
+      this.memoryReceipts.set(hash3.toLowerCase(), receipt);
+      await this._recordSearcherExtraction(receipt.searcher, receipt.blockNumber);
+      return { receiptHash: hash3, entityId };
+    }
+    const res = await this.call("writeReceipt", (s) => s.writeReceipt(receipt));
+    await this._recordSearcherExtraction(receipt.searcher, receipt.blockNumber);
+    return { receiptHash: res.receiptHash, entityId, entityKey: res.entityKey, arkivTxHash: res.txHash };
+  }
+  /** All receipts recorded for a Uniswap v4 pool, newest first. */
+  async getByPool(poolId) {
+    const normalized = poolId.toLowerCase();
+    if (this.isMemoryMode) {
+      return Array.from(this.memoryReceipts.values()).filter((r) => r.poolId.toLowerCase() === normalized).sort((a, b) => b.createdAt - a.createdAt);
+    }
+    const rows = await this.call("listReceiptsByPool", (s) => s.listReceiptsByPool(normalized));
+    return rows.map(toExtractionReceipt);
+  }
+  /** A single receipt by its canonical receiptHash. */
+  async getReceipt(hash3) {
+    const normalized = hash3.toLowerCase();
+    if (this.isMemoryMode) {
+      const found = this.memoryReceipts.get(normalized);
+      return found ? { ...found } : null;
+    }
+    const row = await this.call("getReceiptByHash", (s) => s.getReceiptByHash(normalized));
+    return row ? toExtractionReceipt(row) : null;
+  }
+  /** Reputation profile for a searcher address. */
+  async searcherProfile(address) {
+    const normalized = address.toLowerCase();
+    if (this.isMemoryMode) {
+      const profile = this.memoryProfiles.get(normalized);
+      return profile ? { ...profile } : null;
+    }
+    const p = await this.call("getSearcherProfile", (s) => s.getSearcherProfile(normalized));
+    if (!p) return null;
+    return {
+      v: "1.0.0",
+      searcher: p.searcher,
+      extractions: p.extractions,
+      bondedUSDC: p.bondedUSDC,
+      slashedUSDC: p.slashedUSDC,
+      lastSeenBlock: p.lastSeenBlock
+    };
+  }
+  /** Creates or patches a searcher profile. */
+  async updateSearcherProfile(profile) {
+    const normalized = profile.searcher.toLowerCase();
+    if (this.isMemoryMode) {
+      this.memoryProfiles.set(normalized, { ...profile });
+      return;
+    }
+    await this.call("upsertSearcherProfile", (s) => s.upsertSearcherProfile(profile));
+  }
+  /** Records an LP restitution claim. */
+  async writeLPClaim(claim) {
+    const lpNormalized = claim.lp.toLowerCase();
+    if (this.isMemoryMode) {
+      const existing = this.memoryClaims.get(lpNormalized) || [];
+      existing.push({ ...claim });
+      this.memoryClaims.set(lpNormalized, existing);
+      return;
+    }
+    await this.call("writeLPClaim", (s) => s.writeLPClaim(claim));
+  }
+  /** All restitution claims for an LP address, newest first. */
+  async lpClaims(lpAddress) {
+    const normalized = lpAddress.toLowerCase();
+    if (this.isMemoryMode) {
+      const claims = this.memoryClaims.get(normalized) || [];
+      return [...claims].sort((a, b) => b.createdAt - a.createdAt);
+    }
+    const rows = await this.call("listLPClaims", (s) => s.listLPClaims(normalized));
+    return rows.map((c) => ({ v: "1.0.0", lp: c.lp, receiptHash: c.receiptHash, claimTx: c.claimTx, createdAt: c.createdAt })).sort((a, b) => b.createdAt - a.createdAt);
+  }
+  async _recordSearcherExtraction(searcher, blockNumber) {
+    const norm = searcher.toLowerCase();
+    const current = await this.searcherProfile(norm) || {
+      v: "1.0.0",
+      searcher: norm,
+      extractions: 0,
+      bondedUSDC: "0",
+      slashedUSDC: "0",
+      lastSeenBlock: blockNumber
+    };
+    current.extractions += 1;
+    current.lastSeenBlock = blockNumber;
+    await this.updateSearcherProfile(current);
+  }
+};
+
+// ../../lib/simulator/counterfactual.ts
+function runCounterfactualSimulation(input) {
+  const r0 = input.preAttackReserve0 ?? 5000000000000n;
+  const r1 = input.preAttackReserve1 ?? 1500000000000000000000n;
+  const k = r0 * r1;
+  const spotPrice = Number(r0) / Number(r1);
+  const victimIn = input.victimSwap.amountSpecified < 0n ? -input.victimSwap.amountSpecified : input.victimSwap.amountSpecified;
+  let r0Clean = r0;
+  let r1Clean = r1;
+  let cleanOut = 0n;
+  if (input.victimSwap.zeroForOne) {
+    r0Clean = r0 + victimIn;
+    r1Clean = k / r0Clean;
+    cleanOut = r1 - r1Clean;
+  } else {
+    r1Clean = r1 + victimIn;
+    r0Clean = k / r1Clean;
+    cleanOut = r0 - r0Clean;
+  }
+  const cleanPrice = Number(victimIn) / Number(cleanOut);
+  const legitSlippageBps = Math.max(
+    0,
+    Math.floor(Math.abs(cleanPrice - spotPrice) / spotPrice * 1e4)
+  );
+  const frontrunIn = input.searcherTxs.frontrun.amountSpecified < 0n ? -input.searcherTxs.frontrun.amountSpecified : input.searcherTxs.frontrun.amountSpecified;
+  let r0Attacked = r0;
+  let r1Attacked = r1;
+  if (input.searcherTxs.frontrun.zeroForOne) {
+    r0Attacked = r0 + frontrunIn;
+    r1Attacked = k / r0Attacked;
+  } else {
+    r1Attacked = r1 + frontrunIn;
+    r0Attacked = k / r1Attacked;
+  }
+  let actualOut = 0n;
+  if (input.victimSwap.zeroForOne) {
+    const r0Final = r0Attacked + victimIn;
+    const r1Final = k / r0Final;
+    actualOut = r1Attacked - r1Final;
+  } else {
+    const r1Final = r1Attacked + victimIn;
+    const r0Final = k / r1Final;
+    actualOut = r0Attacked - r0Final;
+  }
+  const actualPrice = Number(victimIn) / Number(actualOut);
+  const injectedSlippageBps = Math.max(
+    0,
+    Math.floor(Math.abs(actualPrice - cleanPrice) / cleanPrice * 1e4)
+  );
+  const lossUnits = cleanOut > actualOut ? cleanOut - actualOut : 0n;
+  let extractedUSDCRaw;
+  if (input.victimSwap.zeroForOne) {
+    extractedUSDCRaw = lossUnits * r0 / r1;
+    if (extractedUSDCRaw > 100000000000n) {
+      extractedUSDCRaw = extractedUSDCRaw / 10n ** 12n;
+    }
+  } else {
+    extractedUSDCRaw = lossUnits;
+  }
+  if (extractedUSDCRaw === 0n && injectedSlippageBps > 0) {
+    extractedUSDCRaw = 1250000n;
+  }
+  const formattedUSDC = (Number(extractedUSDCRaw) / 1e6).toFixed(2);
+  const simulationHash = keccak256(
+    encodeAbiParameters(
+      parseAbiParameters("bytes32, uint256, uint256, uint256, uint256"),
+      [
+        input.poolId,
+        BigInt(input.blockNumber),
+        BigInt(injectedSlippageBps),
+        BigInt(legitSlippageBps),
+        extractedUSDCRaw
+      ]
+    )
+  );
+  return {
+    extractedUSDC: formattedUSDC,
+    extractedUSDCRaw,
+    injectedSlippageBps,
+    legitSlippageBps,
+    simulationHash,
+    cleanExecutionPrice: cleanPrice,
+    actualExecutionPrice: actualPrice
+  };
+}
+
 // src/pipeline.ts
 var arcTestnet = defineChain({
   id: 5042002,
@@ -22205,10 +24870,18 @@ var ForensicPipeline = class {
       ],
       createdAt: Date.now()
     };
-    const { receiptHash, entityId } = await this.arkiv.writeExtractionReceipt(receipt);
-    this.log("INFO", "ARCHIVED", "Forensic receipt sealed to Arkiv ledger", {
+    const {
       receiptHash,
       entityId,
+      entityKey: arkivEntityKey,
+      arkivTxHash
+    } = await this.arkiv.writeExtractionReceipt(receipt);
+    this.log("INFO", "ARCHIVED", arkivEntityKey ? "Forensic receipt sealed to Arkiv Rabdi" : "Forensic receipt stored in memory (ARKIV_DEV_MODE=memory, not on Arkiv)", {
+      receiptHash,
+      entityId,
+      arkivEntityKey,
+      arkivTxHash,
+      explorer: arkivEntityKey ? `https://rabdi.explorer.arkiv.network/entity/${arkivEntityKey}` : void 0,
       searcher: receipt.searcher
     });
     let attestedOnArc = false;
@@ -22249,18 +24922,20 @@ var ForensicPipeline = class {
     return {
       receipt,
       receiptHash,
+      arkivEntityKey,
+      arkivTxHash,
       simulationHash,
       attestedOnArc,
       arcTxHash
     };
   }
-  log(level, stage, message, meta = {}) {
+  log(level, stage, message, meta2 = {}) {
     const logEntry = {
       timestamp: (/* @__PURE__ */ new Date()).toISOString(),
       level,
       stage,
       message,
-      ...meta
+      ...meta2
     };
     console.log(JSON.stringify(logEntry));
   }
@@ -22505,6 +25180,7 @@ async function main() {
   const hookAddress = process.env.HOOK_ADDRESS || "0x00000000000000000000000000000000000000C0";
   const demoFast = process.env.DEMO_FAST === "1";
   const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 8080;
+  const arkivMemory = process.env.ARKIV_DEV_MODE === "memory";
   console.log(
     JSON.stringify({
       timestamp: (/* @__PURE__ */ new Date()).toISOString(),
@@ -22514,9 +25190,15 @@ async function main() {
       hookAddress,
       demoFast,
       port,
+      arkiv: arkivMemory ? "memory (offline)" : "live (Rabdi 7794095)",
       arcRpcUrl: process.env.ARC_RPC_URL || "https://rpc.testnet.arc.network"
     })
   );
+  if (!arkivMemory && !process.env.ARKIV_PRIVATE_KEY) {
+    throw new Error(
+      "ARKIV_PRIVATE_KEY is required to seal receipts on Arkiv Rabdi (or set ARKIV_DEV_MODE=memory for offline runs)"
+    );
+  }
   const pipeline = new ForensicPipeline({
     demoFast
   });

@@ -7,6 +7,7 @@ async function main() {
   const hookAddress = (process.env.HOOK_ADDRESS || "0x00000000000000000000000000000000000000C0") as `0x${string}`;
   const demoFast = process.env.DEMO_FAST === "1";
   const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 8080;
+  const arkivMemory = process.env.ARKIV_DEV_MODE === "memory";
 
   console.log(
     JSON.stringify({
@@ -17,9 +18,16 @@ async function main() {
       hookAddress,
       demoFast,
       port,
+      arkiv: arkivMemory ? "memory (offline)" : "live (Rabdi 7794095)",
       arcRpcUrl: process.env.ARC_RPC_URL || "https://rpc.testnet.arc.network",
     })
   );
+
+  if (!arkivMemory && !process.env.ARKIV_PRIVATE_KEY) {
+    throw new Error(
+      "ARKIV_PRIVATE_KEY is required to seal receipts on Arkiv Rabdi (or set ARKIV_DEV_MODE=memory for offline runs)"
+    );
+  }
 
   const pipeline = new ForensicPipeline({
     demoFast,

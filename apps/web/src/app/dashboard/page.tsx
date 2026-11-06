@@ -1,14 +1,20 @@
 import Link from "next/link";
-import { MOCK_POOLS, MOCK_RECEIPTS } from "@/data/mockData";
-import { HashDisplay } from "@/components/ui/HashDisplay";
+import { MOCK_POOLS } from "@/data/mockData";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { DemoData } from "@/components/ui/DemoData";
+import { ArkivSource } from "@/components/arkiv/ArkivSource";
+import { ReceiptsTable } from "@/components/arkiv/ReceiptsTable";
+import { fromArkiv, sumUSDC, toView, writerAddress } from "@/lib/arkiv";
 
-export default function DashboardPage() {
-  const totalExtracted = MOCK_RECEIPTS.reduce(
-    (acc, r) => acc + parseFloat(r.extractedUSDC),
-    0
-  ).toFixed(2);
+// Always read Arkiv at request time — never bake receipts into the build.
+export const dynamic = "force-dynamic";
+
+export default async function DashboardPage() {
+  const res = await fromArkiv((sdk) => sdk.listRecentReceipts(25));
+  const receipts = res.ok ? res.data.map((r) => toView(r)) : [];
+  const totalExtracted = sumUSDC(receipts);
+  const extractedByPool = (poolId: string) =>
+    sumUSDC(receipts.filter((r) => r.poolId.toLowerCase() === poolId.toLowerCase()));
 
   return (
     <div className="flex-1 p-6 max-w-7xl mx-auto w-full space-y-6">
@@ -22,25 +28,21 @@ export default function DashboardPage() {
             Active surveillance of Uniswap v4 pools on Base Sepolia • Arc Testnet Settlement
           </p>
           <p className="text-[11px] text-muted font-mono mt-1">
-            Illustrative data. Live counters reflect only on-chain activity.
+            Receipts and extraction totals are read live from Arkiv. Pool TVL/volume are illustrative.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="px-3 py-1 border border-border bg-surface rounded text-xs font-mono">
-            <span className="text-muted">Extracted (24h): </span>
-            <DemoData>
-              <span className="text-danger font-bold tabular-nums">${totalExtracted}</span>
-            </DemoData>
+            <span className="text-muted">Extracted (Arkiv): </span>
+            <span className="text-danger font-bold tabular-nums">${totalExtracted}</span>
           </div>
           <div className="px-3 py-1 border border-border bg-surface rounded text-xs font-mono">
             <span className="text-muted">Vault Reserve (Arc): </span>
             <span className="text-good font-bold tabular-nums">$5.00 USDC</span>
           </div>
           <div className="px-3 py-1 border border-border bg-surface rounded text-xs font-mono">
-            <span className="text-muted">Monitored Pools: </span>
-            <DemoData>
-              <span className="text-accent font-bold tabular-nums">{MOCK_POOLS.length}</span>
-            </DemoData>
+            <span className="text-muted">Receipts on Arkiv: </span>
+            <span className="text-accent font-bold tabular-nums">{res.ok ? receipts.length : "—"}</span>
           </div>
         </div>
       </div>
@@ -58,7 +60,7 @@ export default function DashboardPage() {
                 <th className="py-2.5 px-3 font-semibold">Fee</th>
                 <th className="py-2.5 px-3 font-semibold text-right">TVL</th>
                 <th className="py-2.5 px-3 font-semibold text-right">24h Volume</th>
-                <th className="py-2.5 px-3 font-semibold text-right">24h Extracted</th>
+                <th className="py-2.5 px-3 font-semibold text-right">Extracted (Arkiv)</th>
                 <th className="py-2.5 px-3 font-semibold text-center">Status</th>
               </tr>
             </thead>
@@ -84,10 +86,10 @@ export default function DashboardPage() {
                     <DemoData>{pool.volume24h}</DemoData>
                   </td>
                   <td className="py-2.5 px-3 text-right font-semibold tabular-nums text-danger">
-                    <DemoData>{pool.extracted24h}</DemoData>
+                    ${extractedByPool(pool.id)}
                   </td>
                   <td className="py-2.5 px-3 text-center">
-                    <StatusPill status={pool.status === "ACTIVE" ? "DETECTED" : "CLEAN"} />
+                    <StatusPill status={extractedByPool(pool.id) !== "0.00" ? "DETECTED" : "CLEAN"} />
                   </td>
                 </tr>
               ))}
@@ -102,61 +104,21 @@ export default function DashboardPage() {
           <div className="text-xs font-mono font-semibold text-text uppercase tracking-wider">
             Recent Forensic Extraction Receipts
           </div>
-          <div className="text-[11px] font-mono text-muted">Click row for full cryptographic receipt</div>
+          <div className="text-[11px] font-mono text-muted">Click a receipt hash for the full record</div>
         </div>
-        <div className="border border-border rounded bg-surface overflow-x-auto">
-          <table className="w-full text-xs font-mono text-left border-collapse">
-            <thead>
-              <tr className="border-b border-border text-muted bg-[#15181E] select-none">
-                <th className="py-2.5 px-3 font-semibold">Receipt Hash</th>
-                <th className="py-2.5 px-3 font-semibold">Pool</th>
-                <th className="py-2.5 px-3 font-semibold">Searcher</th>
-                <th className="py-2.5 px-3 font-semibold">Victim</th>
-                <th className="py-2.5 px-3 font-semibold text-right">Extracted USDC</th>
-                <th className="py-2.5 px-3 font-semibold text-right">Injected Slippage</th>
-                <th className="py-2.5 px-3 font-semibold text-center">Pipeline Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {MOCK_RECEIPTS.map((r) => (
-                <tr
-                  key={r.receiptHash}
-                  className="hover:bg-[#181B20] transition-colors cursor-pointer group"
-                >
-                  <td className="py-2.5 px-3">
-                    <Link href={`/receipt/${r.receiptHash}`}>
-                      <HashDisplay hash={r.receiptHash} className="group-hover:text-accent" />
-                    </Link>
-                  </td>
-                  <td className="py-2.5 px-3 text-text">
-                    <Link href={`/pool/${r.poolId}`} className="hover:underline">
-                      {r.poolName}
-                    </Link>
-                  </td>
-                  <td className="py-2.5 px-3">
-                    <Link href={`/searcher/${r.searcher}`}>
-                      <HashDisplay hash={r.searcher} className="text-muted hover:text-text" />
-                    </Link>
-                  </td>
-                  <td className="py-2.5 px-3">
-                    <Link href={`/lp/${r.victim}`}>
-                      <HashDisplay hash={r.victim} className="text-muted hover:text-text" />
-                    </Link>
-                  </td>
-                  <td className="py-2.5 px-3 text-right font-bold text-danger tabular-nums">
-                    <DemoData>${r.extractedUSDC}</DemoData>
-                  </td>
-                  <td className="py-2.5 px-3 text-right text-accent tabular-nums">
-                    <DemoData>+{r.injectedSlippageBps} bps</DemoData>
-                  </td>
-                  <td className="py-2.5 px-3 text-center">
-                    <StatusPill status={r.status} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ArkivSource
+          ok={res.ok}
+          queriedAt={res.queriedAt}
+          error={res.ok ? undefined : res.error}
+          query="select * from receipts ownedBy(writer) orderBy blockNumber desc limit 25"
+          count={res.ok ? receipts.length : undefined}
+          writer={writerAddress()}
+        />
+        <ReceiptsTable
+          receipts={receipts}
+          columns={["pool", "searcher", "victim"]}
+          emptyText="No extraction receipts on Arkiv yet."
+        />
       </div>
     </div>
   );

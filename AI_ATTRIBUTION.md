@@ -47,6 +47,11 @@ This document tracks all AI-assisted versus human engineering contributions acro
 | `lib/arkiv/index.ts` | Yes | Re-exported `ArkivClient` and schema types. | Verified public module exports. |
 | `lib/arkiv/schemas.ts` | Partial | Scaffolded `ExtractionReceipt`, `SearcherProfile`, `LPClaim` interfaces. | Implemented recursive `canonicalStringify` with lexicographical key sorting and `computeReceiptHash` (`lines 51-82`). |
 | `lib/arkiv/client.ts` | Partial | Generated `ArkivClient` class with `TODO` annotations for remote RPC calls. | Implemented deterministic in-memory fallback maps (`memoryReceipts`, `memoryProfiles`, `memoryClaims`) and `_recordSearcherExtraction` (`lines 24-167`). |
+| `lib/arkiv/sdk.ts` | Yes | Claude Code (Opus 5.5) wrote the `@arkiv-network/sdk` module: `defineSchema` for receipts/profiles/claims, `createEntity`/`patchEntity` writes, `select().from().where().ownedBy()` reads. | Checked against the live Rabdi entity `0xc327…f8ca` (`pnpm arkiv:verify`). `[HUMAN_NOTES]` |
+| `lib/arkiv/client.ts` (rev. 2) | Yes | Claude Code replaced the non-existent `arkiv_putEntity` / `arkiv_queryEntities` JSON-RPC calls with `ArkivSdk`. Memory mode no longer fabricates an `entityKey`. | `[HUMAN_NOTES]` |
+| `lib/arkiv/verify-live.ts` | Yes | Claude Code: read-only live verification script. | `[HUMAN_NOTES]` |
+| `apps/web/src/lib/arkiv.ts`, `apps/web/src/components/arkiv/*` | Yes | Claude Code: server-side Arkiv data layer, provenance strip, shared receipts table. | `[HUMAN_NOTES]` |
+| `apps/web/src/app/{dashboard,receipt,pool,searcher,lp}/**`, `api/stats` (rev. 2) | Yes | Claude Code replaced `MOCK_RECEIPTS` with live Arkiv reads. | `[HUMAN_NOTES]` |
 | `lib/arkiv/client.test.ts` | Yes | Scaffolded round-trip unit tests using `node:test`. | Verified canonical hash determinism, pool/searcher indexing, and LP claim persistence. |
 | `lib/arkiv/identity.test.ts` | Yes | Scaffolded identifier separation and explorer link unit tests. | Enforced strict boundary distinction between receiptHash and arkivEntityKey. |
 | `lib/simulator/package.json` | Yes | Defined `@darktrace/simulator` package metadata and test script. | Verified `viem` peer configuration. |

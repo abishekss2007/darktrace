@@ -42,6 +42,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@darktrace/arkiv':
+        specifier: workspace:*
+        version: link:../../lib/arkiv
       '@rainbow-me/rainbowkit':
         specifier: ^2.1.2
         version: 2.2.11(@tanstack/react-query@5.105.3(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3)(viem@2.57.16(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7))(wagmi@2.19.5(@tanstack/query-core@5.105.3)(@tanstack/react-query@5.105.3(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(bufferutil@4.1.0)(debug@4.4.3)(react@18.3.1)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.57.16(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7))(zod@4.6.7))
