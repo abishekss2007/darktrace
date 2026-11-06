@@ -25150,15 +25150,27 @@ function startHookWatcher(config) {
     onLogs: async (logs) => {
       for (const log of logs) {
         if (!log.args.poolId || !log.args.searcher || !log.args.victim) continue;
-        await config.pipeline.processExtraction({
-          poolId: log.args.poolId,
-          searcher: log.args.searcher,
-          victim: log.args.victim,
-          extractedValue: log.args.extractedValue ?? 0n,
-          proofHash: log.args.proofHash ?? "0x00",
-          blockNumber: Number(log.blockNumber),
-          txHash: log.transactionHash
-        });
+        try {
+          await config.pipeline.processExtraction({
+            poolId: log.args.poolId,
+            searcher: log.args.searcher,
+            victim: log.args.victim,
+            extractedValue: log.args.extractedValue ?? 0n,
+            proofHash: log.args.proofHash ?? "0x00",
+            blockNumber: Number(log.blockNumber),
+            txHash: log.transactionHash
+          });
+        } catch (err) {
+          console.error(
+            JSON.stringify({
+              timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+              level: "ERROR",
+              stage: "PIPELINE_FAILED",
+              message: err instanceof Error ? err.message : String(err),
+              txHash: log.transactionHash
+            })
+          );
+        }
       }
     },
     onError: (error) => {
@@ -25194,9 +25206,15 @@ async function main() {
       arcRpcUrl: process.env.ARC_RPC_URL || "https://rpc.testnet.arc.network"
     })
   );
-  if (!arkivMemory && !process.env.ARKIV_PRIVATE_KEY) {
-    throw new Error(
-      "ARKIV_PRIVATE_KEY is required to seal receipts on Arkiv Rabdi (or set ARKIV_DEV_MODE=memory for offline runs)"
+  const arkivWriter = arkivMemory ? "memory" : process.env.ARKIV_PRIVATE_KEY ? "live" : "unconfigured";
+  if (arkivWriter === "unconfigured") {
+    console.warn(
+      JSON.stringify({
+        timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+        level: "WARN",
+        stage: "ARKIV_WRITER",
+        message: "ARKIV_PRIVATE_KEY not set: detected extractions will NOT be sealed on Arkiv (set the key, or ARKIV_DEV_MODE=memory for offline runs)"
+      })
     );
   }
   const pipeline = new ForensicPipeline({
@@ -25215,6 +25233,7 @@ async function main() {
           status: "healthy",
           service: "indexer",
           hookAddress,
+          arkivWriter,
           timestamp: (/* @__PURE__ */ new Date()).toISOString()
         })
       );

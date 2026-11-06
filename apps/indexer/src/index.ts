@@ -23,9 +23,18 @@ async function main() {
     })
   );
 
-  if (!arkivMemory && !process.env.ARKIV_PRIVATE_KEY) {
-    throw new Error(
-      "ARKIV_PRIVATE_KEY is required to seal receipts on Arkiv Rabdi (or set ARKIV_DEV_MODE=memory for offline runs)"
+  // Never crash the service over a missing writer key: stay up, report it on /health,
+  // and fail loudly per event (see watcher.ts) instead of faking writes.
+  const arkivWriter = arkivMemory ? "memory" : process.env.ARKIV_PRIVATE_KEY ? "live" : "unconfigured";
+  if (arkivWriter === "unconfigured") {
+    console.warn(
+      JSON.stringify({
+        timestamp: new Date().toISOString(),
+        level: "WARN",
+        stage: "ARKIV_WRITER",
+        message:
+          "ARKIV_PRIVATE_KEY not set: detected extractions will NOT be sealed on Arkiv (set the key, or ARKIV_DEV_MODE=memory for offline runs)",
+      })
     );
   }
 
@@ -53,6 +62,7 @@ async function main() {
           status: "healthy",
           service: "indexer",
           hookAddress,
+          arkivWriter,
           timestamp: new Date().toISOString(),
         })
       );

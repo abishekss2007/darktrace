@@ -35,15 +35,28 @@ export function startHookWatcher(config: WatcherConfig) {
       for (const log of logs) {
         if (!log.args.poolId || !log.args.searcher || !log.args.victim) continue;
 
-        await config.pipeline.processExtraction({
-          poolId: log.args.poolId,
-          searcher: log.args.searcher,
-          victim: log.args.victim,
-          extractedValue: log.args.extractedValue ?? 0n,
-          proofHash: log.args.proofHash ?? "0x00",
-          blockNumber: Number(log.blockNumber),
-          txHash: log.transactionHash,
-        });
+        try {
+          await config.pipeline.processExtraction({
+            poolId: log.args.poolId,
+            searcher: log.args.searcher,
+            victim: log.args.victim,
+            extractedValue: log.args.extractedValue ?? 0n,
+            proofHash: log.args.proofHash ?? "0x00",
+            blockNumber: Number(log.blockNumber),
+            txHash: log.transactionHash,
+          });
+        } catch (err) {
+          // One failed event (e.g. Arkiv unreachable or writer key missing) must not kill the watcher.
+          console.error(
+            JSON.stringify({
+              timestamp: new Date().toISOString(),
+              level: "ERROR",
+              stage: "PIPELINE_FAILED",
+              message: err instanceof Error ? err.message : String(err),
+              txHash: log.transactionHash,
+            })
+          );
+        }
       }
     },
     onError: (error) => {
