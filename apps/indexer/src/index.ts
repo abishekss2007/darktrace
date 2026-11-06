@@ -7,6 +7,7 @@ async function main() {
   const hookAddress = (process.env.HOOK_ADDRESS || "0x00000000000000000000000000000000000000C0") as `0x${string}`;
   const demoFast = process.env.DEMO_FAST === "1";
   const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 8080;
+  const arkivMemory = process.env.ARKIV_DEV_MODE === "memory";
 
   console.log(
     JSON.stringify({
@@ -17,9 +18,25 @@ async function main() {
       hookAddress,
       demoFast,
       port,
+      arkiv: arkivMemory ? "memory (offline)" : "live (Rabdi 7794095)",
       arcRpcUrl: process.env.ARC_RPC_URL || "https://rpc.testnet.arc.network",
     })
   );
+
+  // Never crash the service over a missing writer key: stay up, report it on /health,
+  // and fail loudly per event (see watcher.ts) instead of faking writes.
+  const arkivWriter = arkivMemory ? "memory" : process.env.ARKIV_PRIVATE_KEY ? "live" : "unconfigured";
+  if (arkivWriter === "unconfigured") {
+    console.warn(
+      JSON.stringify({
+        timestamp: new Date().toISOString(),
+        level: "WARN",
+        stage: "ARKIV_WRITER",
+        message:
+          "ARKIV_PRIVATE_KEY not set: detected extractions will NOT be sealed on Arkiv (set the key, or ARKIV_DEV_MODE=memory for offline runs)",
+      })
+    );
+  }
 
   const pipeline = new ForensicPipeline({
     demoFast,
@@ -45,6 +62,7 @@ async function main() {
           status: "healthy",
           service: "indexer",
           hookAddress,
+          arkivWriter,
           timestamp: new Date().toISOString(),
         })
       );

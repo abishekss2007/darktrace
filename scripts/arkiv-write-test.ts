@@ -1,72 +1,35 @@
+// Live write → read round-trip on Arkiv Rabdi through the same module the indexer uses.
+// Usage: ARKIV_PRIVATE_KEY=0x… pnpm arkiv:write-test
 import * as fs from "fs";
 import * as path from "path";
-import { http } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { createWalletClient, createPublicClient, defineSchema, str, addr, u64, dec, bytes, ExpirationTime } from "@arkiv-network/sdk";
-import { rabdi } from "@arkiv-network/sdk/chains";
-import { eq } from "@arkiv-network/sdk/query";
-import { stringToBytes } from "viem";
-import { ExtractionReceipt, computeReceiptHash } from "../lib/arkiv/schemas";
+import { ArkivSdk } from "../lib/arkiv/sdk";
+import { ExtractionReceipt } from "../lib/arkiv/schemas";
 
 function loadEnv() {
   const p = path.resolve(__dirname, "../.env");
-  if (fs.existsSync(p)) {
-    const raw = fs.readFileSync(p, "utf-8");
-    for (const line of raw.split(/\r?\n/)) {
-      const idx = line.indexOf("=");
-      if (idx !== -1) {
-        const k = line.slice(0, idx).trim();
-        const v = line.slice(idx + 1).trim().replace(/^['"]|['"]$/g, "");
-        if (!process.env[k]) process.env[k] = v;
-      }
-    }
+  if (!fs.existsSync(p)) return;
+  for (const line of fs.readFileSync(p, "utf-8").split(/\r?\n/)) {
+    const idx = line.indexOf("=");
+    if (idx === -1 || line.trimStart().startsWith("#")) continue;
+    const k = line.slice(0, idx).trim();
+    const v = line.slice(idx + 1).trim().replace(/^['"]|['"]$/g, "");
+    if (!process.env[k]) process.env[k] = v;
   }
 }
 
-// Define canonical DarkTrace schema on Arkiv
-export const ReceiptsSchema = defineSchema("receipts", {
-  poolId: str().indexed(),
-  searcher: addr().indexed(),
-  victim: addr().indexed(),
-  lp: addr().indexed(),
-  blockNumber: u64().indexed(),
-  receiptHash: str().indexed(),
-  extractedUSDC: dec(),
-  simulationHash: str(),
-  txHashes: bytes(),
-});
-
 async function main() {
   loadEnv();
-  console.log("=== DarkTrace — Arkiv Rabdi Testnet Live On-Chain Write/Read ===");
+  console.log("=== DarkTrace — Arkiv Rabdi live write/read round-trip ===");
 
-  const accessKey = process.env.ARKIV_ACCESS_KEY || "";
-  let pkStr = (process.env.ARKIV_PRIVATE_KEY || process.env.ARKIV_WRITER_ADDRESS || "").trim().replace(/^['"]|['"]$/g, "");
-  if (!pkStr.startsWith("0x")) pkStr = `0x${pkStr}`;
-
-  if (pkStr.length !== 66) {
-    console.error("FAILED Private key must be 66 characters (0x + 64 hex chars).");
+  if (!process.env.ARKIV_PRIVATE_KEY) {
+    console.error("FAILED ARKIV_PRIVATE_KEY is not set (the writer wallet's private key).");
     process.exit(1);
   }
 
-  const account = privateKeyToAccount(pkStr as `0x${string}`);
-  console.log(`Writer Wallet Address: ${account.address}`);
-  console.log(`Access Key:            ${accessKey.slice(0, 10)}...`);
+  const sdk = new ArkivSdk();
+  console.log(`Writer (trusted owner): ${sdk.writerAddress}`);
 
-  const chain = rabdi({ accessKey });
-
-  const publicClient = createPublicClient({
-    chain,
-    transport: http(),
-  });
-
-  const walletClient = createWalletClient({
-    account,
-    chain,
-    transport: http(),
-  });
-
-  const testReceipt: ExtractionReceipt = {
+  const receipt: ExtractionReceipt = {
     v: "1.0.0",
     poolId: "0x835c24ae58a98118715d7541b2c5f0df8f11ca328b8e9c9c3850441c632e8d21",
     searcher: "0x1111111111111111111111111111111111111111",
@@ -85,59 +48,21 @@ async function main() {
     createdAt: Date.now(),
   };
 
-  const receiptHash = computeReceiptHash(testReceipt);
-  console.log(`Computed canonical receiptHash: ${receiptHash}`);
+  const written = await sdk.writeReceipt(receipt);
+  console.log(`WRITE_OK $key=${written.entityKey} tx=${written.txHash}`);
+  console.log(`  receiptHash ${written.receiptHash}`);
 
-  try {
-    console.log("Broadcasting entity creation on Rabdi testnet (Chain 7794095)...");
-    const { entityKey, txHash } = await walletClient.createEntity(
-      ReceiptsSchema,
-      {
-        poolId: testReceipt.poolId.toLowerCase(),
-        searcher: addr(testReceipt.searcher.toLowerCase() as `0x${string}`),
-        victim: addr(testReceipt.victim.toLowerCase() as `0x${string}`),
-        lp: addr(testReceipt.lp.toLowerCase() as `0x${string}`),
-        blockNumber: u64(BigInt(testReceipt.blockNumber)),
-        receiptHash: receiptHash.toLowerCase(),
-        extractedUSDC: dec(testReceipt.extractedUSDC),
-        simulationHash: testReceipt.simulationHash.toLowerCase(),
-        txHashes: stringToBytes(JSON.stringify(testReceipt.txHashes)),
-      },
-      { expiration: ExpirationTime.fromDays(30) }
-    );
-
-    console.log(`Transaction broadcasted: ${txHash}`);
-    console.log(`WRITE_OK ${entityKey}`);
-
-    console.log(`Querying back entity by receiptHash from Rabdi...`);
-    const res = await publicClient
-      .select({
-        $key: true,
-        $owner: true,
-        receiptHash: true,
-        poolId: true,
-        searcher: true,
-        victim: true,
-        extractedUSDC: true,
-      })
-      .from(ReceiptsSchema)
-      .where(eq("receiptHash", receiptHash.toLowerCase()))
-      .fetch();
-
-    if (!res.entities || res.entities.length === 0) {
-      console.error(`FAILED Could not find created entity on Rabdi.`);
-      process.exit(1);
-    }
-
-    const matched = res.entities[0];
-    console.log(`READ_OK ${matched.$key}`);
-    console.log("Matched Entity on Rabdi:", JSON.stringify(matched, null, 2));
-    console.log(`Explorer URL: https://rabdi.explorer.arkiv.network/entity/${matched.$key}`);
-    console.log("SUCCESS Live Arkiv on-chain roundtrip verified!");
-  } catch (err) {
-    console.error("FAILED", err);
+  const read = await sdk.getReceiptByHash(written.receiptHash);
+  if (!read || read.arkivEntityKey.toLowerCase() !== written.entityKey.toLowerCase()) {
+    console.error("FAILED could not read the entity back by receiptHash");
     process.exit(1);
   }
+  console.log(`READ_OK $key=${read.arkivEntityKey} extracted=${read.extractedUSDC} txHashes=${read.txHashes.length}`);
+  console.log(`Explorer: ${written.explorerUrl}`);
+  console.log(`Web:      /receipt/${written.receiptHash}`);
 }
 
-main();
+main().catch((err) => {
+  console.error("FAILED", err);
+  process.exit(1);
+});

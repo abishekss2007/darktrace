@@ -31,6 +31,9 @@ export interface PipelineConfig {
 export interface ProcessedPipelineResult {
   receipt: ExtractionReceipt;
   receiptHash: string;
+  /** Arkiv $key of the sealed receipt (undefined in memory mode). */
+  arkivEntityKey?: string;
+  arkivTxHash?: string;
   simulationHash: string;
   attestedOnArc: boolean;
   arcTxHash?: string;
@@ -171,11 +174,21 @@ export class ForensicPipeline {
       createdAt: Date.now(),
     };
 
-    const { receiptHash, entityId } = await this.arkiv.writeExtractionReceipt(receipt);
-
-    this.log("INFO", "ARCHIVED", "Forensic receipt sealed to Arkiv ledger", {
+    const {
       receiptHash,
       entityId,
+      entityKey: arkivEntityKey,
+      arkivTxHash,
+    } = await this.arkiv.writeExtractionReceipt(receipt);
+
+    this.log("INFO", "ARCHIVED", arkivEntityKey
+      ? "Forensic receipt sealed to Arkiv Rabdi"
+      : "Forensic receipt stored in memory (ARKIV_DEV_MODE=memory, not on Arkiv)", {
+      receiptHash,
+      entityId,
+      arkivEntityKey,
+      arkivTxHash,
+      explorer: arkivEntityKey ? `https://rabdi.explorer.arkiv.network/entity/${arkivEntityKey}` : undefined,
       searcher: receipt.searcher,
     });
 
@@ -223,6 +236,8 @@ export class ForensicPipeline {
     return {
       receipt,
       receiptHash,
+      arkivEntityKey,
+      arkivTxHash,
       simulationHash,
       attestedOnArc,
       arcTxHash,

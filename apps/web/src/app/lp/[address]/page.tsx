@@ -1,9 +1,11 @@
 import Link from "next/link";
-import { MOCK_RECEIPTS } from "@/data/mockData";
 import { HashDisplay } from "@/components/ui/HashDisplay";
-import { StatusPill } from "@/components/ui/StatusPill";
-import { DemoData } from "@/components/ui/DemoData";
-import { ArrowLeft, Wallet, CheckCircle } from "lucide-react";
+import { ArkivSource } from "@/components/arkiv/ArkivSource";
+import { ReceiptsTable } from "@/components/arkiv/ReceiptsTable";
+import { fromArkiv, sumUSDC, toView, writerAddress } from "@/lib/arkiv";
+import { ArrowLeft, Wallet } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 interface LPPageProps {
   params: {
@@ -11,19 +13,26 @@ interface LPPageProps {
   };
 }
 
-export default function LPPage({ params }: LPPageProps) {
-  const lpReceipts = MOCK_RECEIPTS.filter(
-    (r) => r.victim.toLowerCase() === params.address.toLowerCase()
-  );
+export default async function LPPage({ params }: LPPageProps) {
+  const valid = /^0x[0-9a-fA-F]{40}$/.test(params.address);
+  const res = valid
+    ? await fromArkiv(async (sdk) => {
+        const [receipts, claims] = await Promise.all([
+          sdk.listReceiptsByParty(params.address),
+          sdk.listLPClaims(params.address),
+        ]);
+        return { receipts, claims };
+      })
+    : { ok: false as const, error: "not a valid address", queriedAt: new Date().toISOString() };
 
-  const totalSuffered = lpReceipts
-    .reduce((acc, r) => acc + parseFloat(r.extractedUSDC), 0)
-    .toFixed(2);
-
-  const totalRebated = lpReceipts
-    .filter((r) => r.status === "REBATED")
-    .reduce((acc, r) => acc + parseFloat(r.extractedUSDC), 0)
-    .toFixed(2);
+  const claims = res.ok ? res.data.claims : [];
+  const lpReceipts = res.ok
+    ? res.data.receipts.map((r) =>
+        toView(r, claims.find((c) => c.receiptHash.toLowerCase() === r.receiptHash.toLowerCase()))
+      )
+    : [];
+  const totalSuffered = sumUSDC(lpReceipts);
+  const totalRebated = sumUSDC(lpReceipts.filter((r) => r.status === "REBATED"));
 
   return (
     <div className="flex-1 p-6 max-w-7xl mx-auto w-full space-y-6">
@@ -68,19 +77,19 @@ export default function LPPage({ params }: LPPageProps) {
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">Extractions Suffered</div>
             <div className="text-text font-bold mt-1 tabular-nums">
-              <DemoData>{lpReceipts.length || 1}</DemoData>
+              {lpReceipts.length}
             </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">Total Value Extracted</div>
             <div className="text-danger font-bold mt-1 tabular-nums">
-              <DemoData>${totalSuffered}</DemoData>
+              ${totalSuffered}
             </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg">
             <div className="text-muted text-[11px]">Total Rebates Claimed</div>
             <div className="text-good font-bold mt-1 tabular-nums">
-              <DemoData>${totalRebated} USDC</DemoData>
+              ${totalRebated} USDC
             </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg">
@@ -96,53 +105,19 @@ export default function LPPage({ params }: LPPageProps) {
           Observed Extractions on this Account ({lpReceipts.length})
         </div>
 
-        <div className="border border-border rounded bg-surface overflow-x-auto">
-          <table className="w-full text-xs font-mono text-left border-collapse">
-            <thead>
-              <tr className="border-b border-border text-muted bg-[#15181E] select-none">
-                <th className="py-2.5 px-3 font-semibold">Receipt Hash</th>
-                <th className="py-2.5 px-3 font-semibold">Pool</th>
-                <th className="py-2.5 px-3 font-semibold">Searcher</th>
-                <th className="py-2.5 px-3 font-semibold text-right">Extracted USDC</th>
-                <th className="py-2.5 px-3 font-semibold text-right">Injected Slippage</th>
-                <th className="py-2.5 px-3 font-semibold text-center">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {lpReceipts.map((r) => (
-                <tr
-                  key={r.receiptHash}
-                  className="hover:bg-[#181B20] transition-colors cursor-pointer group"
-                >
-                  <td className="py-2.5 px-3">
-                    <Link href={`/receipt/${r.receiptHash}`}>
-                      <HashDisplay hash={r.receiptHash} className="group-hover:text-accent" />
-                    </Link>
-                  </td>
-                  <td className="py-2.5 px-3 text-text">
-                    <Link href={`/pool/${r.poolId}`} className="hover:underline">
-                      {r.poolName}
-                    </Link>
-                  </td>
-                  <td className="py-2.5 px-3">
-                    <Link href={`/searcher/${r.searcher}`}>
-                      <HashDisplay hash={r.searcher} className="text-muted hover:text-text" />
-                    </Link>
-                  </td>
-                  <td className="py-2.5 px-3 text-right font-bold text-danger tabular-nums">
-                    <DemoData>${r.extractedUSDC}</DemoData>
-                  </td>
-                  <td className="py-2.5 px-3 text-right text-accent tabular-nums">
-                    <DemoData>+{r.injectedSlippageBps} bps</DemoData>
-                  </td>
-                  <td className="py-2.5 px-3 text-center">
-                    <StatusPill status={r.status} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ArkivSource
+          ok={res.ok}
+          queriedAt={res.queriedAt}
+          error={res.ok ? undefined : res.error}
+          query={`receipts where victim|lp = ${params.address.slice(0, 10)}… · lp_claims where lp = …`}
+          count={res.ok ? lpReceipts.length : undefined}
+          writer={writerAddress()}
+        />
+        <ReceiptsTable
+          receipts={lpReceipts}
+          columns={["pool", "searcher"]}
+          emptyText="No extraction receipts for this account on Arkiv."
+        />
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // @darktrace/arkiv ships TypeScript source from the monorepo.
+  transpilePackages: ["@darktrace/arkiv"],
   webpack: (config, { webpack }) => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
     config.plugins.push(

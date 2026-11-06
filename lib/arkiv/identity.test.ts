@@ -31,8 +31,9 @@ test("Arkiv Identity Model & Identifier Separation", async (t) => {
 
     const writeResult = await client.writeExtractionReceipt(sampleReceipt);
     assert.equal(writeResult.receiptHash, computedHash);
-    assert.ok("entityKey" in writeResult);
-    assert.ok(typeof writeResult.entityKey === "string");
+    // Memory mode never fabricates an Arkiv $key — only a live write returns one.
+    assert.equal(writeResult.entityKey, undefined);
+    assert.notEqual(writeResult.entityKey, writeResult.receiptHash);
   });
 
   await t.test("Explorer URL generator requires entityKey, not receiptHash", () => {

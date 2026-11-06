@@ -11,10 +11,10 @@
     "contracts:build": "cd contracts && forge build",
     "contracts:test": "cd contracts && forge test",
     "arkiv:write-test": "pnpm --filter @darktrace/arkiv exec tsx ../../scripts/arkiv-write-test.ts",
-    "dev": "pnpm --filter @darktrace/web dev"
+    "dev": "pnpm --filter @darktrace/web dev",
+    "arkiv:verify": "pnpm --filter @darktrace/arkiv exec tsx verify-live.ts"
   },
   "devDependencies": {
     "typescript": "^5.4.5"
   }
 }
-

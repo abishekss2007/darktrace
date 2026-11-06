@@ -1,10 +1,14 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { MOCK_POOLS, MOCK_RECEIPTS } from "@/data/mockData";
+import { MOCK_POOLS } from "@/data/mockData";
 import { HashDisplay } from "@/components/ui/HashDisplay";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { DemoData } from "@/components/ui/DemoData";
+import { ArkivSource } from "@/components/arkiv/ArkivSource";
+import { ReceiptsTable } from "@/components/arkiv/ReceiptsTable";
+import { fromArkiv, sumUSDC, toView, writerAddress } from "@/lib/arkiv";
 import { ArrowLeft } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 interface PoolPageProps {
   params: {
@@ -12,7 +16,7 @@ interface PoolPageProps {
   };
 }
 
-export default function PoolPage({ params }: PoolPageProps) {
+export default async function PoolPage({ params }: PoolPageProps) {
   const pool = MOCK_POOLS.find((p) => p.id.toLowerCase() === params.id.toLowerCase()) || {
     id: params.id,
     name: "Custom Uniswap v4 Pool",
@@ -25,9 +29,9 @@ export default function PoolPage({ params }: PoolPageProps) {
     token1: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
   };
 
-  const poolReceipts = MOCK_RECEIPTS.filter(
-    (r) => r.poolId.toLowerCase() === params.id.toLowerCase()
-  );
+  const res = await fromArkiv((sdk) => sdk.listReceiptsByPool(params.id));
+  const poolReceipts = res.ok ? res.data.map((r) => toView(r)) : [];
+  const extracted = sumUSDC(poolReceipts);
 
   return (
     <div className="flex-1 p-6 max-w-7xl mx-auto w-full space-y-6">
@@ -56,7 +60,7 @@ export default function PoolPage({ params }: PoolPageProps) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <StatusPill status={pool.status === "ACTIVE" ? "DETECTED" : "CLEAN"} />
+            <StatusPill status={poolReceipts.length > 0 ? "DETECTED" : "CLEAN"} />
           </div>
         </div>
 
@@ -79,10 +83,8 @@ export default function PoolPage({ params }: PoolPageProps) {
             </div>
           </div>
           <div className="p-3 border border-border rounded bg-bg">
-            <div className="text-muted text-[11px]">24h Extracted</div>
-            <div className="text-danger font-bold mt-1 tabular-nums">
-              <DemoData>{pool.extracted24h}</DemoData>
-            </div>
+            <div className="text-muted text-[11px]">Extracted (Arkiv)</div>
+            <div className="text-danger font-bold mt-1 tabular-nums">${extracted}</div>
           </div>
         </div>
       </div>
@@ -93,59 +95,19 @@ export default function PoolPage({ params }: PoolPageProps) {
           Detected Extractions in this Pool ({poolReceipts.length})
         </div>
 
-        {poolReceipts.length === 0 ? (
-          <div className="border border-border rounded bg-surface p-8 text-center text-xs font-mono text-muted">
-            No extractions in this pool. The last 200 swaps were clean.
-          </div>
-        ) : (
-          <div className="border border-border rounded bg-surface overflow-x-auto">
-            <table className="w-full text-xs font-mono text-left border-collapse">
-              <thead>
-                <tr className="border-b border-border text-muted bg-[#15181E] select-none">
-                  <th className="py-2.5 px-3 font-semibold">Receipt Hash</th>
-                  <th className="py-2.5 px-3 font-semibold">Searcher</th>
-                  <th className="py-2.5 px-3 font-semibold">Victim</th>
-                  <th className="py-2.5 px-3 font-semibold text-right">Extracted USDC</th>
-                  <th className="py-2.5 px-3 font-semibold text-right">Injected Slippage</th>
-                  <th className="py-2.5 px-3 font-semibold text-center">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {poolReceipts.map((r) => (
-                  <tr
-                    key={r.receiptHash}
-                    className="hover:bg-[#181B20] transition-colors cursor-pointer group"
-                  >
-                    <td className="py-2.5 px-3">
-                      <Link href={`/receipt/${r.receiptHash}`}>
-                        <HashDisplay hash={r.receiptHash} className="group-hover:text-accent" />
-                      </Link>
-                    </td>
-                    <td className="py-2.5 px-3">
-                      <Link href={`/searcher/${r.searcher}`}>
-                        <HashDisplay hash={r.searcher} className="text-muted hover:text-text" />
-                      </Link>
-                    </td>
-                    <td className="py-2.5 px-3">
-                      <Link href={`/lp/${r.victim}`}>
-                        <HashDisplay hash={r.victim} className="text-muted hover:text-text" />
-                      </Link>
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-bold text-danger tabular-nums">
-                      <DemoData>${r.extractedUSDC}</DemoData>
-                    </td>
-                    <td className="py-2.5 px-3 text-right text-accent tabular-nums">
-                      <DemoData>+{r.injectedSlippageBps} bps</DemoData>
-                    </td>
-                    <td className="py-2.5 px-3 text-center">
-                      <StatusPill status={r.status} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <ArkivSource
+          ok={res.ok}
+          queriedAt={res.queriedAt}
+          error={res.ok ? undefined : res.error}
+          query={`select * from receipts where poolId = ${params.id.slice(0, 10)}… ownedBy(writer)`}
+          count={res.ok ? poolReceipts.length : undefined}
+          writer={writerAddress()}
+        />
+        <ReceiptsTable
+          receipts={poolReceipts}
+          columns={["searcher", "victim"]}
+          emptyText="No extraction receipts for this pool on Arkiv."
+        />
       </div>
     </div>
   );

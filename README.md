@@ -92,7 +92,9 @@ flowchart LR
 
 - **Namespace**: `darktrace.v1`
 - **Writer wallet(s)**: `0xb491fe5846DE735B6Cb03a677A3C6296FAB0aDA5`
-- **Entities**: `ExtractionReceipt`, `SearcherProfile`, `LPClaim`
+- **Entities**: `ExtractionReceipt`, `SearcherProfile`, `LPClaim` (SDK schemas in [`lib/arkiv/sdk.ts`](./lib/arkiv/sdk.ts))
+- **Read by the app**: `/dashboard`, `/receipt/[hash]`, `/pool/[id]`, `/searcher/[address]`, `/lp/[address]` and `/api/stats` all query Arkiv server-side on each request, and each shows a "Live from Arkiv Rabdi" strip with the query it ran. See [`/arkiv/how-you-use-arkiv.md`](./arkiv/how-you-use-arkiv.md)
+- **Written by the indexer**: [`apps/indexer/src/pipeline.ts`](./apps/indexer/src/pipeline.ts) seals each detected extraction via `createEntity` (requires `ARKIV_PRIVATE_KEY`)
 - **Canonical receiptHash**: `0xe9e56b6adbf0cae90f08b28a0ae3dccd9fc4ece42eb7b0126e4f208646eae6ce` (stored as attribute inside `$key` `0xc327...`)
 - **Schema + freshness + expiry policy**: see [`/arkiv/schema.md`](./arkiv/schema.md)
 - **Feedback**: see [`/arkiv/friction.md`](./arkiv/friction.md)
@@ -128,7 +130,9 @@ flowchart LR
 - **Explorer link to live entity**:
   [https://rabdi.explorer.arkiv.network/entity/0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca](https://rabdi.explorer.arkiv.network/entity/0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca)
 
-- **Sanity check**: `pnpm arkiv:write-test` writes and reads back one receipt on Rabdi testnet.
+- **Sanity checks**:
+  - `pnpm arkiv:verify`: read-only, no key needed. Resolves the sample receipt and runs the pool, searcher and recent-receipt queries the UI uses.
+  - `pnpm arkiv:write-test`: needs `ARKIV_PRIVATE_KEY`. Writes one receipt and reads it back by `receiptHash`.
 
 ---
 
