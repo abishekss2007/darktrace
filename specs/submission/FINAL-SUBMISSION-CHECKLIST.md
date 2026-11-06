@@ -35,7 +35,7 @@ Comprehensive evidence checklist verifying submission qualification across the t
   - SimulationRegistry: `0xb8416cb4d82BA72b70C3EC55d7AC66b5DB415CF8`
   - RebateVault: `0x2ab745F51002Ce236A9A2dA81cDaA553B87f28CD` (funded with 5.00 USDC via tx `0x4289870dba2b919eac9e654e853ff45f38a03bb9a66e0be3d6da8d8e07deab9d`)
 - [ ] ⚠️ Arc Studio vault unfunded: Studio's web deployer key (`0x5B12...`) is non-exportable; live demo settles against the funded Foundry deployment of the identical contracts.
-- [x] ✅ `/demo` runs end-to-end: Settles on funded RebateVault (`0x2ab7...28CD`) with `$1.25 USDC` rebate claim and `$15.00 -> $16.25 USDC` balance delta.
+- [x] ✅ `/demo` runs end-to-end: Displays live reserve on funded RebateVault (`0x2ab7...28CD`), calculates `$1.25 USDC` rebate claim, and honestly simulates settlement in the frontend UI without broadcasting fake on-chain claims.
 
 ---
 
@@ -53,6 +53,9 @@ Comprehensive evidence checklist verifying submission qualification across the t
   - Enforces `rabdi.db-chain.testnet.arkiv.network` hostname check
   - Throws typed `ArkivRpcError` on network errors
   - Disallows in-memory fallback unless explicitly running with `ARKIV_DEV_MODE="memory"`
+- [x] ✅ Identifier decoupling strictly enforced:
+  - `arkivEntityKey` (`0xc327...`): Used for Rabdi Block Explorer entity links.
+  - `receiptHash` (`0xe9e5...`): Used for app routing (`/receipt/<hash>`) and contract attestation.
 - [x] ✅ `pnpm arkiv:write-test` prints `WRITE_OK` and `READ_OK`:
   - Verified on Rabdi testnet via tx `0x544ee730bb736cdbafcd837bad62f857c8ed0e0eaedf7afce807ffb060c6e0f6`
   - `WRITE_OK 0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca`
@@ -68,27 +71,22 @@ Comprehensive evidence checklist verifying submission qualification across the t
 ## 4. Cross-Cutting Integrity
 
 - [x] ✅ `AI_ATTRIBUTION.md` updated for every file touched across all stages: [`AI_ATTRIBUTION.md`](../../AI_ATTRIBUTION.md)
-- [x] ✅ `git log --oneline | wc -l` is at least 45: **49 commits** (baseline was 39; 10 commits added during submission qualification pass)
-- [x] ✅ All commits are small (<10 files each) and use conventional commit prefixes:
-  - `docs(uniswap): FEEDBACK.md at repo root for prize qualification`
-  - `fix(arkiv): bind client to rabdi testnet, remove silent fallback`
-  - `chore(scripts): arkiv write-test verification script`
-  - `chore(env): document arkiv rabdi env vars`
-  - `fix(scripts): arkiv write-test using official sdk createEntity on rabdi`
-  - `docs(arkiv): five submission files at required paths`
-  - `docs(arkiv): README index for submission artifacts`
-  - `docs(readme): arkiv rabdi integration section + reproducible query`
-  - `chore(arc-studio): prompt + checklist + report template`
-  - `docs(demo): add arc studio + arkiv rabdi verification beats`
-- [x] ✅ No commit message is a single-word squash-bait (e.g. "fix", "update")
-- [x] ✅ Every `/specs/hardening/09..15` file exists:
-  - `09-baseline-audit.md`
-  - `10-uniswap-feedback.md`
-  - `11-arkiv-rabdi-client.md`
-  - `12-arkiv-submission-files.md`
-  - `13-readme-arkiv.md`
-  - `14-arc-studio-package.md`
-  - `15-demo-script.md`
+- [x] ✅ Linear commit history: **60+ commits**, all conventional commits with semantic prefixes.
+- [x] ✅ CI/CD pipeline enforces `--frozen-lockfile`, `forge test`, `pnpm test`, and Next.js production build: [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml).
+- [x] ✅ Docker containerization verified with multi-stage build and `/health` probe: [`docker-compose.yml`](../../docker-compose.yml).
+- [x] ✅ Hardening documentation suite complete:
+  - `specs/hardening/24-read-only-link-audit.md` (Stage 0)
+  - `specs/hardening/25-arkiv-identifier-fix.md` (Stage 1)
+  - `specs/hardening/26-web3-claims.md` (Stage 2)
+  - `specs/hardening/27-docker.md` (Stage 3)
+  - `specs/hardening/28-ci-cd.md` (Stage 4)
+  - `specs/hardening/29-link-verification.md` (Stage 5)
+  - `specs/hardening/30-screenshots.md` (Stage 6)
+  - `specs/hardening/31-readme.md` (Stage 7)
+  - `specs/hardening/32-final-release-verification.md` (Stage 8)
+- [x] ✅ Link audit and screenshots catalogs complete:
+  - [`docs/evidence/link-audit.md`](../../docs/evidence/link-audit.md)
+  - [`docs/screenshots/README.md`](../../docs/screenshots/README.md)
 
 ---
 
@@ -106,4 +104,3 @@ Comprehensive evidence checklist verifying submission qualification across the t
   3. **Arkiv:** `Build on Arkiv (from scratch)`
      - *Qualification Evidence:* Five required documents in [`/arkiv/`](../../arkiv/), live verified entity [`0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca`](https://rabdi.explorer.arkiv.network/entity/0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca) on Rabdi testnet (`7794095`), and writer wallet `0xb491fe5846DE735B6Cb03a677A3C6296FAB0aDA5`
 - **NOT Selected:** Continuity bounties, Swarm bonus
-
