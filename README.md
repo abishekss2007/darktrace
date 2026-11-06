@@ -98,7 +98,7 @@ Judges should be able to tell at a glance what runs for real.
 | Component | Status |
 | :--- | :--- |
 | `DarkTraceHook`, `SearcherRegistry` on Base Sepolia | **Deployed** |
-| `SimulationRegistry`, `RebateVault` on Arc Testnet | **Deployed.** The Foundry vault holds a **5.00 USDC** reserve |
+| `SimulationRegistry`, `RebateVault` on Arc Testnet | **Deployed.** The Foundry vault was funded with 5.00 USDC and has **paid out a real 3.57 USDC rebate** (see below) |
 | Indexer watching the hook | **Live** (`/api/indexer/health` reports the hook address and `arkivWriter`) |
 | Arkiv receipts | **Live.** Written with the SDK, read by `/dashboard`, `/receipt`, `/pool`, `/searcher`, `/lp`, `/api/stats` |
 | Arc vault USDC reserve | **Live** on-chain `balanceOf` read in `/api/stats` (the dashboard badge shows the funded amount) |
@@ -115,7 +115,7 @@ Judges should be able to tell at a glance what runs for real.
 | **Base Sepolia** | `DarkTraceHook` | `0xBCC9e1C474Ed195b3791f2c41EdAC2a25c5b80c0` | Hook with `0x00C0` (`beforeSwap` / `afterSwap`) permission flags |
 | **Base Sepolia** | `SearcherRegistry` | `0x24A2669C706CCE71BAea24a4De18D9D215713551` | Searcher bond escrow and owner-governed slashing |
 | **Arc Testnet** | `SimulationRegistry` (Foundry) | `0xb8416cb4d82BA72b70C3EC55d7AC66b5DB415CF8` | Attestation registry used by the live app |
-| **Arc Testnet** | `RebateVault` (Foundry) | `0x2ab745F51002Ce236A9A2dA81cDaA553B87f28CD` | Settlement vault used by the live app, funded with 5.00 USDC |
+| **Arc Testnet** | `RebateVault` (Foundry) | `0x2ab745F51002Ce236A9A2dA81cDaA553B87f28CD` | Settlement vault used by the live app (funded with 5.00 USDC) |
 | **Arc Testnet** | `SimulationRegistry` (Arc Studio) | `0x52794Da13E573c9e73D32248a286843418Ba2983` | Generated, tested and deployed in Arc Studio |
 | **Arc Testnet** | `RebateVault` (Arc Studio) | `0x676065eb7c72ddf2048f21e6cb2ca6721827c1de` | Generated, tested and deployed in Arc Studio |
 | **Arc Testnet** | Arc native USDC (ERC-20) | `0x3600000000000000000000000000000000000000` | Native 6-decimal USDC interface |
@@ -179,7 +179,7 @@ pnpm arkiv:write-test   # needs ARKIV_PRIVATE_KEY: writes one receipt and reads 
   - pays each receipt at most once (replay nullifier)
   - checks-effects-interactions with a reentrancy guard
   - blocks self-payout
-- **Live app settlement:** Studio's deployer key cannot be exported, so the live app uses a Foundry deployment of the registry and vault, funded with 5.00 USDC. Details: [`arc-studio/report.md`](arc-studio/report.md).
+- **Live app settlement:** Studio's deployer key cannot be exported, so the live app uses a Foundry deployment of the registry and vault (funded with 5.00 USDC). Details: [`arc-studio/report.md`](arc-studio/report.md).
 
 ---
 
@@ -241,6 +241,16 @@ PRIVATE_KEY=0x… pnpm e2e:real    # the DarkTrace writer wallet (0xb491…aDA5)
 3. **Indexer:** [`onchain.ts`](apps/indexer/src/onchain.ts) rebuilds the three swaps and the pre-attack price from the PoolManager's `Swap` events alone, then runs the CPMM counterfactual.
 4. **Arkiv + Arc:** seals the `ExtractionReceipt` on Arkiv and attests it in `SimulationRegistry`.
 5. **Rebate:** [`claim.ts`](apps/indexer/src/claim.ts) claims the attested USDC from `RebateVault`.
+
+### Verified run (Nov 6, 2026)
+
+| Step | Network | Evidence |
+| :--- | :--- | :--- |
+| Sandwich bundle: frontrun 200 → victim 1,000 → backrun, all tUSDC. Searcher +2.43 tUSDC after fees | Base Sepolia, block 55,113,190 | [`0x1adc35cf…a410b4`](https://sepolia.basescan.org/tx/0x1adc35cf1d5c726c853dea8de8401cc52d07689e7c52770b5b543c1ea3a410b4) ([Blockscout](https://base-sepolia.blockscout.com/tx/0x1adc35cf1d5c726c853dea8de8401cc52d07689e7c52770b5b543c1ea3a410b4)) |
+| `DarkTraceHook` emits `ExtractionDetected`: searcher `0xc315…940D`, victim `0x9428…2488` | Base Sepolia | Same tx, pool `0x2183dce5…c676c` |
+| `ExtractionReceipt` sealed: **3.57 USDC** loss, 36 bps injected / 91 bps legit, real tx hashes | Arkiv Rabdi | [`$key 0x837ad00c…32a8`](https://rabdi.explorer.arkiv.network/entity/0x837ad00cd5fba8b67ba3976cbbca64de32d4ddac8483bb6b56b6866f67b432a8) · [receipt view](https://darktrace-lovat.vercel.app/receipt/0xdf3305cb8962998d3f887ad00ee3d206948d4b36703f6be39c9e65c9dee4e681) |
+| `SimulationRegistry.recordSimulation`: 3,571,583 raw USDC attested | Arc Testnet | [`0x50ab85ca…d9eec9`](https://explorer.testnet.arc.io/tx/0x50ab85caa05a7e52e9b9e5b498faf8c67981c1ba013060a068f7ef43cfd9eec9) |
+| `RebateVault.claimRebate`: **3.571583 USDC paid**, reserve 5.00 → 1.43 | Arc Testnet | [`0x4202622d…a4963f`](https://explorer.testnet.arc.io/tx/0x4202622d97af28edd3439a8f3f5ab773524755362357aa22d4c6bfb100a4963f) |
 
 Both sides of this sandwich are controlled by the operator. It is a scripted, real on-chain attack for verification, sized so that the searcher profits after fees and the victim's loss (about $3.6) is fully repayable from the vault reserve.
 

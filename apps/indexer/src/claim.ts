@@ -1,7 +1,8 @@
 // Final leg of the real end-to-end run: find the sealed receipt on Arkiv, wait for its Arc
 // attestation, then claim the USDC restitution from RebateVault.
 //
-// Usage: pnpm --filter @darktrace/indexer claim <poolId> <baseBlockNumber> [recipient]
+// Usage: pnpm --filter @darktrace/indexer claim <poolId> <baseBlockNumber> [recipient] [existingClaimTx]
+//   existingClaimTx: backfill the Arkiv LPClaim for a rebate that was already claimed on Arc.
 // Env:   ARKIV_PRIVATE_KEY (or ARC_PRIVATE_KEY) — the wallet that sends the claim on Arc.
 import "dotenv/config";
 import { createPublicClient, createWalletClient, defineChain, http, parseAbi, type Hex } from "viem";
@@ -27,7 +28,7 @@ const ABI = parseAbi([
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function main() {
-  const [poolId, blockArg, recipientArg] = process.argv.slice(2);
+  const [poolId, blockArg, recipientArg, existingClaimTx] = process.argv.slice(2);
   if (!poolId || !blockArg) {
     console.error("usage: claim <poolId> <baseBlockNumber> [recipient]");
     process.exit(1);
@@ -59,7 +60,9 @@ async function main() {
   console.log(`Attested on Arc: ${att[1]} raw USDC (simulationHash ${att[2]})`);
 
   if (await arc.readContract({ address: VAULT, abi: ABI, functionName: "claimedReceipts", args: [rh] })) {
-    console.log("Already claimed — nothing to do.");
+    console.log("Already claimed on Arc.");
+    if (existingClaimTx) await recordClaimOnArkiv(rh, recipient, existingClaimTx as Hex);
+    else console.log("Pass the claim tx as the 4th argument to record the LPClaim on Arkiv.");
     return;
   }
 
@@ -74,6 +77,18 @@ async function main() {
   console.log(`\nRebate claimed: ${Number(att[1]) / 1e6} USDC -> ${recipient}`);
   console.log(`Vault reserve: ${Number(before) / 1e6} -> ${Number(after) / 1e6} USDC`);
   console.log(`Arc tx: ${tx}`);
+  await recordClaimOnArkiv(rh, recipient, tx);
+}
+
+/** Seals the restitution as an LPClaim entity on Arkiv (once per receipt). */
+async function recordClaimOnArkiv(receiptHash: Hex, lp: Hex, claimTx: Hex) {
+  const sdk = arkiv();
+  if (await sdk.claimForReceipt(receiptHash)) {
+    console.log("LPClaim already on Arkiv.");
+    return;
+  }
+  const { entityKey } = await sdk.writeLPClaim({ v: "1.0.0", lp, receiptHash, claimTx, createdAt: Date.now() });
+  console.log(`LPClaim sealed on Arkiv: https://rabdi.explorer.arkiv.network/entity/${entityKey}`);
 }
 
 main().catch((err) => {

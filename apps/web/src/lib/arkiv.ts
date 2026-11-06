@@ -2,6 +2,7 @@
 // through @darktrace/arkiv (official @arkiv-network/sdk). Never import this from a client component.
 import { arkiv, type ArkivReceipt, type ArkivLPClaim, ARKIV_EXPLORER } from "@darktrace/arkiv";
 import { MOCK_POOLS } from "@/data/mockData";
+import { unstable_noStore as noStore } from "next/cache";
 
 export { ARKIV_EXPLORER };
 
@@ -64,6 +65,9 @@ export function toView(r: ArkivReceipt, claim?: ArkivLPClaim | null): ReceiptVie
 
 /** Runs an Arkiv read with a timeout; failures are reported, never replaced with mock data. */
 export async function fromArkiv<T>(fn: (sdk: ReturnType<typeof arkiv>) => Promise<T>): Promise<ArkivResult<T>> {
+  // viem sends JSON-RPC as fetch POSTs, which Next.js would otherwise store in its Data Cache
+  // (persisting across requests and deploys) and replay stale Arkiv answers. Always read live.
+  noStore();
   const queriedAt = new Date().toISOString();
   try {
     const data = await Promise.race([

@@ -5,12 +5,16 @@ import { DemoData } from "@/components/ui/DemoData";
 import { ArkivSource } from "@/components/arkiv/ArkivSource";
 import { ReceiptsTable } from "@/components/arkiv/ReceiptsTable";
 import { fromArkiv, sumUSDC, toView, writerAddress } from "@/lib/arkiv";
+import { getVaultReserveUSDC } from "@/lib/arc";
 
 // Always read Arkiv at request time — never bake receipts into the build.
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const res = await fromArkiv((sdk) => sdk.listRecentReceipts(25));
+  const [res, vaultReserve] = await Promise.all([
+    fromArkiv((sdk) => sdk.listRecentReceipts(25)),
+    getVaultReserveUSDC(),
+  ]);
   const receipts = res.ok ? res.data.map((r) => toView(r)) : [];
   const totalExtracted = sumUSDC(receipts);
   const extractedByPool = (poolId: string) =>
@@ -38,7 +42,11 @@ export default async function DashboardPage() {
           </div>
           <div className="px-3 py-1 border border-border bg-surface rounded text-xs font-mono">
             <span className="text-muted">Vault Reserve (Arc): </span>
-            <span className="text-good font-bold tabular-nums">$5.00 USDC</span>
+            {vaultReserve === null ? (
+              <span className="text-muted tabular-nums">unavailable</span>
+            ) : (
+              <span className="text-good font-bold tabular-nums">${vaultReserve} USDC</span>
+            )}
           </div>
           <div className="px-3 py-1 border border-border bg-surface rounded text-xs font-mono">
             <span className="text-muted">Receipts on Arkiv: </span>
