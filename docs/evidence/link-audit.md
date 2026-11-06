@@ -59,3 +59,4 @@
 | `https://rpc.testnet.arc.network` | `docker-compose.yml`, `chains.ts` | Obsolete domain | `https://rpc.testnet.arc.io` | **Fixed** in commits `81617a4` and `1d37af7` |
 | `https://rabdi.explorer.arkiv.network/entity/0xe9e5...` | Arkiv explorer buttons | 404 / Empty query | `https://rabdi.explorer.arkiv.network/entity/0xc327...` | **Fixed** in commit `cf857ec` |
 | `https://rpc.arkiv.network` | Docker configs | Invalid host | `https://rpc.rabdi.db-chain.testnet.arkiv.network` | **Fixed** in commit `1d37af7` |
+

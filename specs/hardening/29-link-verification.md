@@ -22,3 +22,4 @@ The purpose of Stage 5 is to formally compile, verify, and cross-reference all U
 ## 3. Verification Deliverables
 - Complete verification matrix published to [`docs/evidence/link-audit.md`](../../docs/evidence/link-audit.md).
 - Automated link check test pass in [`lib/arkiv/identity.test.ts`](../../lib/arkiv/identity.test.ts) enforcing correct explorer link construction.
+

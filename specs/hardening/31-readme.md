@@ -20,3 +20,4 @@ Stage 7 polishes the project's primary entrypoint (`README.md`), verifying that 
 
 4. **Evidence Directory Integration**:
    - Linked [`docs/evidence/link-audit.md`](../../docs/evidence/link-audit.md) and [`docs/screenshots/README.md`](../../docs/screenshots/README.md).
+

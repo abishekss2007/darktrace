@@ -52,3 +52,4 @@ This catalog documents the visual and structural evidence of the DarkTrace syste
 - **Explorer**: `https://rabdi.explorer.arkiv.network/entity/0xc327d5db4aa3098b80dc8729d090317408f98d19e1e19c13d6cf83494a05f8ca`
 - **Write Transaction**: `0x544ee730bb736cdbafcd837bad62f857c8ed0e0eaedf7afce807ffb060c6e0f6`
 - **Verification**: Fully queryable entity confirmed via SDK write/read roundtrip (`pnpm arkiv:write-test`).
+

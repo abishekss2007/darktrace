@@ -20,3 +20,4 @@ Stage 6 catalogs and standardizes the un-mocked visual evidence, user interface 
 
 ## 3. Deliverables
 - Visual catalog documented in [`docs/screenshots/README.md`](../../docs/screenshots/README.md).
+

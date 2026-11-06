@@ -83,3 +83,4 @@ DarkTrace satisfies all submission integrity criteria:
 - **Strict honesty:** Simulated UI actions are explicitly labeled; Foundry and Arc Studio deployments are clearly distinguished; live on-chain balances are read directly from Arc Testnet (`5.00 USDC`).
 - **Zero secrets committed:** No private keys or production credentials present in tracked files.
 - **Reproducible build:** Dependencies pinned, lockfile frozen, container hermetically sealed.
+

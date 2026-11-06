@@ -41,3 +41,4 @@ All workflow steps were executed locally and passed with exit code 0:
 - `pnpm test`: 19 passed, 0 failed.
 - `cd apps/indexer && pnpm run build`: `dist/index.js` bundled cleanly.
 - `pnpm --filter @darktrace/web build`: 12 routes generated cleanly.
+
