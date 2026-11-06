@@ -1,10 +1,12 @@
 # Dependency and build directories
 **/node_modules
 **/.next
-**/dist
 **/out
 **/cache
 **/.turbo
+dist/
+!apps/indexer/dist/
+!apps/indexer/dist/**
 
 # Git and IDE
 .git

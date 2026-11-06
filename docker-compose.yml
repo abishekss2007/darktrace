@@ -1,8 +1,8 @@
 services:
   indexer:
     build:
-      context: .
-      dockerfile: apps/indexer/Dockerfile
+      context: apps/indexer
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     environment:

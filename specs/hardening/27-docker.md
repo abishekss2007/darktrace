@@ -17,11 +17,9 @@ The goal of Stage 3 is to make the DarkTrace forensic indexer service cleanly re
   - `ARC_RPC_URL`: `https://rpc.testnet.arc.io`
   - `ARKIV_RPC_URL`: `https://rpc.rabdi.db-chain.testnet.arkiv.network`
 
-### C. Multi-Stage Hermetic Container Build
-- **Issue**: The original Dockerfile attempted to copy a pre-built host artifact (`dist/index.js`), which failed in container environments when the host had not run a pre-build, or copied host platform symlinks.
-- **Fix**: Implemented a hermetic multi-stage build:
-  1. **Builder Stage (`node:20-slim`)**: Prepares pnpm 9.1.4, installs dependencies with `--frozen-lockfile`, copies monorepo sources, and compiles `apps/indexer/dist/index.js` cleanly via esbuild.
-  2. **Runner Stage (`node:20-slim`)**: Minimal production image containing only the bundled `dist/index.js`, `package.json`, and `curl` for the runtime healthcheck.
+### C. Unified Vercel & Docker Compose Build Context
+- **Issue**: Vercel Container deployment builds `indexer` using `root: "apps/indexer"`, making `apps/indexer` the root build context. Attempting to copy root monorepo files (`pnpm-lock.yaml`, root `package.json`) inside the Dockerfile failed in Vercel container builds.
+- **Fix**: Unified both local `docker-compose.yml` (`context: apps/indexer`) and Vercel container runner to use `apps/indexer` as the context root, packaging the pre-bundled self-contained `dist/index.js` (tracked in git) with alpine `curl` for healthchecks. Exempted `apps/indexer/dist/` in root `.dockerignore` and added `apps/indexer/.dockerignore`.
 
 ### D. Cross-Platform `.dockerignore`
 - **Issue**: Missing or flat `node_modules` rules allowed host OS symlinks and build caches to contaminate the container build context.
