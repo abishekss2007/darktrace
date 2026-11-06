@@ -24757,200 +24757,6 @@ function runCounterfactualSimulation(input) {
   };
 }
 
-// src/pipeline.ts
-var arcTestnet = defineChain({
-  id: 5042002,
-  name: "Arc Testnet",
-  nativeCurrency: { name: "USD Coin", symbol: "USDC", decimals: 6 },
-  rpcUrls: { default: { http: ["https://rpc.testnet.arc.network"] } }
-});
-var SIMULATION_REGISTRY_ABI = parseAbi([
-  "function recordSimulation(bytes32 simulationHash, bytes32 receiptHash, uint256 extractedUSDC) external",
-  "function getAttestation(bytes32 receiptHash) external view returns (bool verified, uint256 amountUSDC, bytes32 simHash)"
-]);
-var ForensicPipeline = class {
-  arkiv;
-  demoFast;
-  arcRpcUrl;
-  arcPrivateKey;
-  simulationRegistryAddress;
-  // Deduplication cache to prevent re-processing identical proof hashes
-  processedHashes = /* @__PURE__ */ new Set();
-  constructor(config = {}) {
-    this.arkiv = config.arkivClient || new ArkivClient();
-    this.demoFast = config.demoFast ?? process.env.DEMO_FAST === "1";
-    this.arcRpcUrl = config.arcRpcUrl || process.env.ARC_RPC_URL || "https://rpc.testnet.arc.network";
-    this.arcPrivateKey = config.arcPrivateKey || process.env.ARC_PRIVATE_KEY;
-    this.simulationRegistryAddress = config.simulationRegistryAddress || process.env.SIMULATION_REGISTRY_ADDRESS;
-  }
-  /**
-   * Main pipeline entry: Event -> Simulator -> Arkiv -> Arc SimulationRegistry
-   */
-  async processExtraction(event) {
-    const proofKey = event.proofHash.toLowerCase();
-    if (this.processedHashes.has(proofKey)) {
-      this.log("WARN", "DEDUPE", "Skipping duplicate extraction event", { proofHash: event.proofHash });
-      return null;
-    }
-    this.processedHashes.add(proofKey);
-    this.log("INFO", "DETECTED", "Hook extraction fingerprint observed", {
-      poolId: event.poolId,
-      searcher: event.searcher,
-      victim: event.victim,
-      blockNumber: event.blockNumber,
-      proofHash: event.proofHash
-    });
-    let simulationHash;
-    let extractedUSDC;
-    let extractedUSDCRaw;
-    let injectedSlippageBps;
-    let legitSlippageBps;
-    if (this.demoFast) {
-      const simInput = {
-        poolId: event.poolId,
-        blockNumber: event.blockNumber,
-        searcherTxs: {
-          frontrun: {
-            sender: event.searcher,
-            zeroForOne: true,
-            amountSpecified: 50000000000n
-          },
-          backrun: {
-            sender: event.searcher,
-            zeroForOne: false,
-            amountSpecified: 15000000000000000000n
-          }
-        },
-        victimSwap: {
-          sender: event.victim,
-          zeroForOne: true,
-          amountSpecified: 100000000000n
-        }
-      };
-      const simResult = runCounterfactualSimulation(simInput);
-      simulationHash = simResult.simulationHash;
-      extractedUSDC = simResult.extractedUSDC;
-      extractedUSDCRaw = simResult.extractedUSDCRaw;
-      injectedSlippageBps = simResult.injectedSlippageBps;
-      legitSlippageBps = simResult.legitSlippageBps;
-      this.log("INFO", "SIMULATED", "Deterministic simulation computed (DEMO_FAST=1)", {
-        extractedUSDC,
-        injectedSlippageBps,
-        legitSlippageBps,
-        simulationHash
-      });
-    } else {
-      const simInput = {
-        poolId: event.poolId,
-        blockNumber: event.blockNumber,
-        searcherTxs: {
-          frontrun: { sender: event.searcher, zeroForOne: true, amountSpecified: event.extractedValue * 2n },
-          backrun: { sender: event.searcher, zeroForOne: false, amountSpecified: event.extractedValue }
-        },
-        victimSwap: { sender: event.victim, zeroForOne: true, amountSpecified: event.extractedValue * 3n }
-      };
-      const simResult = runCounterfactualSimulation(simInput);
-      simulationHash = simResult.simulationHash;
-      extractedUSDC = simResult.extractedUSDC;
-      extractedUSDCRaw = simResult.extractedUSDCRaw;
-      injectedSlippageBps = simResult.injectedSlippageBps;
-      legitSlippageBps = simResult.legitSlippageBps;
-      this.log("INFO", "SIMULATED", "Counterfactual computed against pre-attack reserves using constant-product pricing", {
-        extractedUSDC,
-        injectedSlippageBps,
-        simulationHash
-      });
-    }
-    const receipt = {
-      v: "1.0.0",
-      poolId: event.poolId,
-      searcher: event.searcher,
-      victim: event.victim,
-      lp: "0x05FF2B0E24E15B20C9Ed8704337ca525Bc3095F6",
-      // Primary PoolManager / LP anchor
-      blockNumber: event.blockNumber,
-      extractedUSDC,
-      injectedSlippageBps,
-      legitSlippageBps,
-      simulationHash,
-      txHashes: [
-        event.txHash || "0xaaaa1111aaaa1111aaaa1111aaaa1111aaaa1111aaaa1111aaaa1111aaaa1111",
-        "0xbbbb2222bbbb2222bbbb2222bbbb2222bbbb2222bbbb2222bbbb2222bbbb2222",
-        "0xcccc3333cccc3333cccc3333cccc3333cccc3333cccc3333cccc3333cccc3333"
-      ],
-      createdAt: Date.now()
-    };
-    const {
-      receiptHash,
-      entityId,
-      entityKey: arkivEntityKey,
-      arkivTxHash
-    } = await this.arkiv.writeExtractionReceipt(receipt);
-    this.log("INFO", "ARCHIVED", arkivEntityKey ? "Forensic receipt sealed to Arkiv Rabdi" : "Forensic receipt stored in memory (ARKIV_DEV_MODE=memory, not on Arkiv)", {
-      receiptHash,
-      entityId,
-      arkivEntityKey,
-      arkivTxHash,
-      explorer: arkivEntityKey ? `https://rabdi.explorer.arkiv.network/entity/${arkivEntityKey}` : void 0,
-      searcher: receipt.searcher
-    });
-    let attestedOnArc = false;
-    let arcTxHash;
-    if (this.arcPrivateKey && this.simulationRegistryAddress) {
-      try {
-        const account = privateKeyToAccount(this.arcPrivateKey);
-        const walletClient = createWalletClient({
-          account,
-          chain: arcTestnet,
-          transport: http(this.arcRpcUrl)
-        });
-        const tx = await walletClient.writeContract({
-          address: this.simulationRegistryAddress,
-          abi: SIMULATION_REGISTRY_ABI,
-          functionName: "recordSimulation",
-          args: [simulationHash, receiptHash, extractedUSDCRaw]
-        });
-        attestedOnArc = true;
-        arcTxHash = tx;
-        this.log("INFO", "ATTESTED", "Simulation record committed to Arc SimulationRegistry", {
-          txHash: tx,
-          registry: this.simulationRegistryAddress
-        });
-      } catch (err) {
-        this.log("ERROR", "ATTEST_FAILED", "Failed to submit attestation to Arc", {
-          error: err instanceof Error ? err.message : String(err)
-        });
-      }
-    } else {
-      this.log("INFO", "ATTESTED", "Simulated Arc attestation recorded locally (no signer key configured)", {
-        simulationHash,
-        receiptHash,
-        amountUSDC: extractedUSDC
-      });
-      attestedOnArc = true;
-    }
-    return {
-      receipt,
-      receiptHash,
-      arkivEntityKey,
-      arkivTxHash,
-      simulationHash,
-      attestedOnArc,
-      arcTxHash
-    };
-  }
-  log(level, stage, message, meta2 = {}) {
-    const logEntry = {
-      timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-      level,
-      stage,
-      message,
-      ...meta2
-    };
-    console.log(JSON.stringify(logEntry));
-  }
-};
-
 // ../../node_modules/.pnpm/viem@2.57.16_bufferutil@4.1_3375ca275b166f1b0be03f1daef6f2b6/node_modules/viem/_esm/op-stack/contracts.js
 var contracts = {
   gasPriceOracle: { address: "0x420000000000000000000000000000000000000F" },
@@ -25136,6 +24942,299 @@ var baseSepoliaPreconf = /* @__PURE__ */ defineChain({
   }
 });
 
+// src/onchain.ts
+var POOL_MANAGER = "0x05E73354cFDd6745C338b50BcFDfA3Aa6fA03408";
+var SWAP_ABI = parseAbi([
+  "event Swap(bytes32 indexed id, address indexed sender, int128 amount0, int128 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick, uint24 fee)"
+]);
+var Q96 = 1n << 96n;
+var PIPS = 1000000n;
+var abs = (x) => x < 0n ? -x : x;
+function toSwap(log) {
+  const { args } = decodeEventLog({ abi: SWAP_ABI, data: log.data, topics: log.topics });
+  const zeroForOne = args.amount0 < 0n;
+  const amountInGross = abs(zeroForOne ? args.amount0 : args.amount1);
+  const fee = BigInt(args.fee);
+  return {
+    sender: args.sender,
+    zeroForOne,
+    amountInGross,
+    amountInNet: amountInGross * (PIPS - fee) / PIPS,
+    sqrtPriceX96After: args.sqrtPriceX96,
+    liquidity: args.liquidity,
+    tick: args.tick,
+    fee: Number(fee),
+    txHash: log.transactionHash,
+    logIndex: log.logIndex ?? 0
+  };
+}
+function sqrtPriceBefore(s) {
+  const L = s.liquidity;
+  const pa = s.sqrtPriceX96After;
+  if (s.zeroForOne) {
+    return Q96 * L * pa / (Q96 * L - s.amountInNet * pa);
+  }
+  return pa - s.amountInNet * Q96 / L;
+}
+async function reconstructSandwich(client, params) {
+  const logs = await client.getLogs({
+    address: POOL_MANAGER,
+    event: SWAP_ABI[0],
+    args: { id: params.poolId },
+    fromBlock: params.blockNumber,
+    toBlock: params.blockNumber
+  });
+  const swaps = logs.map((l) => toSwap(l)).filter((s) => params.detectedLogIndex === void 0 || s.logIndex <= params.detectedLogIndex).sort((a, b) => a.logIndex - b.logIndex);
+  if (swaps.length < 3) {
+    throw new Error(`expected >= 3 swaps for pool ${params.poolId} in block ${params.blockNumber}, found ${swaps.length}`);
+  }
+  const [frontrun, victim, backrun] = swaps.slice(-3);
+  const searcher = params.searcher.toLowerCase();
+  if (frontrun.sender.toLowerCase() !== searcher || backrun.sender.toLowerCase() !== searcher || victim.sender.toLowerCase() !== params.victim.toLowerCase()) {
+    throw new Error("Swap senders do not match the ExtractionDetected searcher/victim");
+  }
+  const pre = sqrtPriceBefore(frontrun);
+  const L = frontrun.liquidity;
+  const reserve0 = L * Q96 / pre;
+  const reserve1 = L * pre / Q96;
+  const simulationInput = {
+    poolId: params.poolId,
+    blockNumber: Number(params.blockNumber),
+    searcherTxs: {
+      frontrun: { sender: frontrun.sender, zeroForOne: frontrun.zeroForOne, amountSpecified: -frontrun.amountInNet },
+      backrun: { sender: backrun.sender, zeroForOne: backrun.zeroForOne, amountSpecified: -backrun.amountInNet }
+    },
+    victimSwap: { sender: victim.sender, zeroForOne: victim.zeroForOne, amountSpecified: -victim.amountInNet },
+    preAttackReserve0: reserve0,
+    preAttackReserve1: reserve1
+  };
+  return {
+    frontrun,
+    victim,
+    backrun,
+    preAttackSqrtPriceX96: pre,
+    simulationInput,
+    txHashes: [frontrun.txHash, victim.txHash, backrun.txHash]
+  };
+}
+
+// src/pipeline.ts
+var DEFAULT_SIMULATION_REGISTRY = "0xb8416cb4d82BA72b70C3EC55d7AC66b5DB415CF8";
+var arcTestnet = defineChain({
+  id: 5042002,
+  name: "Arc Testnet",
+  nativeCurrency: { name: "USD Coin", symbol: "USDC", decimals: 6 },
+  rpcUrls: { default: { http: ["https://rpc.testnet.arc.network"] } }
+});
+var SIMULATION_REGISTRY_ABI = parseAbi([
+  "function recordSimulation(bytes32 simulationHash, bytes32 receiptHash, uint256 extractedUSDC) external",
+  "function getAttestation(bytes32 receiptHash) external view returns (bool verified, uint256 amountUSDC, bytes32 simHash)"
+]);
+var ForensicPipeline = class {
+  arkiv;
+  demoFast;
+  arcRpcUrl;
+  arcPrivateKey;
+  simulationRegistryAddress;
+  baseClient;
+  // Deduplication cache to prevent re-processing identical proof hashes
+  processedHashes = /* @__PURE__ */ new Set();
+  constructor(config = {}) {
+    this.arkiv = config.arkivClient || new ArkivClient();
+    this.demoFast = config.demoFast ?? process.env.DEMO_FAST === "1";
+    this.arcRpcUrl = config.arcRpcUrl || process.env.ARC_RPC_URL || "https://rpc.testnet.arc.network";
+    this.arcPrivateKey = config.arcPrivateKey || normalizePrivateKey(process.env.ARC_PRIVATE_KEY) || normalizePrivateKey(process.env.ARKIV_PRIVATE_KEY) || void 0;
+    this.simulationRegistryAddress = config.simulationRegistryAddress || process.env.SIMULATION_REGISTRY_ADDRESS || DEFAULT_SIMULATION_REGISTRY;
+    this.baseClient = config.baseClient || createPublicClient({
+      chain: baseSepolia,
+      transport: http(config.baseRpcUrl || process.env.BASE_SEPOLIA_RPC || "https://sepolia.base.org")
+    });
+  }
+  /**
+   * Main pipeline entry: Event -> Simulator -> Arkiv -> Arc SimulationRegistry
+   */
+  async processExtraction(event) {
+    const proofKey = event.proofHash.toLowerCase();
+    if (this.processedHashes.has(proofKey)) {
+      this.log("WARN", "DEDUPE", "Skipping duplicate extraction event", { proofHash: event.proofHash });
+      return null;
+    }
+    this.processedHashes.add(proofKey);
+    this.log("INFO", "DETECTED", "Hook extraction fingerprint observed", {
+      poolId: event.poolId,
+      searcher: event.searcher,
+      victim: event.victim,
+      blockNumber: event.blockNumber,
+      proofHash: event.proofHash
+    });
+    const sealed = (await this.arkiv.getByPool(event.poolId)).find(
+      (r) => r.blockNumber === event.blockNumber && r.searcher.toLowerCase() === event.searcher.toLowerCase()
+    );
+    if (sealed) {
+      this.log("WARN", "DEDUPE", "Sandwich already sealed on Arkiv; skipping", {
+        poolId: event.poolId,
+        blockNumber: event.blockNumber
+      });
+      return null;
+    }
+    let simulationHash;
+    let extractedUSDC;
+    let extractedUSDCRaw;
+    let injectedSlippageBps;
+    let legitSlippageBps;
+    let onchainTxHashes;
+    if (this.demoFast) {
+      const simInput = {
+        poolId: event.poolId,
+        blockNumber: event.blockNumber,
+        searcherTxs: {
+          frontrun: {
+            sender: event.searcher,
+            zeroForOne: true,
+            amountSpecified: 50000000000n
+          },
+          backrun: {
+            sender: event.searcher,
+            zeroForOne: false,
+            amountSpecified: 15000000000000000000n
+          }
+        },
+        victimSwap: {
+          sender: event.victim,
+          zeroForOne: true,
+          amountSpecified: 100000000000n
+        }
+      };
+      const simResult = runCounterfactualSimulation(simInput);
+      simulationHash = simResult.simulationHash;
+      extractedUSDC = simResult.extractedUSDC;
+      extractedUSDCRaw = simResult.extractedUSDCRaw;
+      injectedSlippageBps = simResult.injectedSlippageBps;
+      legitSlippageBps = simResult.legitSlippageBps;
+      this.log("INFO", "SIMULATED", "Deterministic simulation computed (DEMO_FAST=1)", {
+        extractedUSDC,
+        injectedSlippageBps,
+        legitSlippageBps,
+        simulationHash
+      });
+    } else {
+      const sandwich = await reconstructSandwich(this.baseClient, {
+        poolId: event.poolId,
+        blockNumber: BigInt(event.blockNumber),
+        searcher: event.searcher,
+        victim: event.victim,
+        detectedLogIndex: event.logIndex
+      });
+      onchainTxHashes = sandwich.txHashes;
+      const simInput = sandwich.simulationInput;
+      this.log("INFO", "RECONSTRUCTED", "Sandwich rebuilt from PoolManager Swap events", {
+        frontrunIn: sandwich.frontrun.amountInGross.toString(),
+        victimIn: sandwich.victim.amountInGross.toString(),
+        backrunIn: sandwich.backrun.amountInGross.toString(),
+        ticks: [sandwich.frontrun.tick, sandwich.victim.tick, sandwich.backrun.tick],
+        preAttackSqrtPriceX96: sandwich.preAttackSqrtPriceX96.toString()
+      });
+      const simResult = runCounterfactualSimulation(simInput);
+      simulationHash = simResult.simulationHash;
+      extractedUSDC = simResult.extractedUSDC;
+      extractedUSDCRaw = simResult.extractedUSDCRaw;
+      injectedSlippageBps = simResult.injectedSlippageBps;
+      legitSlippageBps = simResult.legitSlippageBps;
+      this.log("INFO", "SIMULATED", "Counterfactual computed against pre-attack reserves using constant-product pricing", {
+        extractedUSDC,
+        injectedSlippageBps,
+        simulationHash
+      });
+    }
+    const receipt = {
+      v: "1.0.0",
+      poolId: event.poolId,
+      searcher: event.searcher,
+      victim: event.victim,
+      // Restitution party. In v4 the hook sees the victim's router as `sender`.
+      lp: event.victim,
+      blockNumber: event.blockNumber,
+      extractedUSDC,
+      injectedSlippageBps,
+      legitSlippageBps,
+      simulationHash,
+      // Real frontrun / victim / backrun tx hashes (identical when the sandwich landed as one bundle).
+      txHashes: onchainTxHashes ?? (event.txHash ? [event.txHash, event.txHash, event.txHash] : []),
+      createdAt: Date.now()
+    };
+    const {
+      receiptHash,
+      entityId,
+      entityKey: arkivEntityKey,
+      arkivTxHash
+    } = await this.arkiv.writeExtractionReceipt(receipt);
+    this.log("INFO", "ARCHIVED", arkivEntityKey ? "Forensic receipt sealed to Arkiv Rabdi" : "Forensic receipt stored in memory (ARKIV_DEV_MODE=memory, not on Arkiv)", {
+      receiptHash,
+      entityId,
+      arkivEntityKey,
+      arkivTxHash,
+      explorer: arkivEntityKey ? `https://rabdi.explorer.arkiv.network/entity/${arkivEntityKey}` : void 0,
+      searcher: receipt.searcher
+    });
+    let attestedOnArc = false;
+    let arcTxHash;
+    if (this.arcPrivateKey && this.simulationRegistryAddress) {
+      try {
+        const account = privateKeyToAccount(this.arcPrivateKey);
+        const walletClient = createWalletClient({
+          account,
+          chain: arcTestnet,
+          transport: http(this.arcRpcUrl)
+        });
+        const tx = await walletClient.writeContract({
+          address: this.simulationRegistryAddress,
+          abi: SIMULATION_REGISTRY_ABI,
+          functionName: "recordSimulation",
+          args: [simulationHash, receiptHash, extractedUSDCRaw]
+        });
+        const arcClient = createPublicClient({ chain: arcTestnet, transport: http(this.arcRpcUrl) });
+        const mined = await arcClient.waitForTransactionReceipt({ hash: tx });
+        if (mined.status !== "success") throw new Error(`recordSimulation reverted (tx ${tx})`);
+        attestedOnArc = true;
+        arcTxHash = tx;
+        this.log("INFO", "ATTESTED", "Simulation record committed to Arc SimulationRegistry", {
+          txHash: tx,
+          registry: this.simulationRegistryAddress
+        });
+      } catch (err) {
+        this.log("ERROR", "ATTEST_FAILED", "Failed to submit attestation to Arc", {
+          error: err instanceof Error ? err.message : String(err)
+        });
+      }
+    } else {
+      this.log("WARN", "NOT_ATTESTED", "No Arc signer key configured: simulation NOT attested on Arc", {
+        simulationHash,
+        receiptHash,
+        amountUSDC: extractedUSDC
+      });
+    }
+    return {
+      receipt,
+      receiptHash,
+      arkivEntityKey,
+      arkivTxHash,
+      simulationHash,
+      attestedOnArc,
+      arcTxHash
+    };
+  }
+  log(level, stage, message, meta2 = {}) {
+    const logEntry = {
+      timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+      level,
+      stage,
+      message,
+      ...meta2
+    };
+    console.log(JSON.stringify(logEntry));
+  }
+};
+
 // src/watcher.ts
 var EXTRACTION_DETECTED_EVENT = parseAbiItem(
   "event ExtractionDetected(bytes32 indexed poolId, address indexed searcher, address indexed victim, uint256 extractedValue, bytes32 proofHash)"
@@ -25168,7 +25267,8 @@ function startHookWatcher(config) {
             extractedValue: log.args.extractedValue ?? 0n,
             proofHash: log.args.proofHash ?? "0x00",
             blockNumber: Number(log.blockNumber),
-            txHash: log.transactionHash
+            txHash: log.transactionHash,
+            logIndex: log.logIndex ?? void 0
           });
         } catch (err) {
           console.error(

@@ -44,6 +44,7 @@ export function startHookWatcher(config: WatcherConfig) {
             proofHash: log.args.proofHash ?? "0x00",
             blockNumber: Number(log.blockNumber),
             txHash: log.transactionHash,
+            logIndex: log.logIndex ?? undefined,
           });
         } catch (err) {
           // One failed event (e.g. Arkiv unreachable or writer key missing) must not kill the watcher.

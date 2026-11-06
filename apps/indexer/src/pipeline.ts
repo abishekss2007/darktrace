@@ -1,7 +1,12 @@
-import { ArkivClient, ExtractionReceipt } from "@darktrace/arkiv";
+import { ArkivClient, ExtractionReceipt, normalizePrivateKey } from "@darktrace/arkiv";
 import { runCounterfactualSimulation, SimulationInput } from "@darktrace/simulator";
-import { createWalletClient, createPublicClient, http, parseAbi, defineChain } from "viem";
+import { createWalletClient, createPublicClient, http, parseAbi, defineChain, type PublicClient } from "viem";
+import { baseSepolia } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
+import { reconstructSandwich } from "./onchain";
+
+/** Foundry SimulationRegistry that the funded RebateVault verifies against. */
+const DEFAULT_SIMULATION_REGISTRY = "0xb8416cb4d82BA72b70C3EC55d7AC66b5DB415CF8" as const;
 
 const arcTestnet = defineChain({
   id: 5042002,
@@ -18,6 +23,8 @@ export interface ExtractionEventPayload {
   proofHash: `0x${string}`;
   blockNumber: number;
   txHash?: `0x${string}`;
+  /** Log index of ExtractionDetected inside the block (bounds the swap search). */
+  logIndex?: number;
 }
 
 export interface PipelineConfig {
@@ -26,6 +33,9 @@ export interface PipelineConfig {
   arcRpcUrl?: string;
   arcPrivateKey?: `0x${string}`;
   simulationRegistryAddress?: `0x${string}`;
+  /** Base Sepolia client used to rebuild the sandwich from PoolManager Swap events. */
+  baseClient?: PublicClient;
+  baseRpcUrl?: string;
 }
 
 export interface ProcessedPipelineResult {
@@ -50,6 +60,7 @@ export class ForensicPipeline {
   private arcRpcUrl: string;
   private arcPrivateKey?: `0x${string}`;
   private simulationRegistryAddress?: `0x${string}`;
+  private baseClient: PublicClient;
 
   // Deduplication cache to prevent re-processing identical proof hashes
   private processedHashes: Set<string> = new Set();
@@ -58,10 +69,22 @@ export class ForensicPipeline {
     this.arkiv = config.arkivClient || new ArkivClient();
     this.demoFast = config.demoFast ?? (process.env.DEMO_FAST === "1");
     this.arcRpcUrl = config.arcRpcUrl || process.env.ARC_RPC_URL || "https://rpc.testnet.arc.network";
-    this.arcPrivateKey = config.arcPrivateKey || (process.env.ARC_PRIVATE_KEY as `0x${string}` | undefined);
-    this.simulationRegistryAddress = 
-      config.simulationRegistryAddress || 
-      (process.env.SIMULATION_REGISTRY_ADDRESS as `0x${string}` | undefined);
+    // The same writer wallet (0xb491…aDA5) owns SimulationRegistry, so ARKIV_PRIVATE_KEY is the fallback.
+    this.arcPrivateKey =
+      config.arcPrivateKey ||
+      normalizePrivateKey(process.env.ARC_PRIVATE_KEY) ||
+      normalizePrivateKey(process.env.ARKIV_PRIVATE_KEY) ||
+      undefined;
+    this.simulationRegistryAddress =
+      config.simulationRegistryAddress ||
+      (process.env.SIMULATION_REGISTRY_ADDRESS as `0x${string}` | undefined) ||
+      DEFAULT_SIMULATION_REGISTRY;
+    this.baseClient =
+      config.baseClient ||
+      (createPublicClient({
+        chain: baseSepolia,
+        transport: http(config.baseRpcUrl || process.env.BASE_SEPOLIA_RPC || "https://sepolia.base.org"),
+      }) as PublicClient);
   }
 
   /**
@@ -85,12 +108,26 @@ export class ForensicPipeline {
       proofHash: event.proofHash,
     });
 
+    // Cross-process dedupe: the in-memory set above only covers this process. If another indexer
+    // (e.g. the deployed watcher vs. the process-tx CLI) already sealed this sandwich, skip it.
+    const sealed = (await this.arkiv.getByPool(event.poolId)).find(
+      (r) => r.blockNumber === event.blockNumber && r.searcher.toLowerCase() === event.searcher.toLowerCase()
+    );
+    if (sealed) {
+      this.log("WARN", "DEDUPE", "Sandwich already sealed on Arkiv; skipping", {
+        poolId: event.poolId,
+        blockNumber: event.blockNumber,
+      });
+      return null;
+    }
+
     // 2. Counterfactual Simulation
     let simulationHash: `0x${string}`;
     let extractedUSDC: string;
     let extractedUSDCRaw: bigint;
     let injectedSlippageBps: number;
     let legitSlippageBps: number;
+    let onchainTxHashes: string[] | undefined;
 
     if (this.demoFast) {
       // Deterministic fast simulation calculation
@@ -130,15 +167,24 @@ export class ForensicPipeline {
         simulationHash,
       });
     } else {
-      const simInput: SimulationInput = {
+      // Rebuild the real frontrun / victim / backrun from the PoolManager's Swap events.
+      const sandwich = await reconstructSandwich(this.baseClient, {
         poolId: event.poolId,
-        blockNumber: event.blockNumber,
-        searcherTxs: {
-          frontrun: { sender: event.searcher, zeroForOne: true, amountSpecified: event.extractedValue * 2n },
-          backrun: { sender: event.searcher, zeroForOne: false, amountSpecified: event.extractedValue },
-        },
-        victimSwap: { sender: event.victim, zeroForOne: true, amountSpecified: event.extractedValue * 3n },
-      };
+        blockNumber: BigInt(event.blockNumber),
+        searcher: event.searcher,
+        victim: event.victim,
+        detectedLogIndex: event.logIndex,
+      });
+      onchainTxHashes = sandwich.txHashes;
+      const simInput: SimulationInput = sandwich.simulationInput;
+
+      this.log("INFO", "RECONSTRUCTED", "Sandwich rebuilt from PoolManager Swap events", {
+        frontrunIn: sandwich.frontrun.amountInGross.toString(),
+        victimIn: sandwich.victim.amountInGross.toString(),
+        backrunIn: sandwich.backrun.amountInGross.toString(),
+        ticks: [sandwich.frontrun.tick, sandwich.victim.tick, sandwich.backrun.tick],
+        preAttackSqrtPriceX96: sandwich.preAttackSqrtPriceX96.toString(),
+      });
 
       const simResult = runCounterfactualSimulation(simInput);
       simulationHash = simResult.simulationHash;
@@ -160,17 +206,15 @@ export class ForensicPipeline {
       poolId: event.poolId,
       searcher: event.searcher,
       victim: event.victim,
-      lp: "0x05FF2B0E24E15B20C9Ed8704337ca525Bc3095F6", // Primary PoolManager / LP anchor
+      // Restitution party. In v4 the hook sees the victim's router as `sender`.
+      lp: event.victim,
       blockNumber: event.blockNumber,
       extractedUSDC,
       injectedSlippageBps,
       legitSlippageBps,
       simulationHash,
-      txHashes: [
-        event.txHash || "0xaaaa1111aaaa1111aaaa1111aaaa1111aaaa1111aaaa1111aaaa1111aaaa1111",
-        "0xbbbb2222bbbb2222bbbb2222bbbb2222bbbb2222bbbb2222bbbb2222bbbb2222",
-        "0xcccc3333cccc3333cccc3333cccc3333cccc3333cccc3333cccc3333cccc3333",
-      ],
+      // Real frontrun / victim / backrun tx hashes (identical when the sandwich landed as one bundle).
+      txHashes: onchainTxHashes ?? (event.txHash ? [event.txHash, event.txHash, event.txHash] : []),
       createdAt: Date.now(),
     };
 
@@ -211,6 +255,9 @@ export class ForensicPipeline {
           functionName: "recordSimulation",
           args: [simulationHash, receiptHash as `0x${string}`, extractedUSDCRaw],
         });
+        const arcClient = createPublicClient({ chain: arcTestnet, transport: http(this.arcRpcUrl) });
+        const mined = await arcClient.waitForTransactionReceipt({ hash: tx });
+        if (mined.status !== "success") throw new Error(`recordSimulation reverted (tx ${tx})`);
 
         attestedOnArc = true;
         arcTxHash = tx;
@@ -225,12 +272,11 @@ export class ForensicPipeline {
         });
       }
     } else {
-      this.log("INFO", "ATTESTED", "Simulated Arc attestation recorded locally (no signer key configured)", {
+      this.log("WARN", "NOT_ATTESTED", "No Arc signer key configured: simulation NOT attested on Arc", {
         simulationHash,
         receiptHash,
         amountUSDC: extractedUSDC,
       });
-      attestedOnArc = true;
     }
 
     return {
