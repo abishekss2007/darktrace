@@ -1,0 +1,35 @@
+# Dependency and build directories
+**/node_modules
+**/.next
+**/dist
+**/out
+**/cache
+**/.turbo
+
+# Git and IDE
+.git
+.gitignore
+.vscode
+.idea
+
+# Environment and secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Test and coverage
+**/coverage
+**/.nyc_output
+
+# Foundry build artifacts
+contracts/out
+contracts/cache
+contracts/broadcast
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*

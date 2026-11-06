@@ -1,25 +1,25 @@
-version: "3.8"
-
 services:
   indexer:
     build:
       context: .
       dockerfile: apps/indexer/Dockerfile
+    ports:
+      - "8080:8080"
     environment:
+      - PORT=8080
+      - NODE_ENV=development
       - BASE_SEPOLIA_RPC=https://sepolia.base.org
-      - HOOK_ADDRESS=0x00000000000000000000000000000000000000C0
-      - ARC_RPC_URL=https://rpc.testnet.arc.network
-      - SIMULATION_REGISTRY_ADDRESS=0x0000000000000000000000000000000000000000
-      - ARKIV_RPC_URL=https://rpc.arkiv.network
+      - HOOK_ADDRESS=0xBCC9e1C474Ed195b3791f2c41EdAC2a25c5b80c0
+      - ARC_RPC_URL=https://rpc.testnet.arc.io
+      - SIMULATION_REGISTRY_ADDRESS=0xb8416cb4d82BA72b70C3EC55d7AC66b5DB415CF8
+      - ARKIV_RPC_URL=https://rpc.rabdi.db-chain.testnet.arkiv.network
+      - ARKIV_ACCESS_KEY=local_evaluator_memory_key
+      - ARKIV_DEV_MODE=memory
       - DEMO_FAST=1
-    restart: unless-stopped
-
-  simulator:
-    build:
-      context: .
-      dockerfile: apps/indexer/Dockerfile
-    command: ["node", "dist/simulator-worker.js"]
-    environment:
-      - ARC_RPC_URL=https://rpc.testnet.arc.network
-      - BASE_SEPOLIA_RPC=https://sepolia.base.org
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
     restart: unless-stopped
