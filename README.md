@@ -47,6 +47,30 @@ flowchart LR
 
 ---
 
+## Product Preview
+
+### 1. Interactive Forensic Terminal (`/demo`)
+> **Real-time Uniswap v4 sandwich detection, CPMM counterfactual slippage decomposition, and Arkiv proof verification:**
+
+[![DarkTrace Interactive Forensic Terminal](docs/screenshots/demo-terminal.png)](https://darktrace-lovat.vercel.app/demo)
+
+<details>
+<summary><b>View Surveillance Dashboard & Extraction Receipt Screenshots</b></summary>
+
+### 2. Forensics Surveillance Matrix (`/dashboard`)
+> **Live surveillance of Uniswap v4 pools, active Arc Vault USDC reserves, and recent extraction receipts:**
+
+[![DarkTrace Surveillance Matrix](docs/screenshots/dashboard.png)](https://darktrace-lovat.vercel.app/dashboard)
+
+### 3. Cryptographic Extraction Receipt (`/receipt/0xe9e5...`)
+> **Attested loss record with 3-tx sandwich breakdown, canonical receiptHash, and Arkiv Rabdi explorer deep-link:**
+
+[![DarkTrace Forensic Receipt](docs/screenshots/receipt.png)](https://darktrace-lovat.vercel.app/receipt/0xe9e56b6adbf0cae90f08b28a0ae3dccd9fc4ece42eb7b0126e4f208646eae6ce)
+
+</details>
+
+---
+
 ## Deployed Addresses & Contracts
 
 | Network | Contract / Component | Address | Description |
