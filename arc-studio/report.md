@@ -1,6 +1,6 @@
 # Arc Studio deployment record
 
-- **Studio project URL:** `https://studio.arc.io` (Project: DarkTrace MEV Restitution)
+- **Studio project URL:** [https://studio.arc.io/app/c3240360-99a1-4a97-b03e-5e547be78a32](https://studio.arc.io/app/c3240360-99a1-4a97-b03e-5e547be78a32?thread=c19d8800-048f-459f-8329-54f1e7b50d34) (Project: DarkTrace MEV Restitution)
 - **SimulationRegistry (Studio):** `0x52794Da13E573c9e73D32248a286843418Ba2983`
   - Explorer: [https://explorer.testnet.arc.io/address/0x52794Da13E573c9e73D32248a286843418Ba2983](https://explorer.testnet.arc.io/address/0x52794Da13E573c9e73D32248a286843418Ba2983)
 - **RebateVault (Studio):** `0x676065eb7c72ddf2048f21e6cb2ca6721827c1de`
