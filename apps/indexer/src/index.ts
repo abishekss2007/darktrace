@@ -1,5 +1,6 @@
 import "dotenv/config";
 import http from "node:http";
+import { ArkivSdk } from "@darktrace/arkiv";
 import { ForensicPipeline } from "./pipeline";
 import { startHookWatcher } from "./watcher";
 
@@ -25,15 +26,24 @@ async function main() {
 
   // Never crash the service over a missing writer key: stay up, report it on /health,
   // and fail loudly per event (see watcher.ts) instead of faking writes.
-  const arkivWriter = arkivMemory ? "memory" : process.env.ARKIV_PRIVATE_KEY ? "live" : "unconfigured";
-  if (arkivWriter === "unconfigured") {
+  const keyStatus = new ArkivSdk().writerKeyStatus;
+  const arkivWriter = arkivMemory
+    ? "memory"
+    : keyStatus === "ok"
+      ? "live"
+      : keyStatus === "invalid"
+        ? "invalid-key"
+        : "unconfigured";
+  if (arkivWriter !== "live" && arkivWriter !== "memory") {
     console.warn(
       JSON.stringify({
         timestamp: new Date().toISOString(),
         level: "WARN",
         stage: "ARKIV_WRITER",
         message:
-          "ARKIV_PRIVATE_KEY not set: detected extractions will NOT be sealed on Arkiv (set the key, or ARKIV_DEV_MODE=memory for offline runs)",
+          arkivWriter === "invalid-key"
+            ? "ARKIV_PRIVATE_KEY is set but is not 32 bytes hex (quotes/extra characters?): extractions will NOT be sealed on Arkiv"
+            : "ARKIV_PRIVATE_KEY not set: detected extractions will NOT be sealed on Arkiv (set the key, or ARKIV_DEV_MODE=memory for offline runs)",
       })
     );
   }

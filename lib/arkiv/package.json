@@ -6,7 +6,7 @@
   "types": "./index.ts",
   "scripts": {
     "build": "tsc --noEmit",
-    "test": "tsx --test client.test.ts identity.test.ts"
+    "test": "tsx --test client.test.ts identity.test.ts sdk.test.ts"
   },
   "dependencies": {
     "@arkiv-network/sdk": "^1.0.1",

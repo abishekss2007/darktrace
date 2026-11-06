@@ -24344,26 +24344,33 @@ function toReceipt(row) {
     createdAtMs: num2(row.createdAtMs)
   };
 }
+var cleanEnv = (v2) => (v2 ?? "").trim().replace(/^(['"])(.*)\1$/, "$2").trim();
+function normalizePrivateKey(raw) {
+  let pk = cleanEnv(raw);
+  if (!pk) return null;
+  if (!pk.startsWith("0x")) pk = `0x${pk}`;
+  return isHex(pk) && pk.length === 66 ? pk : null;
+}
 var ArkivSdk = class {
   writerAddress;
+  /** Write-key state. Reads never depend on it, so a bad key cannot take the UI down. */
+  writerKeyStatus;
   accessKey;
   privateKey;
   constructor(config = {}) {
-    this.accessKey = config.accessKey ?? process.env.ARKIV_ACCESS_KEY ?? "";
-    const writer = config.writerAddress ?? process.env.ARKIV_WRITER_ADDRESS ?? DEFAULT_WRITER_ADDRESS;
+    this.accessKey = cleanEnv(config.accessKey ?? process.env.ARKIV_ACCESS_KEY);
+    const writer = cleanEnv(config.writerAddress ?? process.env.ARKIV_WRITER_ADDRESS) || DEFAULT_WRITER_ADDRESS;
     if (!isHex(writer) || writer.length !== 42) {
-      throw new Error(`[arkiv] ARKIV_WRITER_ADDRESS must be a 0x address, got "${writer}"`);
+      throw new Error(`[arkiv] ARKIV_WRITER_ADDRESS must be a 0x address (40 hex chars), got ${writer.length} chars`);
     }
     this.writerAddress = writer;
-    let pk = (config.privateKey ?? process.env.ARKIV_PRIVATE_KEY ?? "").trim();
-    if (pk && !pk.startsWith("0x")) pk = `0x${pk}`;
-    if (pk) {
-      if (!isHex(pk) || pk.length !== 66) throw new Error("[arkiv] ARKIV_PRIVATE_KEY must be 32 bytes hex");
-      this.privateKey = pk;
-    }
+    const raw = config.privateKey ?? process.env.ARKIV_PRIVATE_KEY;
+    const pk = normalizePrivateKey(raw);
+    if (pk) this.privateKey = pk;
+    this.writerKeyStatus = pk ? "ok" : cleanEnv(raw) ? "invalid" : "missing";
   }
   get canWrite() {
-    return Boolean(this.privateKey);
+    return this.writerKeyStatus === "ok";
   }
   chain() {
     return rabdi({ accessKey: this.accessKey });
@@ -24372,6 +24379,9 @@ var ArkivSdk = class {
     return createPublicClient2({ chain: this.chain(), transport: http() });
   }
   writer() {
+    if (this.writerKeyStatus === "invalid") {
+      throw new Error("[arkiv] ARKIV_PRIVATE_KEY is set but is not 32 bytes hex (check for quotes or extra characters)");
+    }
     if (!this.privateKey) throw new Error("[arkiv] ARKIV_PRIVATE_KEY is required to write to Arkiv");
     return createWalletClient2({
       chain: this.chain(),
@@ -25206,14 +25216,15 @@ async function main() {
       arcRpcUrl: process.env.ARC_RPC_URL || "https://rpc.testnet.arc.network"
     })
   );
-  const arkivWriter = arkivMemory ? "memory" : process.env.ARKIV_PRIVATE_KEY ? "live" : "unconfigured";
-  if (arkivWriter === "unconfigured") {
+  const keyStatus = new ArkivSdk().writerKeyStatus;
+  const arkivWriter = arkivMemory ? "memory" : keyStatus === "ok" ? "live" : keyStatus === "invalid" ? "invalid-key" : "unconfigured";
+  if (arkivWriter !== "live" && arkivWriter !== "memory") {
     console.warn(
       JSON.stringify({
         timestamp: (/* @__PURE__ */ new Date()).toISOString(),
         level: "WARN",
         stage: "ARKIV_WRITER",
-        message: "ARKIV_PRIVATE_KEY not set: detected extractions will NOT be sealed on Arkiv (set the key, or ARKIV_DEV_MODE=memory for offline runs)"
+        message: arkivWriter === "invalid-key" ? "ARKIV_PRIVATE_KEY is set but is not 32 bytes hex (quotes/extra characters?): extractions will NOT be sealed on Arkiv" : "ARKIV_PRIVATE_KEY not set: detected extractions will NOT be sealed on Arkiv (set the key, or ARKIV_DEV_MODE=memory for offline runs)"
       })
     );
   }
